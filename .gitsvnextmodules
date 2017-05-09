@@ -1,0 +1,8 @@
+[submodule "Tools"]
+	path = Tools
+	owner = /
+	url = https://svn.code.sf.net/p/contools/contools/trunk/Scripts/Tools
+	branch = /
+	fetch = :refs/remotes/git-svn
+	remote = svn
+	type = dir
