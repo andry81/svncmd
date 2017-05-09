@@ -1,0 +1,4 @@
+.|dir3/
+.|dir3/file1.txt
+.|dir6/
+.|dir6/file1.txt

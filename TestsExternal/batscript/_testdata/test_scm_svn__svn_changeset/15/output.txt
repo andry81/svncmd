@@ -1,0 +1,11 @@
+4|dir1/
+4|dir1/file1.txt
+4|dir1/file2.txt
+4|dir1/file3.txt
+4|dir1/file4.txt
+4|dir1/subdir1/
+4|dir1/subdir1/file1.txt
+4|dir1/subdir1/file2.txt
+4|dir1/subdir1/file3.txt
+3|dir4/
+4|dir4/file1.txt

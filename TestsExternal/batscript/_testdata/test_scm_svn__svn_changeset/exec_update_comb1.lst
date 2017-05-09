@@ -1,0 +1,16 @@
+; Format: <Current Dir> | <Suffix Command> | <CmdLine>
+; <Current Dir> - Switch to <Current Dir> before execute <CmdLine>
+; <CmdLine> - Command line to execute
+; <Suffix Command> - Command to execute after <CmdLine> (for example: echo.)
+; . - empty
+
+.|.|svn co -r 3 "file:///%TEST_SVN_REPO_PATH_ABS_LIST[0]%" "%TEST_SVN_REPOS_ROOT%\%TEST_SVN_CO_REPO_DIR_LIST[0]%"
+repos/%TEST_SVN_CO_REPO_DIR_LIST[0]%|.|svn up -r 3 .
+.|.|svn up -r 4 "dir1"
+.|.|svn up -r 2 "dir2"
+.|.|svn rm "dir3"
+.|.|svn up -r 4 "dir4/file1.txt"
+.|.|svn up -r 2 "dir5"
+.|.|mkdir "dir6"
+.|.|"%TOOLS_PATH%/touch.bat" "dir6/file1.txt"
+.|.|svn add "dir6"

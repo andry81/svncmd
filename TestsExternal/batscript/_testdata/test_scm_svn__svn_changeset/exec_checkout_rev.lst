@@ -1,0 +1,7 @@
+; Format: <Current Dir> | <Suffix Command> | <CmdLine>
+; <Current Dir> - Switch to <Current Dir> before execute <CmdLine>
+; <CmdLine> - Command line to execute
+; <Suffix Command> - Command to execute after <CmdLine> (for example: echo.)
+; . - empty
+
+.|.|svn co -r %TEST_SVN_REVISIONS_LIST[0]% "file:///%TEST_SVN_REPO_PATH_ABS_LIST[0]%" "%TEST_SVN_REPOS_ROOT%\%TEST_SVN_CO_REPO_DIR_LIST[0]%"
