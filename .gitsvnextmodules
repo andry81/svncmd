@@ -6,3 +6,19 @@
 	fetch = :refs/remotes/git-svn
 	remote = svn
 	type = dir
+[submodule "ToolsExternal/python"]
+	path = ToolsExternal/python
+	owner = ToolsExternal
+	url = https://svn.code.sf.net/p/contools/external_tests/trunk/Scripts/Tools/python
+	branch = /
+	fetch = :refs/remotes/git-svn
+	remote = svn
+	type = dir
+[submodule "ToolsExternal/scm/svn"]
+	path = ToolsExternal/scm/svn
+	owner = ToolsExternal
+	url = https://svn.code.sf.net/p/contools/external_tests/trunk/Scripts/Tools/scm/svn
+	branch = /
+	fetch = :refs/remotes/git-svn
+	remote = svn
+	type = dir
