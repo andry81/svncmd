@@ -179,7 +179,7 @@ rem create temporary files to store local context output
 if exist "%GEN_BRANCH_TEMP_FILE_DIR%" (
   echo.%?~nx0%: error: temporary generated directory GEN_BRANCH_TEMP_FILE_DIR is already exist: "%GEN_BRANCH_TEMP_FILE_DIR%"
   exit /b 2
-)
+) >&2
 
 mkdir "%GEN_BRANCH_TEMP_FILE_DIR%"
 
@@ -486,48 +486,32 @@ if exist "%BRANCH_ROOT_CHANGESET_FILE_DIR%" (
   )
 )
 
-if not exist "%BRANCH_ROOT_CHANGESET_FILE%" (
-  echo.%?~nx0%: error: BRANCH_ROOT_CHANGESET_FILE does not exist: "%BRANCH_ROOT_CHANGESET_FILE%".
-  exit /b 25
-) >&2
-
 rem SVN diff
 
-if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
-  if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
-    echo.Generating SVN branch root diff into file...
-    echo.  "%BRANCH_ROOT_DIFF_FILE%"
+if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 ^
+if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
+  echo.Generating SVN branch root diff into file...
+  echo.  "%BRANCH_ROOT_DIFF_FILE%"
 
-    rem always create an empty file
-    type nul > "%BRANCH_ROOT_DIFF_FILE%"
-
-    rem set a current directory for relative paths in a diff file
-    pushd "%SVN_BRANCH_PATH%" && (
-      rem WARNING: "-r <Last Changed Rev>" will request a file from the SVN server!
-      if %FLAG_SVN_DIFF_RA% EQU 0 (
-        svn diff . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
-      ) else (
-        svn diff -r "%BRANCH_ROOT_LAST_REV%" . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
-      )
-
-      rem Resolve binary differences which could not been displayed in the difference file and index add/remove
-      call :RESOLVE_BINARY_DIFFERENCES "%%BRANCH_ROOT_DIFF_FILE%%" "%%BRANCH_WORKINGSET_CATALOG_BINARY_DIFF_DIR%%" || ( popd & exit /b 27 )
-
-      popd
-    )
-  )
-) else if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
-  rem root diff file must exist even if empty
+  rem always create an empty file
   type nul > "%BRANCH_ROOT_DIFF_FILE%"
-  rem del /F /Q /A:-D "%BRANCH_ROOT_DIFF_FILE:/=\%" 2> nul
+
+  rem set a current directory for relative paths in a diff file
+  pushd "%SVN_BRANCH_PATH%" && (
+    rem WARNING: "-r <Last Changed Rev>" will request a file from the SVN server!
+    if %FLAG_SVN_DIFF_RA% EQU 0 (
+      svn diff -r BASE . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
+    ) else (
+      svn diff -r "%BRANCH_ROOT_LAST_REV%" . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
+    )
+
+    rem Resolve binary differences which could not been displayed in the difference file and index add/remove
+    call :RESOLVE_BINARY_DIFFERENCES "%%BRANCH_ROOT_DIFF_FILE%%" "%%BRANCH_WORKINGSET_CATALOG_BINARY_DIFF_DIR%%" || ( popd & exit /b 27 )
+
+    popd
+  )
 )
   
-if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 ^
-if not exist "%BRANCH_ROOT_DIFF_FILE%" (
-  echo.%?~nx0%: error: BRANCH_ROOT_DIFF_FILE does not exist: "%BRANCH_ROOT_DIFF_FILE%".
-  exit /b 28
-) >&2
-
 rem SVN externals
 
 if exist "%BRANCH_ROOT_EXTERNALS_FILE_DIR%" (
@@ -900,8 +884,9 @@ if "%BRANCH_EXTERNAL_LAST_REV%" == "" (
 
 rem SVN changeset (wc.db direct request)
 
-if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
-  rem always create an empty file
+rem request nested changeset ONLY if root changeset is requested
+if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 ^
+if exist "%BRANCH_ROOT_CHANGESET_FILE_DIR%" (
   type nul > "%BRANCH_WORKINGSET_CATALOG_PATH%/$changeset.lst"
 
   rem set a current directory for the svn_changeset.bat script
@@ -913,15 +898,13 @@ if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
 
 rem SVN diff
 
-rem always create an empty file
-type nul > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch"
-
-if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
+if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 ^
+if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
   rem set a current directory for relative paths in a patch file
   pushd "%BRANCH_EXTERNAL_WORKING_PATH%" && (
     rem WARNING: "-r <Last Changed Rev>" will request a file from the SVN server!
     if %FLAG_SVN_DIFF_RA% EQU 0 (
-      svn diff . --non-interactive > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch" || ( popd & exit /b 51 )
+      svn diff -r BASE . --non-interactive > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch" || ( popd & exit /b 51 )
     ) else (
       svn diff -r "%BRANCH_EXTERNAL_LAST_REV%" . --non-interactive > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch" || ( popd & exit /b 51 )
     )
@@ -932,10 +915,6 @@ if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
     popd
   )
 )
-rem else (
-rem   rem always remove diff text file
-rem   del /F /Q /A:-D "%BRANCH_WORKINGSET_CATALOG_PATH:/=\%\$diff.patch" 2> nul
-rem )
 
 rem always create an empty file
 type nul > "%BRANCH_WORKINGSET_CATALOG_PATH%/$externals.lst"
@@ -1007,7 +986,7 @@ call :EXTRACT_EXTERNALS
 goto :EOF
 
 :POST_PROCESS_EXTERNALS_FILE
-call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list.bat" "%%BRANCH_EXTERNALS_FILE%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" > "%BRANCH_EXTERNALS_LIST_FILE_TMP%"
+call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat" "%%BRANCH_EXTERNALS_FILE%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" > "%BRANCH_EXTERNALS_LIST_FILE_TMP%"
 if %ERRORLEVEL% NEQ 0 (
   echo.%?~nx0%: error: invalid svn:externals path transformation: EXTERNAL_FILE="%BRANCH_EXTERNALS_FILE%" REPO_ROOT="%BRANCH_REPO_ROOT%" ^
 DIR_URL="%BRANCH_DIR_URL%".
