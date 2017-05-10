@@ -2,15 +2,13 @@
 
 rem Flags:
 rem  -R - update root externals recursively.
-rem  -r - checkout/relocate/switch/revert/update all branch directories (recursively or not) w/o flag --ignore-externals.
+rem  -r - checkout/relocate/revert/update all branch directories (recursively or not) w/o flag --ignore-externals.
 rem       If set then the script will synchronize a parent branch state with children branches through the svn.exe call only.
 rem       If not set, then the script will sychronize parent-children databases itself by the wc.db direct access.
 rem  -fresh - remove root branch directory content before checkout it.
-rem  -ac - auto cleanup all branches before relocate/switch/revert/update to mainly remove all locks.
+rem  -ac - auto cleanup all branches before relocate/revert/update to mainly remove all locks.
 rem  -ar - auto revert any branch changes.
-rem  -as - auto switch to URL from workingset if previous is different (relative path change).
-rem  -fs - force switch from URL w/o common version control ancestry with the requested switch location (see error E195012 and --ignore-ancestry svn.exe flag)
-rem  -arloc - auto relocate to URL from workingset if previous is different (repository location change).
+rem  -arloc - auto relocate to URL from workingset if previous URL is different (repository location + in repository relative path change).
 
 setlocal
 

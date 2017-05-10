@@ -3,7 +3,7 @@
 rem Author:   Andrey Dibrov (andry at inbox dot ru)
 
 rem Description:
-rem   Generate CSV list from dumped svn:externals file.
+rem   Generate externals CSV list from dumped svn:externals file.
 rem
 
 rem Drop last error level

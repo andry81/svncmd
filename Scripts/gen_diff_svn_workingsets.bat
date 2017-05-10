@@ -53,6 +53,9 @@ if exist "!SVN_WORKINGSET_DIFF!" (
   exit /b 3
 ) >&2
 
+rem always create an empty file
+type nul > "!SVN_WORKINGSET_DIFF!" || exit /b 4
+
 rem load workingset lines into variables to speed up overall code interations
 set "LOAD_SVN_WORKINGSET=!SVN_WORKINGSET_NEXT!"
 set "SVN_WORKINGSET_LINE_VAR_PREFIX=SVN_WORKINGSET_NEXT_LINE_"
@@ -109,6 +112,9 @@ if !FOR_L_INDEX! GTR !%SVN_WORKINGSET_L_LINES_VAR%! exit /b 0
 goto PROCESS_WORKINGSET_L_FOR_LOOP
 
 :PROCESS_LINE_WORKINGSET_L
+set "L_REPO_FOUND="
+set L_REV_FOUND=0
+
 set "L_REPO="
 set "L_REV="
 set "SVN_WORKINGSET_L_LINE=!%SVN_WORKINGSET_L_LINE_VAR%%FOR_L_INDEX%!"
@@ -130,13 +136,13 @@ if !SVN_WORKINGSET_SEARCH_T! EQU 0 (
       (echo. ^|!L_REPO!^|!L_REV!^|0)>>"!SVN_WORKINGSET_DIFF!"
     ) else (
       set WORKINGSETS_HAS_CHANGES=1
-      (echo.^*^|!L_REPO!^|!L_REV!^|!R_REV!)>>"!SVN_WORKINGSET_DIFF!"
+      (echo.^*^|!L_REPO!^|!L_REV!^|!R_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
     )
   ) else if not "!L_REPO!" == "" (
     set WORKINGSETS_HAS_CHANGES=1
     (echo.+^|!L_REPO!^|!L_REV!^|0)>>"!SVN_WORKINGSET_DIFF!"
   )
-) else if not "!R_REPO!" == "" (
+) else if not "!R_REPO_FOUND!" == "" (
   if !WORKINGSET_REPO_FOUND! EQU 0 (
     set WORKINGSETS_HAS_CHANGES=1
     (echo.-^|!L_REPO!^|0^|!L_REV!)>>"!SVN_WORKINGSET_DIFF!"
@@ -163,9 +169,14 @@ for /F "eol=# tokens=1,2 delims=|" %%i in ("!SVN_WORKINGSET_R_LINE!") do (
 )
 
 rem case sensitive compare!
+if not "!L_REPO!|!R_REPO!" == "|" ^
 if "!L_REPO!" == "!R_REPO!" (
   set WORKINGSET_REPO_FOUND=1
-  if !L_REV! NEQ !R_REV! set WORKINGSET_REV_CHANGED=1
+  set R_REPO_FOUND=!R_REPO!
+  if !L_REV! NEQ !R_REV! (
+    set WORKINGSET_REV_CHANGED=1
+    set R_REV_FOUND=!R_REV!
+  )
   exit /b -1
 )
 
@@ -182,9 +193,9 @@ set "!SVN_WORKINGSET_NUM_LINES_VAR!=!SVN_WORKINGSET_INDEX!"
 exit /b 0
 
 :LOAD_LINE_SVN_WORKINGSET
-if "!REPO!" == "" ( set "LASTERROR=1" && exit /b 1 )
-if "!REV!" == "" ( set "LASTERROR=2" && exit /b 1 )
-if !REV! LSS 0 ( set "LASTERROR=3" && exit /b 1 )
+if "!REPO!" == "" ( set "LASTERROR=10" && exit /b 1 )
+if "!REV!" == "" ( set "LASTERROR=11" && exit /b 1 )
+if !REV! LSS 0 ( set "LASTERROR=12" && exit /b 1 )
 
 set /A SVN_WORKINGSET_INDEX+=1
 

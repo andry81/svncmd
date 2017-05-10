@@ -64,6 +64,9 @@ if exist "!SVN_WORKINGSET_DIFF!" (
   exit /b 3
 ) >&2
 
+rem always create an empty file
+type nul > "!SVN_WORKINGSET_DIFF!" || exit /b 4
+
 rem load externals lines into variables to speed up overall code interations
 set "LOAD_SVN_WORKINGSET=!SVN_WORKINGSET_NEXT!"
 set "SVN_WORKINGSET_LINE_VAR_PREFIX=SVN_WORKINGSET_NEXT_LINE_"
@@ -120,6 +123,12 @@ if !FOR_L_INDEX! GTR !%SVN_WORKINGSET_L_LINES_VAR%! exit /b 0
 goto PROCESS_WORKINGSET_L_FOR_LOOP
 
 :PROCESS_LINE_WORKINGSET_L
+set "R_LOCAL_PATH_FOUND="
+set "R_EXT_PATH_FOUND="
+set R_OP_REV_FOUND=0
+set R_PEG_REV_FOUND=0
+set R_REPO_FOUND=-
+
 set "L_LOCAL_PATH="
 set "L_EXT_PATH="
 set "L_OP_REV="
@@ -151,11 +160,11 @@ if !SVN_WORKINGSET_SEARCH_T! EQU 0 (
           (echo. ^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
         ) else (
           set WORKINGSETS_HAS_CHANGES=1
-          (echo.^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|-^|!R_OP_REV!^|!R_PEG_REV!)>>"!SVN_WORKINGSET_DIFF!"
+          (echo.^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|!R_REPO_FOUND!^|-^|!R_PEG_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
         )
       ) else (
         set WORKINGSETS_HAS_CHANGES=1
-        (echo.^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|!R_REPO!^|!R_PEG_REV!^|!R_OP_REV!)>>"!SVN_WORKINGSET_DIFF!"
+        (echo.^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|!R_REPO_FOUND!^|!R_PEG_REV_FOUND!^|!R_OP_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
       )
     ) else (
       set WORKINGSETS_HAS_CHANGES=1
@@ -199,14 +208,21 @@ for /F "eol=# tokens=1,2,3,4,5 delims=|" %%i in ("!SVN_WORKINGSET_R_LINE!") do (
   set "R_PEG_REV=%%l"
   set "R_REPO=%%m"
 )
+rem echo R !R_LOCAL_PATH!-!R_EXT_PATH!-!R_OP_REV!-!R_PEG_REV!-!R_REPO!
 
 rem case insensitive compare!
+if not "!L_LOCAL_PATH!|!R_LOCAL_PATH!" == "|" ^
 if /i "!L_LOCAL_PATH!" == "!R_LOCAL_PATH!" (
   set WORKINGSET_LOCAL_PATH_FOUND=1
+  set R_LOCAL_PATH_FOUND=!R_LOCAL_PATH!
   rem case insensitive compare ^(svn supports case sensitive external paths!^)
   if /i "!L_EXT_PATH!" == "!R_EXT_PATH!" (
     set WORKINGSET_EXT_PATH_FOUND=1
-    if /i "!L_REPO!" == "!R_REPO!" (
+    set R_LOCAL_PATH_FOUND=!R_LOCAL_PATH!
+    set R_REPO_FOUND=!R_REPO!
+    set R_OP_REV_FOUND=!R_OP_REV!
+    set R_PEG_REV_FOUND=!R_PEG_REV!
+    if "!L_REPO!" == "!R_REPO!" (
       set WORKINGSET_REPO_FOUND=1
       if !L_OP_REV! NEQ !R_OP_REV! set WORKINGSET_REV_CHANGED=1
       if !L_PEG_REV! NEQ !R_PEG_REV! set WORKINGSET_REV_CHANGED=1
@@ -231,13 +247,13 @@ set "%SVN_WORKINGSET_NUM_LINES_VAR%=!SVN_WORKINGSET_INDEX!"
 exit /b 0
 
 :LOAD_LINE_SVN_WORKINGSET
-if "!LOCAL_PATH!" == "" ( set "LASTERROR=1" && exit /b 1 )
-if "!EXT_PATH!" == "" ( set "LASTERROR=2" && exit /b 1 )
-if "!OP_REV!" == "" ( set "LASTERROR=3" && exit /b 1 )
-if "!PEG_REV!" == "" ( set "LASTERROR=4" && exit /b 1 )
-if "!REPO!" == "" ( set "LASTERROR=5" && exit /b 1 )
-if !OP_REV! LSS 0 ( set "LASTERROR=6" && exit /b 1 )
-if !PEG_REV! LSS 0 ( set "LASTERROR=7" && exit /b 1 )
+if "!LOCAL_PATH!" == "" ( set "LASTERROR=10" && exit /b 1 )
+if "!EXT_PATH!" == "" ( set "LASTERROR=11" && exit /b 1 )
+if "!OP_REV!" == "" ( set "LASTERROR=12" && exit /b 1 )
+if "!PEG_REV!" == "" ( set "LASTERROR=13" && exit /b 1 )
+if "!REPO!" == "" ( set "LASTERROR=14" && exit /b 1 )
+if !OP_REV! LSS 0 ( set "LASTERROR=15" && exit /b 1 )
+if !PEG_REV! LSS 0 ( set "LASTERROR=16" && exit /b 1 )
 
 set /A SVN_WORKINGSET_INDEX+=1
 
