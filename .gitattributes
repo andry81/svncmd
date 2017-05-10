@@ -22,6 +22,7 @@ Scripts/svn_check_out.bat -text
 Scripts/svn_list.bat -text
 Scripts/svn_up.bat -text
 Scripts/sync_branch_workingset.bat -text
+/TODO.txt -text
 TestScripts/gen.bat -text
 TestScripts/sync.bat -text
 Tests/batscripts/__init__.bat -text
