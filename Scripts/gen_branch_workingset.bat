@@ -176,7 +176,7 @@ set "GEN_BRANCH_TEMP_FILE_DIR=%TEMP%\%?~n0%.%SYNC_DATE%.%SYNC_TIME%"
 set "BRANCH_ROOT_INFO_FILE_TMP=%GEN_BRANCH_TEMP_FILE_DIR%\$root_info.txt"
 
 rem create temporary files to store local context output
-if exist "%GEN_BRANCH_TEMP_FILE_DIR%" (
+if exist "%GEN_BRANCH_TEMP_FILE_DIR%\" (
   echo.%?~nx0%: error: temporary generated directory GEN_BRANCH_TEMP_FILE_DIR is already exist: "%GEN_BRANCH_TEMP_FILE_DIR%"
   exit /b 2
 ) >&2
@@ -498,7 +498,7 @@ if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
 
   rem set a current directory for relative paths in a diff file
   pushd "%SVN_BRANCH_PATH%" && (
-    rem WARNING: "-r <Last Changed Rev>" will request a file from the SVN server!
+    rem WARNING: "-r <Last Changed Rev>" will request a diff from the SVN server!
     if %FLAG_SVN_DIFF_RA% EQU 0 (
       svn diff -r BASE . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
     ) else (
@@ -902,7 +902,7 @@ if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 ^
 if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
   rem set a current directory for relative paths in a patch file
   pushd "%BRANCH_EXTERNAL_WORKING_PATH%" && (
-    rem WARNING: "-r <Last Changed Rev>" will request a file from the SVN server!
+    rem WARNING: "-r <Last Changed Rev>" will request a diff from the SVN server!
     if %FLAG_SVN_DIFF_RA% EQU 0 (
       svn diff -r BASE . --non-interactive > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch" || ( popd & exit /b 51 )
     ) else (
@@ -988,8 +988,7 @@ goto :EOF
 :POST_PROCESS_EXTERNALS_FILE
 call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat" "%%BRANCH_EXTERNALS_FILE%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" > "%BRANCH_EXTERNALS_LIST_FILE_TMP%"
 if %ERRORLEVEL% NEQ 0 (
-  echo.%?~nx0%: error: invalid svn:externals path transformation: EXTERNAL_FILE="%BRANCH_EXTERNALS_FILE%" REPO_ROOT="%BRANCH_REPO_ROOT%" ^
-DIR_URL="%BRANCH_DIR_URL%".
+  echo.%?~nx0%: error: generation of the externals list file has failed: ERROR="%ERRORLEVEL%" EXTERNAL_FILE="%BRANCH_EXTERNALS_FILE%" REPO_ROOT="%BRANCH_REPO_ROOT%" DIR_URL="%BRANCH_DIR_URL%".
   exit /b 53
 ) >&2
 

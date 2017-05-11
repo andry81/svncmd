@@ -15,6 +15,30 @@ call "%%~dp0__init__.bat" || goto :EOF
 
 set "?~nx0=%~nx0"
 
+rem script flags
+set FLAG_SVN_NO_URI_TRANSFORM=0
+
+:FLAGS_LOOP
+
+rem flags always at first
+set "FLAG=%~1"
+
+if not "%FLAG%" == "" ^
+if not "%FLAG:~0,1%" == "-" set "FLAG="
+
+if not "%FLAG%" == "" (
+  if "%FLAG%" == "-no_uri_transform" (
+    set FLAG_SVN_NO_URI_TRANSFORM=1
+    shift
+  ) else (
+    echo.%?~nx0%: error: invalid flag: %FLAG%
+    exit /b -255
+  ) >&2
+
+  rem read until no flags
+  goto FLAGS_LOOP
+)
+
 set "EXTERNALS_FILE=%~dpf1"
 set "REPO_ROOT=%~2"
 set "DIR_URL=%~3"
@@ -29,6 +53,8 @@ if not exist "%EXTERNALS_FILE%" (
   exit /b 2
 ) >&2
 
+if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_ARGS_CHECK
+
 if "%REPO_ROOT%" == "" (
   echo.%?~nx0%: error: `Repository Root` argument is not set.
   exit /b 3
@@ -39,6 +65,7 @@ if "%DIR_URL%" == "" (
   exit /b 4
 ) >&2
 
+:IGNORE_URI_ARGS_CHECK
 set "EXTERNAL_DIR_PATH_PREFIX="
 
 rem echo --- %EXTERNALS_FILE% ---
@@ -126,6 +153,11 @@ for /F "eol= tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
   if not "%%j" == "" set "EXTERNAL_URI_REV_PEG=%%j"
 )
 
+rem absolute URI or nothing
+set "EXTERNAL_URI=-"
+
+if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
+
 call "%%SVNCMD_TOOLS_ROOT%%/make_url_absolute.bat" "%%DIR_URL%%" "%%EXTERNAL_URI_PATH%%" "%%REPO_ROOT%%"
 if %ERRORLEVEL% NEQ 0 (
   echo.%?~nx0%: error: invalid svn:externals path transformation: BASE_URL="%DIR_URL%" ^
@@ -134,6 +166,7 @@ EXTERNAL_PATH="%EXTERNAL_URI_PATH%" REPOSITORY_ROOT="%REPO_ROOT%" RESULT="%RETUR
 ) >&2
 set "EXTERNAL_URI=%RETURN_VALUE%"
 
+:IGNORE_URI_TRANSFORM
 if "%EXTERNAL_DIR_PATH_PREFIX%" == "" set EXTERNAL_DIR_PATH_PREFIX=.
 if "%EXTERNAL_URI_REV_OPERATIVE%" == "" set EXTERNAL_URI_REV_OPERATIVE=0
 if "%EXTERNAL_URI_REV_PEG%" == "" set EXTERNAL_URI_REV_PEG=0

@@ -20,6 +20,11 @@ Tests for svn_sync_branch_workingset.bat:
   - sync w/o any flags
   - sync w/ an external has local changes but must be removed
 
+Test for svn_remove_externals.bat/svn_remove_external.bat/svn_remove_external_dir.bat:
+  - sync where content of the external directory already partially removed
+  - sync where the external directory does not have .svn subdirectory
+  - sync where path to an external directory half removed (for example, dir1/dir2/ext does not exist, but dir1/dir2 is the external path)
+
 Tests for svn_changeset.bat:
   - in WC directory w/o .svn subdirectory, but w/ .svn subdirectory in parent directory
   - in local repo (file:///) directory

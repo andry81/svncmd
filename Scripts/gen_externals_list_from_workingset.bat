@@ -31,7 +31,10 @@ if not "%FLAG%" == "" (
     set FLAG_SVN_EXTERNALS_RECURSIVE=1
     set "FLAG_SVN_EXTERNALS_PROPGET=-R"
     shift
-  )
+  ) else (
+    echo.%?~nx0%: error: invalid flag: %FLAG%
+    exit /b -255
+  ) >&2
 
   rem read until no flags
   goto FLAGS_LOOP
