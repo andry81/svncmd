@@ -171,4 +171,5 @@ if "%EXTERNAL_DIR_PATH_PREFIX%" == "" set EXTERNAL_DIR_PATH_PREFIX=.
 if "%EXTERNAL_URI_REV_OPERATIVE%" == "" set EXTERNAL_URI_REV_OPERATIVE=0
 if "%EXTERNAL_URI_REV_PEG%" == "" set EXTERNAL_URI_REV_PEG=0
 
+rem TODO: EXTERNAL_DIR_PATH_PREFIX can be repo URL path, transformation required in case of compare with another list with local paths in the first parameter 
 echo.%EXTERNAL_DIR_PATH_PREFIX%^|%EXTERNAL_DIR_PATH%^|%EXTERNAL_URI_REV_OPERATIVE%^|%EXTERNAL_URI_REV_PEG%^|%EXTERNAL_URI%
