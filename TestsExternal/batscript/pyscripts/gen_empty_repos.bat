@@ -1,14 +1,18 @@
 @echo off
 
-rem Drop last error level
-cd .
+call "%%~dp0__init__.bat" || goto :EOF
 
-rem Create local variable's stack
-setlocal
+set /A __NEST_LVL+=1
 
-if %__NEST_LVL%0 EQU 0 (
-  call "%%~dp0..\__init__.bat" || goto :EOF
+rem redirect call into python script with the same name
+"%TEST_PYTHON_EXE%" "%~dp0%~n0.py" %*
+set LASTERROR=%ERRORLEVEL%
+
+set /A __NEST_LVL-=1
+
+if %__NEST_LVL% LEQ 0 (
+  echo.^
+  pause
 )
 
-rem call python module from here with all the arguments
-"%TEST_PYTHON_EXE_PATH%" -m "%~dp0%~n0.py" %*
+exit /b %LASTERROR%
