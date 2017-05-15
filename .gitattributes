@@ -26,9 +26,10 @@ Scripts/remove_branch_workingset_files.bat -text
 Scripts/svn_changeset.bat -text
 Scripts/svn_check_out.bat -text
 Scripts/svn_list.bat -text
-Scripts/svn_remove_external.bat -text
+Scripts/svn_remove_external_by_revision.bat -text
+Scripts/svn_remove_external_by_workingset.bat -text
 Scripts/svn_remove_external_unchanged_dir.bat -text
-Scripts/svn_remove_externals.bat -text
+Scripts/svn_remove_externals_by_workingset.bat -text
 Scripts/svn_up.bat -text
 Scripts/sync_branch_workingset.bat -text
 /TODO.txt -text

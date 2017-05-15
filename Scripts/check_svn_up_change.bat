@@ -16,6 +16,8 @@ rem    type svn_changesets_diff.lst
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 4 (echo.^>^>%0 %*) >&3
+
 set "UPSTREAM_SVN_CHANGESET=%~dpf1"
 set "DOWNSTREAM_SVN_CHANGESET=%~dpf2"
 

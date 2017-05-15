@@ -32,6 +32,8 @@ cd .
 rem enable delayed expansion to speed overall code iterations
 setlocal ENABLEDELAYEDEXPANSION
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
+
 set "SVN_WORKINGSET_NEXT=%~1"
 set "SVN_WORKINGSET_PREV=%~2"
 set "SVN_WORKINGSET_DIFF=%~3"

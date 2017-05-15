@@ -11,12 +11,15 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
+
 call "%%~dp0__init__.bat" || goto :EOF
 
 set "?~nx0=%~nx0"
 
 rem script flags
 set FLAG_SVN_NO_URI_TRANSFORM=0
+set FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL=0
 
 :FLAGS_LOOP
 
@@ -29,6 +32,9 @@ if not "%FLAG:~0,1%" == "-" set "FLAG="
 if not "%FLAG%" == "" (
   if "%FLAG%" == "-no_uri_transform" (
     set FLAG_SVN_NO_URI_TRANSFORM=1
+    shift
+  ) else if "%FLAG%" == "-make_dir_path_prefix_rel" (
+    set FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL=1
     shift
   ) else (
     echo.%?~nx0%: error: invalid flag: %FLAG%
@@ -53,6 +59,7 @@ if not exist "%EXTERNALS_FILE%" (
   exit /b 2
 ) >&2
 
+if %FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL% NEQ 0 goto CHECK_DIR_URL
 if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_ARGS_CHECK
 
 if "%REPO_ROOT%" == "" (
@@ -60,6 +67,7 @@ if "%REPO_ROOT%" == "" (
   exit /b 3
 ) >&2
 
+:CHECK_DIR_URL
 if "%DIR_URL%" == "" (
   echo.%?~nx0%: error: `URL` argument is not set.
   exit /b 4
@@ -156,6 +164,7 @@ for /F "eol= tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
 rem absolute URI or nothing
 set "EXTERNAL_URI=-"
 
+if %FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL% NEQ 0 goto IGNORE_URI_TRANSFORM
 if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 call "%%SVNCMD_TOOLS_ROOT%%/make_url_absolute.bat" "%%DIR_URL%%" "%%EXTERNAL_URI_PATH%%" "%%REPO_ROOT%%"
@@ -167,6 +176,20 @@ EXTERNAL_PATH="%EXTERNAL_URI_PATH%" REPOSITORY_ROOT="%REPO_ROOT%" RESULT="%RETUR
 set "EXTERNAL_URI=%RETURN_VALUE%"
 
 :IGNORE_URI_TRANSFORM
+if %FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL% EQU 0 goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
+
+call set "EXTERNAL_DIR_PATH_SUFFIX=%%EXTERNAL_DIR_PATH_PREFIX:%DIR_URL%=%%"
+if "%EXTERNAL_DIR_PATH_SUFFIX%" == "" goto TRANSFORM_DIR_PATH_PREFIX
+
+if not "%DIR_URL%%EXTERNAL_DIR_PATH_SUFFIX%" == "%EXTERNAL_DIR_PATH_PREFIX%" goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
+if not "%EXTERNAL_DIR_PATH_SUFFIX:~0,1%" == "/" goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
+
+set "EXTERNAL_DIR_PATH_SUFFIX=%EXTERNAL_DIR_PATH_SUFFIX:~1%"
+
+:TRANSFORM_DIR_PATH_PREFIX
+set "EXTERNAL_DIR_PATH_PREFIX=%EXTERNAL_DIR_PATH_SUFFIX%"
+
+:IGNORE_DIR_PATH_PREFIX_TRANSFORM
 if "%EXTERNAL_DIR_PATH_PREFIX%" == "" set EXTERNAL_DIR_PATH_PREFIX=.
 if "%EXTERNAL_URI_REV_OPERATIVE%" == "" set EXTERNAL_URI_REV_OPERATIVE=0
 if "%EXTERNAL_URI_REV_PEG%" == "" set EXTERNAL_URI_REV_PEG=0

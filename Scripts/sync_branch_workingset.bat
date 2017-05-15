@@ -50,6 +50,8 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 1 (echo.^>^>%0 %*) >&3
+
 call "%%~dp0__init__.bat" || goto :EOF
 
 set "?~n0=%~n0"
@@ -147,12 +149,15 @@ set "SYNC_DATE=%RETURN_VALUE:~0,4%_%RETURN_VALUE:~4,2%_%RETURN_VALUE:~6,2%"
 set "SYNC_TIME=%RETURN_VALUE:~8,2%_%RETURN_VALUE:~10,2%_%RETURN_VALUE:~12,2%_%RETURN_VALUE:~15,3%"
 
 set "SYNC_BRANCH_TEMP_FILE_DIR=%TEMP%\%?~n0%.%SYNC_DATE%.%SYNC_TIME%"
+set "SQLITE_OUT_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\sqlite_out.txt"
+set "BRANCH_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info.txt"
 set "BRANCH_BASE_REV_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info_base.txt"
 set "BRANCH_BASE_REV_DIFF_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$diff_base.patch"
 set "BRANCH_FROM_EXTERNALS_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_from.txt"
 set "BRANCH_FROM_EXTERNALS_LIST_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_from.lst"
 set "BRANCH_TO_EXTERNALS_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_to.txt"
 set "BRANCH_TO_EXTERNALS_LIST_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_to.lst"
+set "BRANCH_TO_EXTERNALS_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info_externals_to.txt"
 rem set "GEN_BRANCH_WORKINGSET_BASE_DIR_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\gen_workingset"
 
 rem create temporary files to store local context output
@@ -380,7 +385,7 @@ if "%BRANCH_WORKINGSET_REPO_ROOT%" == "" (
 
 if %SYNC_BRANCH_IS_ROOT% EQU 0 goto SKIP_CURRENT_REV_FROM_INFO
 
-rem retrieve workingset root current revision
+rem workingset root current revision
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "Revision"
 set "SYNC_BRANCH_CURRENT_REV=%RETURN_VALUE%"
 if "%SYNC_BRANCH_CURRENT_REV%" == "" (
@@ -577,8 +582,6 @@ call :PREPROCESS_REMOVE_BRANCH_EXTERNALS || goto :EOF
 goto PREPROCESS_REMOVE_BRANCH_EXTERNALS_END
 
 :PREPROCESS_REMOVE_BRANCH_EXTERNALS
-setlocal
-
 rem Add externals explicit remove step, because:
 rem   1. Update with the --ignore-externals flag won't remove externals what should be removed
 rem      (externals what should be added will be added automatically in next turn by it's explicit processing).
@@ -593,62 +596,21 @@ rem   2. Additionally remove parent directories (in reverse order from child to 
 rem      any files or directories in it.
 rem   3. Stop with an error if being removed external contains changes but the auto revert option is not set.
 
-rem from externals
-pushd "%SYNC_BRANCH_PATH%" && (
-  rem from externals
-  svn pget svn:externals -r BASE . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 60 )
-
-  rem to externals
-  svn pget svn:externals -r "%SYNC_BRANCH_CURRENT_REV%" . -R --non-interactive > "%BRANCH_TO_EXTERNALS_FILE_TMP%" || ( popd & exit /b 61 )
-
-  popd
+call "%%SVNCMD_TOOLS_ROOT%%/svn_remove_external_by_revision.bat" %%FLAG_TEXT_SVN_AUTO_REVERT%% -nested_only . "%%SYNC_BRANCH_CURRENT_REV%%" "%%SYNC_BRANCH_PATH%%"
+if %ERRORLEVEL% NEQ 0 (
+  echo.%?~nx0%: error: external branch directory remove has failed: ERROR="%ERRORLEVEL%" REVISION="%SYNC_BRANCH_CURRENT_REV%" BRANCH_PATH="%SYNC_BRANCH_PATH%".
+  exit /b 60
 )
-
-rem convert externals into CSV list
-call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat" -no_uri_transform "%%BRANCH_FROM_EXTERNALS_FILE_TMP%%" > "%BRANCH_FROM_EXTERNALS_LIST_FILE_TMP%"
-if %ERRORLEVEL% NEQ 0 (
-  echo.%?~nx0%: error: generation of the externals list file has failed: ERROR="%ERRORLEVEL%" EXTERNALS_FILE="%BRANCH_FROM_EXTERNALS_FILE_TMP%".
-  exit /b 62
-) >&2
-
-call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat" -no_uri_transform "%%BRANCH_TO_EXTERNALS_FILE_TMP%%" > "%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%"
-if %ERRORLEVEL% NEQ 0 (
-  echo.%?~nx0%: error: generation of the externals list file has failed: ERROR="%ERRORLEVEL%" EXTERNALS_FILE="%BRANCH_TO_EXTERNALS_FILE_TMP%".
-  exit /b 63
-) >&2
-
-rem TEMPORARY DISABLED FOR THE SAKE (SADLY BUT NOT RICE VODKA) OF PERFORMANCE
-rem rem generate full nest externals list by a call to the gen_branch_workingset.bat with minimum parameters set
-rem call "%%SVNCMD_TOOLS_ROOT%%/gen_branch_workingset.bat" -offline -R "%%SYNC_BRANCH_PATH%%" "%%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%%/$root_info.txt" "" "" ^
-rem   "%%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%%/$root_externals.lst" "%%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%%/$workingset.lst" "%%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%%/workingset" >nul
-rem if %ERRORLEVEL% NEQ 0 (
-rem   echo.%?~nx0%: error: a branch workingset is failed to generate: ERROR="%ERRORLEVEL%" BRANCH_PATH="%SYNC_BRANCH_PATH%".
-rem   exit /b 60
-rem ) >&2
-rem 
-rem rem convert externals into CSV list
-rem call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_workingset.bat" "%%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%%/$workingset.lst" "%%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%%/workingset" > "%BRANCH_FROM_EXTERNALS_LIST_FILE_TMP%"
-rem if %ERRORLEVEL% NEQ 0 (
-rem   echo.%?~nx0%: error: invalid working file: ERROR="%ERRORLEVEL%" WORKINGSET_FILE="%%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%%/$workingset.lst".
-rem   exit /b 61
-rem ) >&2
-
-pause
-call "%%SVNCMD_TOOLS_ROOT%%/svn_remove_externals.bat" %%FLAG_TEXT_SVN_AUTO_REVERT%% . "%%BRANCH_WORKINGSET_FILE%%" "%%SYNC_BRANCH_PATH%%" "%%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%%" "%%BRANCH_FROM_EXTERNALS_LIST_FILE_TMP%%"
-if %ERRORLEVEL% GTR 0 (
-  echo.%?~nx0%: error: preprocess of the update externals remove has failed: ERROR="%ERRORLEVEL%" BRANCH_PATH="%SYNC_BRANCH_PATH%".
-  exit /b 62
-) >&2
 
 exit /b 0
 
-:PREPROCESS_REMOVE_BRANCH_EXTERNAL_DIR_PATH_END
+:PREPROCESS_REMOVE_BRANCH_EXTERNALS_END
 
 rem INFO:
 rem   Update changes with --set-depth infinity in case if previous checkout/update has been done w/o infinity depth.
 rem   If update is recursive (-R) then ignore externals update because they will be updated exclusively.
 pushd "%SYNC_BRANCH_PATH%" && (
-  call :CMD svn up . -r "%%SYNC_BRANCH_CURRENT_REV%%" --set-depth infinity %%FLAG_TEXT_SVN_IGNORE_EXTERNALS%% --non-interactive || ( popd & exit /b 70 )
+  call :CMD svn up -r "%%SYNC_BRANCH_CURRENT_REV%%" . --set-depth infinity %%FLAG_TEXT_SVN_IGNORE_EXTERNALS%% --non-interactive || ( popd & exit /b 70 )
   echo.
   popd
 )
@@ -661,7 +623,7 @@ if exist "%BRANCH_CHANGESET_FILE%" call :UPDATE_BY_CHANGESET
 goto UPDATE_BY_CHANGESET_END
 
 :UPDATE_BY_CHANGESET
-for /F "usebackq eol= tokens=1,* delims=|" %%i in ("%BRANCH_CHANGESET_FILE%") do (
+for /F "usebackq eol=	 tokens=1,* delims=|" %%i in ("%BRANCH_CHANGESET_FILE%") do (
   set CHANGESET_REVISION=%%i
   set "CHANGESET_PATH=%%j"
   pushd "%SYNC_BRANCH_PATH%" && (
@@ -732,7 +694,7 @@ if %SYNC_BRANCH_IS_ROOT% NEQ 0 exit /b 0
 goto PREPROCESS_PATCH_EXTERNAL_REMOVE_END
 
 :PREPROCESS_PATCH_EXTERNAL_REMOVE
-call "%%SVNCMD_TOOLS_ROOT%%/svn_remove_externals.bat" %%FLAG_TEXT_SVN_AUTO_REVERT%% . "%%BRANCH_WORKINGSET_FILE%%" "%%SYNC_BRANCH_PATH%%" "%%BRANCH_EXTERNALS_FILE%%" "%%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%%"
+call "%%SVNCMD_TOOLS_ROOT%%/svn_remove_externals_by_workingset.bat" %%FLAG_TEXT_SVN_AUTO_REVERT%% . "%%BRANCH_WORKINGSET_FILE%%" "%%SYNC_BRANCH_PATH%%" "%%BRANCH_EXTERNALS_FILE%%" "%%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%%"
 if %ERRORLEVEL% GTR 0 (
   echo.%?~nx0%: error: preprocess the patch externals remove has failed: ERROR="%ERRORLEVEL%" BRANCH_PATH="%SYNC_BRANCH_PATH%".
   exit /b 73
@@ -753,34 +715,34 @@ goto POSTPROCESS_PATCH_APPLY_END
 :POSTPROCESS_PATCH_APPLY
 setlocal
 
-if not exist "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db" (
-  echo.%?~nx0%: error: SVN database is not found: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
+if not exist "%SYNC_BRANCH_PATH%/.svn/wc.db" (
+  echo.%?~nx0%: error: SVN database is not found: "%SYNC_BRANCH_PATH%/.svn/wc.db".
   exit /b 80
 ) >&2
 
 rem get parent branch info file to request repository UUID
-pushd "%SYNC_BRANCH_PARENT_PATH%" && (
-  svn info . --non-interactive > "%BRANCH_INFO_FILE_TMP%" || ( popd & exit /b 81 )
+pushd "%SYNC_BRANCH_PATH%" && (
+  svn info -r BASE . --non-interactive > "%BRANCH_INFO_FILE_TMP%" || ( popd & exit /b 81 )
   popd
 )
 
 rem read parent branch info file
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE_TMP%%" "Repository UUID"
-set "PARENT_BRANCH_REPOSITORY_UUID=%RETURN_VALUE%"
-if "%PARENT_BRANCH_REPOSITORY_UUID%" == "" (
-  echo.%?~nx0%: error: `Repository UUID` property is not found in temporary SVN info file requested from the branch: BRANCH_PATH="%SYNC_BRANCH_PARENT_PATH%".
+set "BRANCH_REPOSITORY_UUID=%RETURN_VALUE%"
+if "%BRANCH_REPOSITORY_UUID%" == "" (
+  echo.%?~nx0%: error: `Repository UUID` property is not found in temporary SVN info file requested from the branch: BRANCH_PATH="%SYNC_BRANCH_PATH%".
   exit /b 82
 ) >&2
 
-set "REPOS_ID="
-for /F "usebackq eol= tokens=* delims=" %%i in (`call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PATH%%/.svn/wc.db" ".headers off" "select id from "REPOSITORY" where uuid='%%PARENT_BRANCH_REPOSITORY_UUID%%'"`) do set "REPOS_ID=%%i"
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'REPOSITORY' where uuid='%%BRANCH_REPOSITORY_UUID%%'" > "%SQLITE_OUT_FILE_TMP%"
+set /P REPOS_ID=< "%SQLITE_OUT_FILE_TMP%"
 if "%REPOS_ID%" == "" (
   echo.%?~nx0%: error: SVN database `REPOSITORY id` request has failed: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
   exit /b 90
 ) >&2
 
-set "WC_ID="
-for /F "usebackq eol= tokens=* delims=" %%i in (`call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from "WCROOT" where local_abspath is null or local_abspath = ''"`) do set "WC_ID=%%i"
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'WCROOT' where local_abspath is null or local_abspath = ''" > "%SQLITE_OUT_FILE_TMP%"
+set /P WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 if "%WC_ID%" == "" (
   echo.%?~nx0%: error: SVN database `WCROOT id` request has failed: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
   exit /b 91
@@ -789,26 +751,44 @@ if "%WC_ID%" == "" (
 if "%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%" == "0" set "SYNC_BRANCH_EXTERNAL_URI_REV_PEG="
 if "%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%" == "0" set "SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE=%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%"
 
-set "PREV_WC_ID="
-for /F "usebackq eol= tokens=* delims=" %%i in (`call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from "EXTERNALS" where wc_id = '%%WC_ID%%' and local_relpath = '%%SYNC_BRANCH_LOCAL_REL_PATH%%' and repos_id = '%%REPOS_ID%%' and kind = 'dir' and def_local_relpath = '%%SYNC_BRANCH_DEF_LOCAL_REL_PATH%%' and def_repos_relpath = '%%BRANCH_WORKINGSET_REPO_REL_PATH%%'"`) do set "PREV_WC_ID=%%i"
+set "SQLITE_EXP_WHERE=where wc_id = '%WC_ID%' and local_relpath = '%SYNC_BRANCH_LOCAL_REL_PATH%' and repos_id = '%REPOS_ID%' and presence = 'normal' and kind = 'dir' and def_local_relpath = '%SYNC_BRANCH_DEF_LOCAL_REL_PATH%' and def_repos_relpath = '%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%'"
 
-rem Update/Insert record into the WC EXTERNALS table to link the external directory to the WC root.
-if not "%PREV_WC_ID%" == "" (
-  call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
-    "update EXTERNALS set parent_relpath = '%%SYNC_BRANCH_PARENT_REL_PATH%%',presence = 'normal',def_operational_revision = '%%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%%',def_revision = '%%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%%' where wc_id = '%%WC_ID%%' and local_relpath = '%%SYNC_BRANCH_LOCAL_REL_PATH%%' and repos_id = '%%REPOS_ID%%' and kind = 'dir' and def_local_relpath = '%%SYNC_BRANCH_LOCAL_DEF_PATH%%' and def_repos_relpath = '%%BRANCH_WORKINGSET_REPO_REL_PATH%%'" || (
-    echo.%?~nx0%: error: failed to update a record in the EXTERNALS table in the WC root: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
-    exit /b 92
-  ) >&2
-) else (
-  call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
-    "insert into EXTERNALS (wc_id,local_relpath,parent_relpath,repos_id,presence,kind,def_local_relpath,def_repos_relpath,def_operational_revision,def_revision) values (%%WC_ID%%,'%%SYNC_BRANCH_LOCAL_REL_PATH%%','%%SYNC_BRANCH_PARENT_REL_PATH%%','%%REPOS_ID%%','normal','dir','%%SYNC_BRANCH_DEF_LOCAL_REL_PATH%%','%%BRANCH_WORKINGSET_REPO_REL_PATH%%','%%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%%','%%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%%')" || (
-    echo.%?~nx0%: error: failed to insert a record to the EXTERNALS table in the WC root: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
-    exit /b 93
-  ) >&2
-)
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from 'EXTERNALS' %%SQLITE_EXP_WHERE%%" > "%SQLITE_OUT_FILE_TMP%"
+set /P PREV_WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 
+if not "%PREV_WC_ID%" == "" goto UPDATE_EXTERNALS_RECORD
+goto TRY_INSERT_EXTERNALS_RECORD
+
+:UPDATE_EXTERNALS_RECORD
+rem Update record into the WC EXTERNALS table to update the link of the external directory to the WC root.
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
+  "update EXTERNALS set parent_relpath = '%%SYNC_BRANCH_PARENT_REL_PATH%%',def_repos_relpath = '%BRANCH_WORKINGSET_REPO_REL_PATH%',def_operational_revision = '%%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%%',def_revision = '%%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%%' %%SQLITE_EXP_WHERE%%" || (
+  echo.%?~nx0%: error: failed to update a record in the EXTERNALS table in the WC root: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
+  exit /b 92
+) >&2
+
+goto TRY_INSERT_EXTERNALS_RECORD_END
+
+:TRY_INSERT_EXTERNALS_RECORD
+set "SQLITE_EXP_WHERE=where wc_id = '%WC_ID%' and local_relpath = '%SYNC_BRANCH_LOCAL_REL_PATH%' and repos_id = '%REPOS_ID%' and presence = 'normal' and kind = 'dir' and def_local_relpath = '%SYNC_BRANCH_DEF_LOCAL_REL_PATH%' and def_repos_relpath = '%BRANCH_WORKINGSET_REPO_REL_PATH%'"
+
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from 'EXTERNALS' %%SQLITE_EXP_WHERE%%" > "%SQLITE_OUT_FILE_TMP%"
+set /P PREV_WC_ID=< "%SQLITE_OUT_FILE_TMP%"
+
+rem check if insert already done
+if not "%PREV_WC_ID%" == "" goto TRY_INSERT_EXTERNALS_RECORD_END
+
+:INSERT_EXTERNALS_RECORD
+rem Insert record into the WC EXTERNALS table to link the external directory to the WC root.
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
+  "insert into EXTERNALS (wc_id,local_relpath,parent_relpath,repos_id,presence,kind,def_local_relpath,def_repos_relpath,def_operational_revision,def_revision) values (%%WC_ID%%,'%%SYNC_BRANCH_LOCAL_REL_PATH%%','%%SYNC_BRANCH_PARENT_REL_PATH%%','%%REPOS_ID%%','normal','dir','%%SYNC_BRANCH_DEF_LOCAL_REL_PATH%%','%%BRANCH_WORKINGSET_REPO_REL_PATH%%','%%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%%','%%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%%')" || (
+  echo.%?~nx0%: error: failed to insert a record to the EXTERNALS table in the WC root: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
+  exit /b 93
+) >&2
+
+:TRY_INSERT_EXTERNALS_RECORD_END
 :POSTPROCESS_PATCH_APPLY_END
-exit /b 0
+exit /b
 
 :RESOLVE_PATCH_AMBIGUITY
 setlocal
