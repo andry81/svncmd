@@ -18,6 +18,8 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 6 (echo.^>^>%0 %*) >&3
+
 set "URL=%~1"
 
 for /F "eol= tokens=1,* delims=:" %%i in ("%URL%") do set "RETURN_VALUE=%%i"

@@ -18,6 +18,8 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 6 (echo.^>^>%0 %*) >&3
+
 set "URL=%~1"
 
 set "URL_SCHEME="

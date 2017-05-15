@@ -19,6 +19,9 @@ Tests for svn_sync_branch_workingset.bat:
   - sync w/ tree changes (gen must be implemented with "svn diff --git" support)
   - sync w/o any flags
   - sync w/ an external has local changes but must be removed
+  - sync external with URL relocation, where patch from the gen contains URL changes
+  - sync and break in middle of parent wc.db update, where EXTERNALS tabdle processed for insert/update/delete
+  - sync with local changes in nested externals with the -ignore_nested_externals_local_changes flag set
 
 Test for svn_remove_externals.bat/svn_remove_external.bat/svn_remove_external_dir.bat:
   - sync where content of the external directory already partially removed

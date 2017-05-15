@@ -26,6 +26,8 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 5 (echo.^>^>%0 %*) >&3
+
 set "?~nx0=%~nx0"
 
 rem script flags

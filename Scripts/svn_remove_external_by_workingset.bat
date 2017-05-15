@@ -3,15 +3,18 @@
 rem Author:   Andrey Dibrov (andry at inbox dot ru)
 
 rem Description:
-rem   Script for remove a single SVN external from the WC root.
+rem   Script for remove a single SVN external from the WC root between the base
+rem   revision and revision from the workingset.
 
 rem Examples:
-rem 1. call svn_remove_external.bat branch/current branch_workingset.lst ./proj1 proj1_subdir ext_path 771a6eda-33e6-498b-82b5-7144d63c2b48 1
+rem 1. call svn_remove_external_by_workingset.bat branch/current branch_workingset.lst ./proj1 proj1_subdir ext_path 1 1
 
 rem Drop last error level
 cd .
 
 setlocal
+
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
 
 call "%%~dp0__init__.bat" || goto :EOF
 
@@ -105,11 +108,17 @@ goto ERROR_WCROOT_PATH_END
 
 if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
   set "EXTERNAL_BRANCH_PATH_PREFIX=%EXTERNAL_DIR_PATH_PREFIX%/%EXTERNAL_DIR_PATH%"
-) else (
+) else if not "%EXTERNAL_DIR_PATH%" == "." (
   set "EXTERNAL_BRANCH_PATH_PREFIX=%EXTERNAL_DIR_PATH%"
+) else set EXTERNAL_BRANCH_PATH_PREFIX=.
+
+if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
+  set "EXTERNAL_BRANCH_PATH=%WCROOT_PATH:\=/%/%EXTERNAL_BRANCH_PATH_PREFIX%"
+  set "EXTERNAL_BRANCH_PATH_ABS=%WCROOT_PATH_ABS:\=/%/%EXTERNAL_BRANCH_PATH_PREFIX%"
+) else (
+  set "EXTERNAL_BRANCH_PATH=%WCROOT_PATH:\=/%"
+  set "EXTERNAL_BRANCH_PATH_ABS=%WCROOT_PATH_ABS:\=/%"
 )
-set "EXTERNAL_BRANCH_PATH=%WCROOT_PATH:\=/%/%EXTERNAL_BRANCH_PATH_PREFIX%"
-set "EXTERNAL_BRANCH_PATH_ABS=%WCROOT_PATH_ABS:\=/%/%EXTERNAL_BRANCH_PATH_PREFIX%"
 
 if "%EXTERNAL_DIR_PATH_PREFIX%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
 if "%EXTERNAL_DIR_PATH%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
@@ -193,13 +202,15 @@ exit /b 0
 rem If workingset file is set, then find the external revision and info file in the workingset file, otherwise
 rem use the base revision externals list.
 
-set "WORKINGSET_REV_FOUND="
+set "WORKINGSET_BRANCH_CURRENT_REV_FOUND="
+set "WORKINGSET_BRANCH_URI_FOUND="
 if "%WORKINGSET_FILE%" == "" goto IGNORE_WORKINGSET_REVISION_SEARCH
 
 :WORKINGSET_SEARCH_LOOP
 for /F "usebackq eol=# tokens=1,4,5 delims=|" %%i in ("%WORKINGSET_FILE%") do (
   set "SYNC_BRANCH_CURRENT_REV=%%i"
   set "SYNC_BRANCH_DECORATED_PATH=%%j"
+  set "SYNC_BRANCH_URI=%%k"
   call :BRANCH_WORKINGSET_LINE || goto WORKINGSET_SEARCH_LOOP_END
 )
 
@@ -217,7 +228,7 @@ if "%SYNC_BRANCH_DECORATED_PATH%" == "" (
   exit /b 21
 ) >&2
 
-rem don't check nested externals on th local changes if the flag is set
+rem don't check nested externals on the local changes if the flag is set
 if %FLAG_SVN_IGNORE_NESTED_EXTERNALS_LOCAL_CHANGES% NEQ 0 (
   if not "%SYNC_BRANCH_DECORATED_PATH::=%" == "%SYNC_BRANCH_DECORATED_PATH%" exit /b 0
 )
@@ -245,7 +256,8 @@ if /i not "%SYNC_BRANCH_UNREDUCED_PATH_PREFIX%" == "%WCROOT_PATH%" exit /b 0
 
 echo.==^> %SYNC_BRANCH_PATH% -^> %SYNC_BRANCH_CURRENT_REV%^|%SYNC_BRANCH_DECORATED_PATH%
 
-set "WORKINGSET_REV_FOUND=%SYNC_BRANCH_CURRENT_REV%"
+set "WORKINGSET_BRANCH_CURRENT_REV_FOUND=%SYNC_BRANCH_CURRENT_REV%"
+set "WORKINGSET_BRANCH_URI_FOUND=%SYNC_BRANCH_URI%"
 
 exit /b 1
 
@@ -255,8 +267,8 @@ pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
   rem from externals
   svn pget svn:externals -r BASE . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 30 )
 
-  if not "%WORKINGSET_REV_FOUND%" == "" (
-    svn pget svn:externals -r "%WORKINGSET_REV_FOUND%" . -R --non-interactive > "%BRANCH_TO_EXTERNALS_FILE_TMP%" || ( popd & exit /b 31 )
+  if not "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" == "" (
+    svn pget svn:externals -r "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" . -R --non-interactive > "%BRANCH_TO_EXTERNALS_FILE_TMP%" || ( popd & exit /b 31 )
   )
 
   popd
@@ -269,12 +281,12 @@ if %ERRORLEVEL% NEQ 0 (
   exit /b 32
 ) >&2
 
-if "%WORKINGSET_REV_FOUND%" == "" (
+if "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" == "" (
   set "BRANCH_TO_EXTERNALS_LIST_FILE_TMP=%BRANCH_FROM_EXTERNALS_LIST_FILE_TMP%"
   goto NO_TO_EXTERNALS
 )
 
-call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat" -no_uri_transform "%%BRANCH_TO_EXTERNALS_FILE_TMP%%" > "%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%"
+call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat" -no_uri_transform -make_dir_path_prefix_rel "%%BRANCH_TO_EXTERNALS_FILE_TMP%%" "" "%%WORKINGSET_BRANCH_URI_FOUND%%" > "%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%"
 if %ERRORLEVEL% NEQ 0 (
   echo.%?~nx0%: error: generation of the externals list file has failed: ERROR="%ERRORLEVEL%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 33
@@ -282,7 +294,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 :NO_TO_EXTERNALS
 
-call "%%SVNCMD_TOOLS_ROOT%%/svn_remove_externals.bat"%%BARE_FLAGS%% -remove_unchanged "%%SYNC_BRANCH_PATH%%" "%%WORKINGSET_FILE%%" "%%WCROOT_PATH%%" "%%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%%" "%%BRANCH_FROM_EXTERNALS_LIST_FILE_TMP%%"
+call "%%SVNCMD_TOOLS_ROOT%%/svn_remove_externals.bat"%%BARE_FLAGS%% -remove_unchanged "%%SYNC_BRANCH_PATH%%/%%EXTERNAL_BRANCH_PATH%%" "%%WORKINGSET_FILE%%" "%%EXTERNAL_DIR_PATH%%" "%%BRANCH_TO_EXTERNALS_LIST_FILE_TMP%%" "%%BRANCH_FROM_EXTERNALS_LIST_FILE_TMP%%"
 if %ERRORLEVEL% NEQ 0 (
   echo.%?~nx0%: error: preprocess of the update externals remove has failed: ERROR="%ERRORLEVEL%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 34
@@ -300,6 +312,7 @@ pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
     set "SVN_FILE_PATH=%%i"
     call :REMOVE_SVN_FILE_PATH || ( popd & goto :EOF )
   )
+  echo.
   popd
 )
 

@@ -18,6 +18,8 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 5 (echo.^>^>%0 %*) >&3
+
 set "INFO_PARAM_FILE=%~1"
 set "INFO_PARAM_NAME=%~2"
 

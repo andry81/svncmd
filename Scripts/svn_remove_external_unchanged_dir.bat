@@ -20,9 +20,12 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
+
 call "%%~dp0__init__.bat" || goto :EOF
 
 set "?~n0=%~n0"
+set "?~nx0=%~nx0"
 
 set "WCROOT_PATH=%~1"
 set "EXTERNAL_DIR_PATH_PREFIX=%~2"
@@ -39,17 +42,6 @@ goto NO_SYNC_BRANCH_PATH_END
 ) >&2
 :NO_SYNC_BRANCH_PATH_END
 
-if "%WORKINGSET_FILE%" == "" goto NO_WORKINGSET_FILE
-if not exist "%WORKINGSET_FILE%" goto NO_WORKINGSET_FILE
-
-goto NO_WORKINGSET_FILE_END
-:NO_WORKINGSET_FILE
-(
-  echo.%?~nx0%: error: workingset file does not exist: WORKINGSET_FILE="%WORKINGSET_FILE%".
-  exit /b 2
-) >&2
-:NO_WORKINGSET_FILE_END
-
 if "%WCROOT_PATH%" == "" goto ERROR_WCROOT_PATH
 if not exist "%WCROOT_PATH%\.svn\wc.db" goto ERROR_WCROOT_PATH
 
@@ -57,7 +49,7 @@ goto ERROR_WCROOT_PATH_END
 :ERROR_WCROOT_PATH
 (
   echo.%?~nx0%: error: SVN WC root path does not exist or is not under version control: WCROOT_PATH="%WCROOT_PATH%".
-  exit /b 3
+  exit /b 2
 ) >&2
 :ERROR_WCROOT_PATH_END
 
@@ -76,7 +68,7 @@ goto ERROR_EXTERNAL_BRANCH_PATH_END
 :ERROR_EXTERNAL_BRANCH_PATH
 (
   echo.%?~nx0%: error: external branch path does not exist or is not under version control: EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%".
-  exit /b 4
+  exit /b 3
 ) >&2
 :ERROR_EXTERNAL_BRANCH_PATH_END
 
@@ -138,7 +130,7 @@ set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:^=\^%"
 set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:$=\$%"
 
 rem findstr returns 0 on not empty list
-( svn status "%DIR_PATH_PREFIX%" --depth infinity --non-interactive 2>nul || exit /b 50 ) | findstr.exe /R /C:"^? " | findstr.exe /R /V /C:"^?[ 	][ 	]*%DIR_PATH_SUBDIR%$"
+( svn status "%DIR_PATH_PREFIX%" --depth infinity --non-interactive 2>nul || exit /b 50 ) | findstr.exe /R /C:"^? " | findstr.exe /R /V /C:"^?[ 	][ 	]*%DIR_PATH_SUBDIR%$" >nul
 
 if %ERRORLEVEL% NEQ 0 goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_CHECK_DIR_ON_UNVERSIONED_FILES
 goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
