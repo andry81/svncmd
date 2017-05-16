@@ -39,4 +39,10 @@ Tests for svn_changeset.bat:
   - in local repo (file:///) directory
   - in directory not under SVN control
 
+SVN buggy operations:
+  - 1. rename versioned files1.txt to file1_2.txt
+    2. create/copy new file file1.txt with different content
+    3. file1.txt add to svn
+    3. commit
+    4. file file1.txt left uncommitted
 so on...
