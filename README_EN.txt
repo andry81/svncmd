@@ -31,6 +31,6 @@ https://en.wikipedia.org/wiki/MIT_License)
 run configure.bat
 
 -------------------------------------------------------------------------------
-6. AUTHOR EMAIL
+4. AUTHOR EMAIL
 -------------------------------------------------------------------------------
 Andrey Dibrov (andry at inbox dot ru)
