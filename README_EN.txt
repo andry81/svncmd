@@ -1,5 +1,5 @@
 * README_EN.txt
-* 2017.05.09
+* 2017.05.20
 * svncmd
 
 1. DESCRIPTION
@@ -22,8 +22,8 @@ Set of batch scripts for svn command line tools including svn command line tools
 -------------------------------------------------------------------------------
 2. LICENSE
 -------------------------------------------------------------------------------
-The Boost license (see included text file "license.txt" or
-http://www.boost.org/users/license.html)
+The MIT license (see included text file "license.txt" or
+https://en.wikipedia.org/wiki/MIT_License)
 
 -------------------------------------------------------------------------------
 3. INSTALLATION
@@ -33,4 +33,4 @@ run configure.bat
 -------------------------------------------------------------------------------
 6. AUTHOR EMAIL
 -------------------------------------------------------------------------------
-andry at inbox dot ru
+Andrey Dibrov (andry at inbox dot ru)
