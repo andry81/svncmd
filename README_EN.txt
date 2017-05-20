@@ -10,8 +10,8 @@
 -------------------------------------------------------------------------------
 1. DESCRIPTION
 -------------------------------------------------------------------------------
-Set of batch scripts for svn command line tools including svn command line tools
-(Win32) as is from:
+Set of batch scripts (experimental) for the svn command line tools including
+the svn command line tools (Win32) as is from:
 * TortoiseSVN
 * CollabNet
 * SlikSVN
