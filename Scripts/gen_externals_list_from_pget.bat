@@ -116,7 +116,7 @@ if "%EXTERNAL_DIR_PATH:~0,1%" == "-" (
   if not "%EXTERNAL_PATH_EXP%" == "" set "EXTERNAL_DIR_PATH_PREFIX=%EXTERNAL_PATH_EXP:\=/%"
   set "EXTERNAL_PATH_EXP="
   set "EXTERNAL_DIR_PATH="
-  for /F "eol= tokens=2,* delims= " %%i in ("%EXTERNAL_DIR_PATH%") do (
+  for /F "eol=	 tokens=2,* delims= " %%i in ("%EXTERNAL_DIR_PATH%") do (
     set "EXTERNAL_PATH_EXP=%%i"
     set "EXTERNAL_DIR_PATH=%%j"
   )
@@ -156,7 +156,7 @@ if not "%EXTERNAL_DIR_PATH%" == "" goto PARSE_EXTERNAL_PATH_EXP_OK2
 set "EXTERNAL_URI_PATH="
 set "EXTERNAL_URI_REV_PEG="
 set "EXTERNAL_CURRENT_REV="
-for /F "eol= tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
+for /F "eol=	 tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
   set "EXTERNAL_URI_PATH=%%i"
   if not "%%j" == "" set "EXTERNAL_URI_REV_PEG=%%j"
 )

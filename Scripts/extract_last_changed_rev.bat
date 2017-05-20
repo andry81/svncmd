@@ -61,7 +61,7 @@ if "%INFO_LAST_CHANGED_REV%" == "" set INFO_LAST_CHANGED_REV=0
 
 set "SVNVERSION_LAST_CHANGED_REV="
 set "SVNVERSION_LAST_MIXED_REV="
-for /F "eol= tokens=1,2,* delims=:" %%i in ("%SVNVERSION_VALUE%") do (
+for /F "eol=	 tokens=1,2,* delims=:" %%i in ("%SVNVERSION_VALUE%") do (
   set "SVNVERSION_LAST_CHANGED_REV=%%i"
   set "SVNVERSION_LAST_MIXED_REV=%%j"
 )
