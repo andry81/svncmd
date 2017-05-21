@@ -1,4 +1,5 @@
 /.git
+/.gitmodules
 Scripts/.git
 Scripts/__init__.bat
 /Temp
