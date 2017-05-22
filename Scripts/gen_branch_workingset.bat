@@ -455,6 +455,13 @@ if not exist "%BRANCH_ROOT_INFO_FILE%" (
   exit /b 21
 ) >&2
 
+call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_ROOT_INFO_FILE%%" "Schedule"
+set "BRANCH_ROOT_SCHEDULE=%RETURN_VALUE%"
+if not "%BRANCH_ROOT_SCHEDULE%" == "normal" (
+  echo.%?~nx0%: warning: not normal `Schedule` property is ignored in SVN info file: "%BRANCH_ROOT_INFO_FILE%".
+  exit /b 0
+) >&2
+
 if %FLAG_SVN_DIFF_RA% NEQ 0 (
   call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_ROOT_INFO_FILE%%" "Last Changed Rev" || (
     echo.%?~nx0%: error: "Last Changed Rev" property is not found in SVN info file: "%BRANCH_ROOT_INFO_FILE%".
