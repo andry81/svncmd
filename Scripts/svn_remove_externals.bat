@@ -15,6 +15,8 @@ cd .
 
 setlocal
 
+if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
+
 call "%%~dp0__init__.bat" || goto :EOF
 
 set "?~n0=%~n0"
