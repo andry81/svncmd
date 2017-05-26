@@ -1,0 +1,67 @@
+* KNOWN_ISSUES.txt
+* 2017.05.26
+* Known Issues
+
+1. SCRIPT ISSUES
+1.1 gen_branch_workingset.bat
+1.2 sync_branch_workingset.bat
+2. SVN ISSUES
+
+------------------------------------------------------------------------------
+1. SCRIPT ISSUES
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+1.1 gen_branch_workingset.bat
+------------------------------------------------------------------------------
+1. By default, script will use the svn command line tools to request Working
+   Copy information. In some cases it will lead to network use even if
+   processed path is a local file path.
+   To avoid such condition you have to explicitly set the offline flag to avoid
+   the network interference.
+2. By default, script won't request externals from a branch not external
+   subdirectories, won't generate "all files" list and hash these files to
+   create for a branch files the hash list to give a chance to user to
+   revalidate manually the result of synchronization operation later.
+   To traverse a branch not external directories recursively and to generate
+   these files you have to explicitly pass -R/-ls/-stat flags to the script
+   respectively.
+3. Versioned directories should not begin by the #-character, because it is
+   used to mark directories as externals, otherwise synchronization may throw
+   errors. Versioned files should not be the files $info.txt, $changeset.lst,
+   $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
+   $externals.lst, $files.lst, $status.txt, because they are used to store
+   svn.exe output information, otherwise the script may throw errors.
+4. All collisions must be resolved before the script execution, otherwise
+   the result will be inconsistent.
+
+------------------------------------------------------------------------------
+1.2 sync_branch_workingset.bat
+------------------------------------------------------------------------------
+1. By default, script won't synchronize externals to the workingset and auto
+   cleanup/revert/relocate working copy before synchronization.
+   You have to explicitly pass -R/-ac/-ar/-as/arloc flags respectively to
+   enable that logic.
+2. If the -r flag is not set (--ignore-externals is not used), then the script
+   will leave renamed/removed external directories intact in the working copy,
+   because script does not implement external directories explicit remove in
+   this case.
+3. Versioned directories should not begin by the #-character, because it is
+   used to mark directories as externals, otherwise synchronization may throw
+   errors. Versioned files should not be the files $info.txt, $changeset.lst,
+   $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
+   $externals.lst, $files.lst, $status.txt, because they are used to store
+   svn.exe output information, otherwise the script may throw errors.
+4. Script does not resolve external recurrent references. For example, if one
+   external points from repo1 to repo2, where another external points from
+   repo2 to repo1, then there is may be an external recurrent path between 2
+   repositories. The same cycle dependencies can be even between the externals
+   of the same repository. So script currenly does not resolve such infinite
+   recursion (even if the -R flag is not set).
+
+------------------------------------------------------------------------------
+2. SVN ISSUES
+------------------------------------------------------------------------------
+https://issues.apache.org/jira/browse/SVN-4662 ("svn diff-revert-patch breaks moved files and folders")
+https://issues.apache.org/jira/browse/SVN-4680 ("obstructing working copy after clean update to a revision")
+https://issues.apache.org/jira/browse/SVN-4681 ("svn pget svn:externals -r <rev> . -R" dramatically slow")

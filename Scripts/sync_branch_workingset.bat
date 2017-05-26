@@ -34,16 +34,26 @@ rem    svn pget svn:externals branch/current -R > root_externals_synced.lst
 rem    dir branch/current /S > dir_branch_synched.txt
 
 rem KNOWN ISSUES:
-rem 1. By default, script won't synchronize externals to the workingset and auto cleanup/revert/relocate working copy before synchronization.
-rem    You have to explicitly pass -R/-ac/-ar/-as/arloc flags respectively to enable that logic.
-rem 2. If the -r flag is not set (--ignore-externals is not used), then the script will leave renamed/removed external directories intact in the working copy,
-rem    because script does not implement external directories explicit remove in this case.
-rem 3. Versioned directories should not begin by the #-character, because it is used to mark directories as externals, otherwise synchronization may throw errors.
-rem    Versioned files should not be the files $info.txt, $changeset.lst, $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst, $externals.lst, $files.lst, $status.txt,
-rem    because they are used to store svn.exe output information, otherwise the script may throw errors.
-rem 4. Script does not resolve external recurrent references. For example, if one external points from repo1 to repo2, where another external points from repo2 to repo1,
-rem    then there is may be an external recurrent path between 2 repositories. The same cycle dependencies can be even between the externals of the same repository.
-rem    So script currenly does not resolve such infinite recursion (even if the -R flag is not set).
+rem 1. By default, script won't synchronize externals to the workingset and auto
+rem    cleanup/revert/relocate working copy before synchronization.
+rem    You have to explicitly pass -R/-ac/-ar/-as/arloc flags respectively to
+rem    enable that logic.
+rem 2. If the -r flag is not set (--ignore-externals is not used), then the script
+rem    will leave renamed/removed external directories intact in the working copy,
+rem    because script does not implement external directories explicit remove in
+rem    this case.
+rem 3. Versioned directories should not begin by the #-character, because it is
+rem    used to mark directories as externals, otherwise synchronization may throw
+rem    errors. Versioned files should not be the files $info.txt, $changeset.lst,
+rem    $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
+rem    $externals.lst, $files.lst, $status.txt, because they are used to store
+rem    svn.exe output information, otherwise the script may throw errors.
+rem 4. Script does not resolve external recurrent references. For example, if one
+rem    external points from repo1 to repo2, where another external points from
+rem    repo2 to repo1, then there is may be an external recurrent path between 2
+rem    repositories. The same cycle dependencies can be even between the externals
+rem    of the same repository. So script currenly does not resolve such infinite
+rem    recursion (even if the -R flag is not set).
 
 rem Drop last error level
 cd .
