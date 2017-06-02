@@ -12,7 +12,7 @@ set "CONFIG_ROOT=%CONFIG_ROOT:\=/%"
 if "%CONFIG_ROOT:~-1%" == "/" set "CONFIG_ROOT=%CONFIG_ROOT:~0,-1%"
 
 rem To avoid interference with already installed versions of tools we have to reset
-rem entire environment into initial state to just after the Windows install.
+rem entire environment into initial state when the Windows just installed.
 rem Read windows version.
 call "%%CONTOOLS_ROOT%%/winver.bat"
 
@@ -82,7 +82,7 @@ rem external tools root directory
 call :ABSPATH EXTERNAL_TOOLS_ROOT "%%TESTS_ROOT%%/../../ToolsExternal"
 
 rem python bin root
-call :ABSPATH TEST_PYTHON_BIN_ROOT "%%EXTERNAL_TOOLS_ROOT%%/python/python-3.x-win32"
+call :ABSPATH TEST_PYTHON_BIN_ROOT "%%EXTERNAL_TOOLS_ROOT%%/python/python-win32/3.6.1"
 
 rem python executable path
 call :ABSPATH TEST_PYTHON_EXE "%%TEST_PYTHON_BIN_ROOT%%/python.exe"
