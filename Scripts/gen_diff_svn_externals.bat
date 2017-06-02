@@ -69,7 +69,7 @@ if exist "!SVN_WORKINGSET_DIFF!" (
 rem always create an empty file
 type nul > "!SVN_WORKINGSET_DIFF!" || exit /b 4
 
-rem load externals lines into variables to speed up overall code interations
+rem load externals lines into variables to speed up overall code iterations
 set "LOAD_SVN_WORKINGSET=!SVN_WORKINGSET_NEXT!"
 set "SVN_WORKINGSET_LINE_VAR_PREFIX=SVN_WORKINGSET_NEXT_LINE_"
 set "SVN_WORKINGSET_NUM_LINES_VAR=SVN_WORKINGSET_NEXT_LINES"
