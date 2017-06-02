@@ -50,21 +50,24 @@ rem    Copy information. In some cases it will lead to network use even if
 rem    processed path is a local file path.
 rem    To avoid such condition you have to explicitly set the offline flag to avoid
 rem    the network interference.
-rem 2. By default, script won't request externals from a branch not external
-rem    subdirectories, won't generate "all files" list and hash these files to
+rem 2. By default, script won't request externals from not repository (external)
+rem    subdirectories, won't generate "all files" list and hash these files (to
 rem    create for a branch files the hash list to give a chance to user to
-rem    revalidate manually the result of synchronization operation later.
+rem    revalidate manually the result of entire synchronization operation
+rem    later).
 rem    To traverse a branch not external directories recursively and to generate
 rem    these files you have to explicitly pass -R/-ls/-stat flags to the script
 rem    respectively.
 rem 3. Versioned directories should not begin by the #-character, because it is
-rem    used to mark directories as externals, otherwise synchronization may throw
-rem    errors. Versioned files should not be the files $info.txt, $changeset.lst,
+rem    used to mark directories as externals, otherwise the synchronization
+rem    script may throw errors.
+rem    Versioned files should not be the files $info.txt, $changeset.lst,
 rem    $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
 rem    $externals.lst, $files.lst, $status.txt, because they are used to store
-rem    svn.exe output information, otherwise the script may throw errors.
+rem    svn.exe output information, otherwise the synchronization script may
+rem    throw errors.
 rem 4. All collisions must be resolved before the script execution, otherwise
-rem    the result will be inconsistent.
+rem    the result will be undefined.
 
 rem Drop last error level
 cd .

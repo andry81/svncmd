@@ -8,16 +8,12 @@ rem   Script extracts `Last Changed Version` from svnversion dump.
 rem Examples:
 rem 1. call extract_last_changed_rev.bat 100 100:120M
 rem    rem RETURN_VALUE=120
-rem    echo "RETURN_VALUE=%RETURN_VALUE%"
 rem 2. call extract_last_changed_rev.bat 120 130
 rem    rem RETURN_VALUE=120
-rem    echo "RETURN_VALUE=%RETURN_VALUE%"
 rem 3. call extract_last_changed_rev.bat 100 100:120M
 rem    rem RETURN_VALUE=120
-rem    echo "RETURN_VALUE=%RETURN_VALUE%"
-rem 4. call extract_last_changed_rev.bat 120 130
+rem 4. call extract_last_changed_rev.bat -crev 120 130
 rem    rem RETURN_VALUE=130
-rem    echo "RETURN_VALUE=%RETURN_VALUE%"
 
 set "RETURN_VALUE="
 

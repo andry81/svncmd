@@ -6,12 +6,17 @@ rem Description:
 rem   Script runs gen_branch_wrokingset.bat script with time measurement.
 
 rem Examples:
-rem 1. call gen_branch_workingset_time.bat -R branch/current root_info.txt root_diff.patch root_externals.lst workingset.lst workingset
-rem    type root_info.txt
-rem    type root_diff.patch
-rem    type root_externals.lst
-rem    type workingset.lst
-rem    dir workingset
+rem 1. call gen_branch_workingset_time.bat -R -ls branch/current current_root_info.txt current_root_changeset.lst current_root_diff.patch current_root_externals.lst current_workingset.lst current_workingset current_root_files.lst current_all_files.lst current_all_files_hash.lst current_root_status.txt current_all_status.txt
+rem    type current_root_info.txt
+rem    type current_root_diff.patch
+rem    type current_root_externals.lst
+rem    type current_workingset.lst
+rem    dir current_workingset /S
+rem    type current_root_files.lst
+rem    type current_all_files.lst
+rem    type current_all_files_hash.lst
+rem    type current_root_status.txt
+rem    type current_all_status.txt
 
 rem Drop last error level
 cd .

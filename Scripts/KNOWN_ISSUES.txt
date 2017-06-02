@@ -1,5 +1,5 @@
 * KNOWN_ISSUES.txt
-* 2017.05.26
+* 2017.06.02
 * Known Issues
 
 1. SCRIPT ISSUES
@@ -19,21 +19,24 @@
    processed path is a local file path.
    To avoid such condition you have to explicitly set the offline flag to avoid
    the network interference.
-2. By default, script won't request externals from a branch not external
-   subdirectories, won't generate "all files" list and hash these files to
+2. By default, script won't request externals from not repository (external)
+   subdirectories, won't generate "all files" list and hash these files (to
    create for a branch files the hash list to give a chance to user to
-   revalidate manually the result of synchronization operation later.
+   revalidate manually the result of entire synchronization operation
+   later).
    To traverse a branch not external directories recursively and to generate
    these files you have to explicitly pass -R/-ls/-stat flags to the script
    respectively.
 3. Versioned directories should not begin by the #-character, because it is
-   used to mark directories as externals, otherwise synchronization may throw
-   errors. Versioned files should not be the files $info.txt, $changeset.lst,
+   used to mark directories as externals, otherwise the synchronization
+   script may throw errors.
+   Versioned files should not be the files $info.txt, $changeset.lst,
    $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
    $externals.lst, $files.lst, $status.txt, because they are used to store
-   svn.exe output information, otherwise the script may throw errors.
+   svn.exe output information, otherwise the synchronization script may
+   throw errors.
 4. All collisions must be resolved before the script execution, otherwise
-   the result will be inconsistent.
+   the result will be undefined.
 
 ------------------------------------------------------------------------------
 1.2 sync_branch_workingset.bat
@@ -64,4 +67,4 @@
 ------------------------------------------------------------------------------
 https://issues.apache.org/jira/browse/SVN-4662 ("svn diff-revert-patch breaks moved files and folders")
 https://issues.apache.org/jira/browse/SVN-4680 ("obstructing working copy after clean update to a revision")
-https://issues.apache.org/jira/browse/SVN-4681 ("svn pget svn:externals -r <rev> . -R" dramatically slow")
+https://issues.apache.org/jira/browse/SVN-4681 (""svn pget svn:externals -r <rev> . -R" dramatically slow")
