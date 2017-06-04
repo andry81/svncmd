@@ -3,9 +3,8 @@
 rem exit if already initialized
 if 0%__INIT__% NEQ 0 exit /b 0
 
-if "%CONTOOLS_ROOT%" == "" set "CONTOOLS_ROOT=%~dp0..\..\Tools"
-set "CONTOOLS_ROOT=%CONTOOLS_ROOT:\=/%"
-if "%CONTOOLS_ROOT:~-1%" == "/" set "CONTOOLS_ROOT=%CONTOOLS_ROOT:~0,-1%"
+rem initialize Tools "module"
+call "%%~dp0..\..\Tools\__init__.bat" || goto :EOF
 
 if "%CONFIG_ROOT%" == "" set "CONFIG_ROOT=%~dp0..\..\Config"
 set "CONFIG_ROOT=%CONFIG_ROOT:\=/%"
@@ -74,9 +73,8 @@ set "TESTS_ROOT=%~dp0"
 set "TESTS_ROOT=%TESTS_ROOT:\=/%"
 if "%TESTS_ROOT:~-1%" == "/" set "TESTS_ROOT=%TESTS_ROOT:~0,-1%"
 
-if "%TEST_SCRIPTS_ROOT%" == "" set "TEST_SCRIPTS_ROOT=%TESTS_ROOT%/../../Scripts"
-set "TEST_SCRIPTS_ROOT=%TEST_SCRIPTS_ROOT:\=/%"
-if "%TEST_SCRIPTS_ROOT:~-1%" == "/" set "TEST_SCRIPTS_ROOT=%TEST_SCRIPTS_ROOT:~0,-1%"
+rem initialize Tools "module"
+call "%%TESTS_ROOT%%/../../Tools/__init__.bat" || goto :EOF
 
 rem external tools root directory
 call :ABSPATH EXTERNAL_TOOLS_ROOT "%%TESTS_ROOT%%/../../ToolsExternal"
