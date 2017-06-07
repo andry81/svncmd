@@ -265,7 +265,7 @@ exit /b 1
 :IGNORE_WORKINGSET_REVISION_SEARCH
 pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
   rem from externals
-  svn pget svn:externals -r BASE . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 30 )
+  svn pget svn:externals . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 30 )
 
   if not "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" == "" (
     svn pget svn:externals -r "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" . -R --non-interactive > "%BRANCH_TO_EXTERNALS_FILE_TMP%" || ( popd & exit /b 31 )

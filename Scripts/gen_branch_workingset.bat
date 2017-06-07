@@ -129,7 +129,7 @@ if not "%FLAG%" == "" (
     shift
   ) else if "%FLAG%" == "-stat-exclude-?" (
     set FLAG_SVN_STATUS_EXCLUDE_?=1
-    set FLAG_TEXT_FINDSTR_EXCLUDE_ARGS=%FLAG_TEXT_FINDSTR_EXCLUDE_ARGS% /C:"^? "
+    set FLAG_TEXT_FINDSTR_EXCLUDE_ARGS=%FLAG_TEXT_FINDSTR_EXCLUDE_ARGS% /C:"^?"
     set FLAG_FINDSTR_HAS_EXCLUDES=1
     shift
   ) else (
@@ -368,7 +368,7 @@ type nul > "%BRANCH_ROOT_ALLFILES_FILE%"
 type nul > "%BRANCH_ROOT_ALLFILES_HASH_FILE%"
 
 set "SVN_BRANCH_SUB_PATH_LAST="
-for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /S /B /A:D ".svn" 2^>nul`) do (
+for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /S /B /A:D "*.svn" 2^>nul`) do (
   set "SVN_BRANCH_SUB_PATH=%%i"
   call :BRANCH_SUB_PATH "%%SVN_BRANCH_SUB_PATH%%\.." || goto :EOF
 )
@@ -523,7 +523,7 @@ if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
   pushd "%SVN_BRANCH_PATH%" && (
     rem WARNING: "-r <Last Changed Rev>" will request a diff from the SVN server!
     if %FLAG_SVN_DIFF_RA% EQU 0 (
-      svn diff -r BASE . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
+      svn diff . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
     ) else (
       svn diff -r "%BRANCH_ROOT_LAST_REV%" . --non-interactive > "%BRANCH_ROOT_DIFF_FILE%" || ( popd & exit /b 26 )
     )
@@ -927,7 +927,7 @@ if exist "%BRANCH_ROOT_DIFF_FILE_DIR%" (
   pushd "%BRANCH_EXTERNAL_WORKING_PATH%" && (
     rem WARNING: "-r <Last Changed Rev>" will request a diff from the SVN server!
     if %FLAG_SVN_DIFF_RA% EQU 0 (
-      svn diff -r BASE . --non-interactive > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch" || ( popd & exit /b 51 )
+      svn diff . --non-interactive > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch" || ( popd & exit /b 51 )
     ) else (
       svn diff -r "%BRANCH_EXTERNAL_LAST_REV%" . --non-interactive > "%BRANCH_WORKINGSET_CATALOG_PATH%/$diff.patch" || ( popd & exit /b 51 )
     )

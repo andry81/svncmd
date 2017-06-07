@@ -116,23 +116,8 @@ if "%DIR_PATH_PREFIX%" == "." goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
 
 if not exist "%DIR_PATH_PREFIX:/=\%\" exit /b 0
 
-rem Svn status returns true unversioned items only if directory is a part of repository.
-rem If the parent path of the external directory is not under version control of the WC root and the external directory parent path is not the WC root path,
-rem then the svn status will always report such component directories from the parent path as unversioned.
-rem So instead of call to the svn status we must check unversioned items in the parent path through the shell.
-
-rem escape findstr.exe special control characters
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:\=\\%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:.=\.%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:[=\[%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:]=\]%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:^=\^%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:$=\$%"
-
-rem findstr returns 0 on not empty list
-( svn status "%DIR_PATH_PREFIX%" --depth infinity --non-interactive 2>nul || exit /b 50 ) | findstr.exe /R /C:"^? " | findstr.exe /R /V /C:"^?[ 	][ 	]*%DIR_PATH_SUBDIR%$" >nul
-
-if %ERRORLEVEL% NEQ 0 goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_CHECK_DIR_ON_UNVERSIONED_FILES
+call "%%SVNCMD_TOOLS_ROOT%%/svn_has_changes.bat" -stat-exclude-versioned "%%DIR_PATH_PREFIX%%" "%%DIR_PATH_SUBDIR%%" || goto :EOF
+if %RETURN_VALUE% EQU 0 goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_CHECK_DIR_ON_UNVERSIONED_FILES
 goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
 
 :REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_CHECK_DIR_ON_UNVERSIONED_FILES

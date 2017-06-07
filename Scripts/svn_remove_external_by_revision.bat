@@ -220,7 +220,7 @@ exit /b 0
 echo 1 EXTERNAL_BRANCH_PATH_ABS=%EXTERNAL_BRANCH_PATH_ABS%
 pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
   rem from externals
-  svn pget svn:externals -r BASE . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 30 )
+  svn pget svn:externals . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 30 )
 
   svn pget svn:externals -r "%REVISION%" . -R --non-interactive > "%BRANCH_TO_EXTERNALS_FILE_TMP%" || ( popd & exit /b 31 )
 
