@@ -98,7 +98,7 @@ if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
 
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" ^
 if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%CD%" (
-  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH%" CD="%CD%".
+  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH%" CD="%CD:\=/%".
   exit /b 250
 ) >&2
 
@@ -114,8 +114,8 @@ if %FLAG_SVN_OFFLINE% NEQ 0 goto CHECK_WCROOT_PATH_DB
 goto CHECK_WCROOT_PATH_DB_END
 
 :CHECK_WCROOT_PATH_DB
-if not exist "%SVN_WCROOT_PATH%\.svn\wc.db" (
-  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH%\.svn\wc.db"
+if not exist "%SVN_WCROOT_PATH%/.svn/wc.db" (
+  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH%/.svn/wc.db"
   exit /b 249
 ) >&2
 

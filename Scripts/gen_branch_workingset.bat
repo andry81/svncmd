@@ -368,7 +368,7 @@ type nul > "%BRANCH_ROOT_ALLFILES_FILE%"
 type nul > "%BRANCH_ROOT_ALLFILES_HASH_FILE%"
 
 set "SVN_BRANCH_SUB_PATH_LAST="
-for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /S /B /A:D "*.svn" 2^>nul`) do (
+for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /S /B /A:D ".svn" 2^>nul`) do (
   set "SVN_BRANCH_SUB_PATH=%%i"
   call :BRANCH_SUB_PATH "%%SVN_BRANCH_SUB_PATH%%\.." || goto :EOF
 )
@@ -410,13 +410,13 @@ call set "SVN_BRANCH_REL_SUB_PATH=%%SVN_BRANCH_SUB_PATH:%CD%=%%"
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
   if "%SVN_BRANCH_REL_SUB_PATH:~0,1%" == "\" set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:~1%"
 ) else (
-  echo.%?~nx0%: error: SVN branch path should not be a current directory here: SVN_BRANCH_SUB_PATH="%SVN_BRANCH_SUB_PATH%" CD="%CD%".
+  echo.%?~nx0%: error: SVN branch path should not be a current directory here: SVN_BRANCH_SUB_PATH="%SVN_BRANCH_SUB_PATH%" CD="%CD:\=/%".
   exit /b 16
 ) >&2
 
 rem test if SVN_BRANCH_SUB_PATH inside current directory path
 if /i not "%CD%\%SVN_BRANCH_REL_SUB_PATH%" == "%SVN_BRANCH_SUB_PATH%" (
-  echo.%?~nx0%: error: current directory path is not base path for SVN branch path: SVN_BRANCH_SUB_PATH="%SVN_BRANCH_SUB_PATH%" CD="%CD%".
+  echo.%?~nx0%: error: current directory path is not base path for SVN branch path: SVN_BRANCH_SUB_PATH="%SVN_BRANCH_SUB_PATH%" CD="%CD:\=/%".
   exit /b 17
 ) >&2
 

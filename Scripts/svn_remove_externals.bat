@@ -99,7 +99,7 @@ exit /b 0
 
 :SET_WCROOT_PATH_ABS_END
 
-if not exist "%WCROOT_PATH_ABS%\.svn\wc.db" goto ERROR_WCROOT_PATH
+if not exist "%WCROOT_PATH_ABS%/.svn/wc.db" goto ERROR_WCROOT_PATH
 
 goto ERROR_WCROOT_PATH_END
 :ERROR_WCROOT_PATH

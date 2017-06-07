@@ -43,7 +43,7 @@ goto NO_SYNC_BRANCH_PATH_END
 :NO_SYNC_BRANCH_PATH_END
 
 if "%WCROOT_PATH%" == "" goto ERROR_WCROOT_PATH
-if not exist "%WCROOT_PATH%\.svn\wc.db" goto ERROR_WCROOT_PATH
+if not exist "%WCROOT_PATH%/.svn/wc.db" goto ERROR_WCROOT_PATH
 
 goto ERROR_WCROOT_PATH_END
 :ERROR_WCROOT_PATH
@@ -62,7 +62,7 @@ set "EXTERNAL_BRANCH_PATH=%WCROOT_PATH:\=/%/%EXTERNAL_BRANCH_PATH_PREFIX%"
 
 if "%EXTERNAL_DIR_PATH_PREFIX%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
 if "%EXTERNAL_DIR_PATH%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
-if not exist "%EXTERNAL_BRANCH_PATH%\.svn\wc.db" goto ERROR_EXTERNAL_BRANCH_PATH
+if not exist "%EXTERNAL_BRANCH_PATH%/.svn/wc.db" goto ERROR_EXTERNAL_BRANCH_PATH
 
 goto ERROR_EXTERNAL_BRANCH_PATH_END
 :ERROR_EXTERNAL_BRANCH_PATH
@@ -165,7 +165,7 @@ goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE_LOOP
 
 :HAS_DIR_PATH_UNVERSIONED_FILES
 rem directories with the .svn subdirectory has being request through the svn commands
-if exist "%DIR_PATH_PREFIX%\.svn\" exit /b 1
+if exist "%DIR_PATH_PREFIX%/.svn\" exit /b 1
 
 for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /A /B "%DIR_PATH_PREFIX%"`) do (
   if /i not "%%i" == ".svn" if /i not "%DIR_PATH_DIR%" == "%%i" exit /b 0

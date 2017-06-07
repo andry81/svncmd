@@ -454,7 +454,7 @@ rem SOLUTION: Use "URL@<revision>" addition to the `-r "<revision>"' argument.
 
 rem make checkout/update if directory was not yet checkout or was checkouted/updated excluding externals
 set SVN_DIR_CHECKOUTED=0
-if not exist "%SYNC_BRANCH_PATH%\.svn\" (
+if not exist "%SYNC_BRANCH_PATH%/.svn\" (
   set SVN_DIR_CHECKOUTED=1
   call :CMD svn co -r "%%SYNC_BRANCH_CURRENT_REV%%" "%%BRANCH_WORKINGSET_DIR_URL%%@%%SYNC_BRANCH_CURRENT_REV%%" "%%SYNC_BRANCH_PATH%%" --depth infinity %%FLAG_TEXT_SVN_IGNORE_EXTERNALS%% --non-interactive || exit /b 41
   echo.
