@@ -116,7 +116,7 @@ if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
 
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" ^
 if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%CD%" (
-  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH%" CD="%CD%".
+  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH%" CD="%CD:\=/%".
   exit /b 250
 ) >&2
 
@@ -126,8 +126,8 @@ exit /b 0
 
 :TEST_WCROOT_PATH_END
 
-if not exist "%SVN_WCROOT_PATH%\.svn\wc.db" (
-  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH%\.svn\wc.db"
+if not exist "%SVN_WCROOT_PATH%/.svn/wc.db" (
+  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH%/.svn/wc.db"
   exit /b 249
 ) >&2
 
@@ -145,7 +145,7 @@ rem check on supported wc.db user version
 call "%%?~dp0%%impl/svn_get_wc_db_user_ver.bat"
 
 if "%WC_DB_USER_VERSION%" == "" (
-  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%CD%\.svn\wc.db"
+  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%CD:\=/%/.svn/wc.db"
   exit /b 240
 ) >&2
 
