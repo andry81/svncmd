@@ -162,7 +162,6 @@ set "SYNC_BRANCH_TEMP_FILE_DIR=%TEMP%\%?~n0%.%SYNC_DATE%.%SYNC_TIME%"
 set "SQLITE_OUT_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\sqlite_out.txt"
 set "BRANCH_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info.txt"
 set "BRANCH_BASE_REV_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info_base.txt"
-set "BRANCH_BASE_REV_DIFF_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$diff_base.patch"
 set "BRANCH_FROM_EXTERNALS_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_from.txt"
 set "BRANCH_FROM_EXTERNALS_LIST_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_from.lst"
 set "BRANCH_TO_EXTERNALS_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_to.txt"
@@ -462,7 +461,7 @@ if not exist "%SYNC_BRANCH_PATH%/.svn\" (
 
 rem create temporary branch info file to compare with relative URL from workingset info file
 pushd "%SYNC_BRANCH_PATH%" && (
-  svn info -r BASE . --non-interactive > "%BRANCH_BASE_REV_INFO_FILE_TMP%" || ( popd & exit /b 42 )
+  svn info . --non-interactive > "%BRANCH_BASE_REV_INFO_FILE_TMP%" || ( popd & exit /b 42 )
   popd
 )
 
@@ -543,23 +542,16 @@ if not "%BRANCH_BASE_REV_REPO_ROOT%" == "%BRANCH_WORKINGSET_REPO_ROOT%" (
 
 :IGNORE_BRANCH_REPO_PATH_COMPARE
 
-rem generate current revision branch difference file before all changes on the branch
+rem check branch changes status
 if %FLAG_SVN_AUTO_REVERT% EQU 0 (
-  rem create current revision branch difference file to compare with
-  pushd "%SYNC_BRANCH_PATH%" && (
-    svn diff -r BASE . --non-interactive > "%BRANCH_BASE_REV_DIFF_FILE_TMP%" || ( popd & exit /b 54 )
-    popd
-  )
-
-  rem get branch difference file size before update
-  call "%%CONTOOLS_ROOT%%/get_filesize.bat" "%%BRANCH_BASE_REV_DIFF_FILE_TMP%%"
+  call "%%SVNCMD_TOOLS_ROOT%%/svn_has_changes.bat" -stat-exclude-? "%%SYNC_BRANCH_PATH%%" || ( popd & exit /b 54 )
 )
 
 if %FLAG_SVN_AUTO_REVERT% EQU 0 (
-  set BRANCH_BASE_DIFF_FILESIZE=%ERRORLEVEL%
+  set BRANCH_HAS_CHANGES=%RETURN_VALUE%
 ) else (
   rem must be not empty before usage in if expression
-  set BRANCH_BASE_DIFF_FILESIZE=0
+  set BRANCH_HAS_CHANGES=0
 )
 
 rem autorevert branch changes if not fresh checkout
@@ -570,8 +562,8 @@ if %FLAG_SVN_FRESH_CHECKOUT% EQU 0 (
       popd
     )
     echo.
-  ) else if %BRANCH_BASE_DIFF_FILESIZE% NEQ 0 (
-    echo.%?~nx0%: error: Branch has differences, manual branch revert is required: BRANCH_PATH="%BRANCH_PATH%".
+  ) else if %BRANCH_HAS_CHANGES% NEQ 0 (
+    echo.%?~nx0%: error: Branch has changes, manual branch revert is required: BRANCH_PATH="%BRANCH_PATH%".
     exit /b 56
   ) >&2
 )
@@ -732,7 +724,7 @@ if not exist "%SYNC_BRANCH_PATH%/.svn/wc.db" (
 
 rem get parent branch info file to request repository UUID
 pushd "%SYNC_BRANCH_PATH%" && (
-  svn info -r BASE . --non-interactive > "%BRANCH_INFO_FILE_TMP%" || ( popd & exit /b 81 )
+  svn info . --non-interactive > "%BRANCH_INFO_FILE_TMP%" || ( popd & exit /b 81 )
   popd
 )
 

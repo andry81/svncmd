@@ -137,7 +137,6 @@ set "SYNC_TIME=%RETURN_VALUE:~8,2%_%RETURN_VALUE:~10,2%_%RETURN_VALUE:~12,2%_%RE
 
 set "SYNC_TEMP_FILE_DIR=%TEMP%\%?~n0%.%SYNC_DATE%.%SYNC_TIME%"
 set "SYNC_EXTERNALS_DIFF_LIST_FILE_TMP=%SYNC_TEMP_FILE_DIR%\$externals_diff.lst"
-set "EXTERNAL_DIFF_FILE_TMP=%SYNC_TEMP_FILE_DIR%\$diff.patch"
 set "EXTERNAL_INFO_FILE_TMP=%SYNC_TEMP_FILE_DIR%\$info.txt"
 
 rem create temporary files to store local context output
@@ -201,16 +200,10 @@ if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
 
 set "EXTERNAL_BRANCH_PATH_TO_REMOVE=%WCROOT_PATH_ABS:\=/%/%EXTERNAL_BRANCH_PATH_PREFIX%"
 
-rem create an external base revision branch difference file to compare with
-pushd "%EXTERNAL_BRANCH_PATH_TO_REMOVE%" && (
-  svn diff -r BASE . --non-interactive > "%EXTERNAL_DIFF_FILE_TMP%" || ( popd & exit /b 41 )
-  popd
-)
+rem check branch changes status
+call "%%SVNCMD_TOOLS_ROOT%%/svn_has_changes.bat" -stat-exclude-? "%%EXTERNAL_BRANCH_PATH_TO_REMOVE%%" || ( popd & exit /b 41 )
 
-rem get branch difference file size before update
-call "%%CONTOOLS_ROOT%%/get_filesize.bat" "%%EXTERNAL_DIFF_FILE_TMP%%"
-
-if %ERRORLEVEL% NEQ 0 ^
+if %RETURN_VALUE% NEQ 0 ^
 if %FLAG_SVN_AUTO_REVERT% EQU 0 (
   rem being removed external directory has differences but the auto revert flag is not set
   echo.%?~nx0%: error: external directory has differences, manual branch revert is required: EXTERNAL_DIR="%EXTERNAL_DIR_PATH_PREFIX%/%EXTERNAL_DIR_PATH%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
@@ -219,7 +212,7 @@ if %FLAG_SVN_AUTO_REVERT% EQU 0 (
 ) >&2
 
 pushd "%EXTERNAL_BRANCH_PATH_TO_REMOVE%" && (
-  svn info -r BASE . --non-interactive > "%EXTERNAL_INFO_FILE_TMP%" || ( popd & exit /b 50 )
+  svn info . --non-interactive > "%EXTERNAL_INFO_FILE_TMP%" || ( popd & exit /b 50 )
   popd
 )
 

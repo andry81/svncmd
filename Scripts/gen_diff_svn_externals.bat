@@ -34,8 +34,8 @@ rem     <op_prev> - previous operative revision of the external repository
 rem                 if repository is changed.
 
 rem Examples:
-rem 1. call gen_diff_SVN_WORKINGSET.bat svn_extenals1.lst SVN_WORKINGSET2.lst SVN_WORKINGSET_changeset.lst
-rem    type SVN_WORKINGSET_changeset.lst
+rem 1. call gen_diff_svn_workingset.bat svn_extenals1.lst svn_workingset2.lst svn_workingset_changeset.lst
+rem    type svn_workingset_changeset.lst
 
 rem Drop last error level
 cd .
