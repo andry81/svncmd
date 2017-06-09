@@ -26,8 +26,12 @@ if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 6 (echo.^>^>%0 %*) >&3
 
 set "?~nx0=%~nx0"
 
-rem script flags
+rem exclude unversioned items
 set FLAG_SVN_STATUS_EXCLUDE_?=0
+rem ignore externals
+set FLAG_SVN_EXTERNALS_RECURSIVE=0
+set "FLAG_TEXT_SVN_IGNORE_EXTERNALS=--ignore-externals"
+rem exclude versioned changes
 set FLAG_SVN_STATUS_EXCLUDE_VERSIONED=0
 
 :FLAGS_LOOP
@@ -41,6 +45,9 @@ if not "%FLAG:~0,1%" == "-" set "FLAG="
 if not "%FLAG%" == "" (
   if "%FLAG%" == "-stat-exclude-?" (
     set FLAG_SVN_STATUS_EXCLUDE_?=1
+  ) else if "%FLAG%" == "-r" (
+    set FLAG_SVN_EXTERNALS_RECURSIVE=1
+    set "FLAG_TEXT_SVN_IGNORE_EXTERNALS="
   ) else if "%FLAG%" == "-stat-exclude-versioned" (
     set FLAG_SVN_STATUS_EXCLUDE_VERSIONED=1
   ) else (
@@ -66,7 +73,7 @@ goto DIR_PATH_PREFIX_END
 :DIR_PATH_PREFIX_ERROR
 (
   echo.%?~nx0%: error: directory does not exist: "%DIR_PATH_PREFIX%".
-  exit /b 1
+  exit /b -255
 ) >&2
 
 :DIR_PATH_PREFIX_END
@@ -79,7 +86,7 @@ goto DIR_PATH_SUBDIR_END
 :DIR_PATH_SUBDIR_ERROR
 (
   echo.%?~nx0%: error: directory does not exist or not relative: "%DIR_PATH_PREFIX%\%DIR_PATH_SUBDIR%\".
-  exit /b 2
+  exit /b -254
 ) >&2
 
 :DIR_PATH_SUBDIR_END
@@ -89,33 +96,20 @@ rem If the parent path of an external directory is not under version control and
 rem then the svn status will always report such component directories from the parent path as unversioned.
 rem So instead of call to the script you must check unversioned items in the parent path through the shell.
 
-rem escape findstr.exe special control characters
-if "%DIR_PATH_SUBDIR%" == "" goto IGNORE_DIR_PATH_SUBDIR
-
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:\=\\%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:.=\.%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:[=\[%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:]=\]%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:^=\^%"
-set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:$=\$%"
-
-:IGNORE_DIR_PATH_SUBDIR
-
 rem always use not empty first filter
-set "FINDSTR_EXP_FIRST_FILTER=^| findstr.exe /R /C:"^[^? 	]"
+set FINDSTR_EXP_FIRST_FILTER= ^| findstr.exe /R /C:"^[ ACDIMR?!~][ CM][ L][ +][ SX][ K][ KOTB][ C]."
 set "FINDSTR_EXP_SECOND_FILTER="
 if %FLAG_SVN_STATUS_EXCLUDE_?% NEQ 0 (
-  set FINDSTR_EXP_FIRST_FILTER= ^| findstr.exe /R /V /C:"^?"
-  if not "%DIR_PATH_SUBDIR%" == "" set FINDSTR_EXP_SECOND_FILTER= ^| findstr.exe /R /C:"^[^? 	]*[ 	][ 	]*%DIR_PATH_SUBDIR%$"
+  set FINDSTR_EXP_SECOND_FILTER= ^| findstr.exe /R /C:"^[^?]"
 ) else if %FLAG_SVN_STATUS_EXCLUDE_VERSIONED% NEQ 0 (
-  set FINDSTR_EXP_FIRST_FILTER=^| findstr.exe /R /C:"^?"
-  if not "%DIR_PATH_SUBDIR%" == "" set FINDSTR_EXP_SECOND_FILTER= ^| findstr.exe /R /C:"^?[^ 	]*[ 	][ 	]*%DIR_PATH_SUBDIR%$"
-) else (
-  if not "%DIR_PATH_SUBDIR%" == "" set FINDSTR_EXP_SECOND_FILTER= ^| findstr.exe /R /C:"^[^? 	]*[ 	][ 	]*%DIR_PATH_SUBDIR%$"
+  set FINDSTR_EXP_SECOND_FILTER= ^| findstr.exe /R /C:"^?"
 )
 
+set "SVN_STATUS_FILE_PATH=%DIR_PATH_PREFIX%"
+if not "%DIR_PATH_SUBDIR%" == "" set "SVN_STATUS_FILE_PATH=%SVN_STATUS_FILE_PATH%\%DIR_PATH_SUBDIR%"
+
 rem findstr returns 0 on not empty list
-( svn status "%DIR_PATH_PREFIX%" --depth infinity --non-interactive 2>nul || exit /b 3 )%FINDSTR_EXP_FIRST_FILTER%%FINDSTR_EXP_SECOND_FILTER%
+( svn status "%SVN_STATUS_FILE_PATH%" --depth infinity %FLAG_TEXT_SVN_IGNORE_EXTERNALS% --non-interactive 2>nul || exit /b)%FINDSTR_EXP_FIRST_FILTER%%FINDSTR_EXP_SECOND_FILTER%
 
 (
   endlocal
