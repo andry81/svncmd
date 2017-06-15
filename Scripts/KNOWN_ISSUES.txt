@@ -1,5 +1,5 @@
 * KNOWN_ISSUES.txt
-* 2017.06.02
+* 2017.06.14
 * Known Issues
 
 1. SCRIPT ISSUES
@@ -65,6 +65,30 @@
 ------------------------------------------------------------------------------
 2. SVN ISSUES
 ------------------------------------------------------------------------------
-https://issues.apache.org/jira/browse/SVN-4662 ("svn diff-revert-patch breaks moved files and folders")
-https://issues.apache.org/jira/browse/SVN-4680 ("obstructing working copy after clean update to a revision")
-https://issues.apache.org/jira/browse/SVN-4681 (""svn pget svn:externals -r <rev> . -R" dramatically slow")
+
+* "svn diff-revert-patch breaks moved files and folders":
+  Tracker:
+    - https://issues.apache.org/jira/browse/SVN-4662
+
+* "obstructing working copy after clean update to a revision":
+  Tracker:
+    - https://issues.apache.org/jira/browse/SVN-4680
+
+* "svn status" does not show unversioned items been deleted but not committed":
+  Mailing lists:
+    - http://mail-archives.apache.org/mod_mbox/subversion-users/201705.mbox/browser
+    - http://mail-archives.apache.org/mod_mbox/subversion-users/201706.mbox/browser
+    - https://svn.haxx.se/users/archive-2017-05/0039.shtml
+    - https://svn.haxx.se/users/archive-2017-06/0060.shtml
+
+* "svn pget svn:externals -r <rev> . -R" dramatically slow":
+  Tracker:
+    - https://issues.apache.org/jira/browse/SVN-4681
+  Mailing lists:
+    - http://mail-archives.apache.org/mod_mbox/subversion-users/201705.mbox/browser
+    - https://svn.haxx.se/users/archive-2017-05/0036.shtml
+
+* "svn status merges intersected external records into single row":
+  Mailing lists:
+    - http://mail-archives.apache.org/mod_mbox/subversion-users/201706.mbox/browser
+    - https://svn.haxx.se/users/archive-2017-06/0057.shtml

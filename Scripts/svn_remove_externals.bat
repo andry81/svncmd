@@ -207,7 +207,6 @@ if %RETURN_VALUE% NEQ 0 ^
 if %FLAG_SVN_AUTO_REVERT% EQU 0 (
   rem being removed external directory has differences but the auto revert flag is not set
   echo.%?~nx0%: error: external directory has differences, manual branch revert is required: EXTERNAL_DIR="%EXTERNAL_DIR_PATH_PREFIX%/%EXTERNAL_DIR_PATH%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
-  pause
   exit /b 42
 ) >&2
 
@@ -236,7 +235,7 @@ call "%%SVNCMD_TOOLS_ROOT%%/svn_remove_external.bat"%%BARE_FLAGS%% "%%SYNC_BRANC
 if %ERRORLEVEL% NEQ 0 (
   echo.%?~nx0%: error: external branch directory remove has failed: ERROR="%ERRORLEVEL%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 60
-)
+) >&2
 
 exit /b 0
 
