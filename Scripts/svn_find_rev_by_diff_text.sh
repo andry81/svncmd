@@ -12,5 +12,6 @@ for rev in $REVISIONS; do
     difftext=`svn diff --old=$file@$prevRev --new=$file@$rev | tr -s " " | grep -v " -\ \- " | grep -e "$2"`
     if [[ -n "$difftext" ]]; then
         echo "$rev: $difftext"
+        echo -e "\n"
     fi
 done
