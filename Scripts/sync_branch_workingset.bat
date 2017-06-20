@@ -48,7 +48,9 @@ rem    errors. Versioned files should not be the files $info.txt, $changeset.lst
 rem    $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
 rem    $externals.lst, $files.lst, $status.txt, because they are used to store
 rem    svn.exe output information, otherwise the script may throw errors.
-rem 4. Script does not resolve external recurrent references. For example, if one
+rem 4. Versioned directories should not contain `%` and `=` characters, because
+rem    they are a part of the script path manipulation logic.
+rem 5. Script does not resolve external recurrent references. For example, if one
 rem    external points from repo1 to repo2, where another external points from
 rem    repo2 to repo1, then there is may be an external recurrent path between 2
 rem    repositories. The same cycle dependencies can be even between the externals

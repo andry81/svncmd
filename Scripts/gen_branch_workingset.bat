@@ -66,7 +66,9 @@ rem    $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
 rem    $externals.lst, $files.lst, $status.txt, because they are used to store
 rem    svn.exe output information, otherwise the synchronization script may
 rem    throw errors.
-rem 4. All collisions must be resolved before the script execution, otherwise
+rem 4. Versioned directories should not contain `%` and `=` characters, because
+rem    they are a part of the script path manipulation logic.
+rem 5. All collisions must be resolved before the script execution, otherwise
 rem    the result will be undefined.
 
 rem Drop last error level
