@@ -1,5 +1,5 @@
 * KNOWN_ISSUES.txt
-* 2017.06.14
+* 2017.06.20
 * Known Issues
 
 1. SCRIPT ISSUES
@@ -35,7 +35,9 @@
    $externals.lst, $files.lst, $status.txt, because they are used to store
    svn.exe output information, otherwise the synchronization script may
    throw errors.
-4. All collisions must be resolved before the script execution, otherwise
+4. Versioned directories should not contain `%` and `=` characters, because
+   they are a part of the script path manipulation logic.
+5. All collisions must be resolved before the script execution, otherwise
    the result will be undefined.
 
 ------------------------------------------------------------------------------
@@ -55,7 +57,9 @@
    $diff.patch, $diff_copy.lst, $diff_added.lst, $diff_removed.lst,
    $externals.lst, $files.lst, $status.txt, because they are used to store
    svn.exe output information, otherwise the script may throw errors.
-4. Script does not resolve external recurrent references. For example, if one
+4. Versioned directories should not contain `%` and `=` characters, because
+   they are a part of the script path manipulation logic.
+5. Script does not resolve external recurrent references. For example, if one
    external points from repo1 to repo2, where another external points from
    repo2 to repo1, then there is may be an external recurrent path between 2
    repositories. The same cycle dependencies can be even between the externals
