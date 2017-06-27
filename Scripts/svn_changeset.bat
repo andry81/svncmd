@@ -10,18 +10,22 @@ rem   All together it reperesents a changeset for a given revisions range.
 
 rem Examples:
 rem 1. rem Read files of 66 revision only.
-rem    pushd "..." && ( call svn_changeset.bat -r 66 > files.lst & popd )
-rem 2. rem Read files higher than 66 revision.
+rem    call svn_changeset.bat -r 66 branch/current > files.lst
+rem 2. rem Read files of 66 revision only.
+rem    pushd branch/current && ( call svn_changeset.bat -r 66: . > files.lst & popd )
+rem 3. rem Read files of 66 revision only.
+rem    pushd branch/current && ( call svn_changeset.bat -r 66: > files.lst & popd )
+rem 4. rem Read files higher than 66 revision.
 rem    pushd "..." && ( call svn_changeset.bat -r 66: > files.lst & popd )
-rem 3. rem Read files higher than 66 revision and less or equal to 70 resivion.
+rem 5. rem Read files higher than 66 revision and less or equal to 70 resivion.
 rem    pushd "..." && ( call svn_changeset.bat -r 66:70 > files.lst & popd )
-rem 4. rem Read none 66 revision files with not empty revision number.
+rem 6. rem Read none 66 revision files with not empty revision number.
 rem    pushd "..." && ( call svn_changeset.bat -r !66 > files.lst & popd )
-rem 5. rem Read inversed range where revisions higher than 67 and less or equal to 66 revision.
+rem 7. rem Read inversed range where revisions higher than 67 and less or equal to 66 revision.
 rem    pushd "..." && ( call svn_changeset.bat -r !66:67 > files.lst & popd )
-rem 6. rem Read files without revision number (empty).
+rem 8. rem Read files without revision number (empty).
 rem    pushd "..." && ( call svn_changeset.bat -r - > files.lst & popd )
-rem 7. rem Read none 66 revision files including empty revision number.
+rem 9. rem Read none 66 revision files including empty revision number.
 rem    pushd "..." && ( call svn_changeset.bat -r !66- > files.lst & popd )
 
 rem Drop last error level
@@ -43,6 +47,7 @@ set ARG_SVN_NODES_TABLE_IS_SET=0
 set "ARG_SVN_NODES_TABLE="
 set ARG_SVN_WCROOT=0
 set "ARG_SVN_WCROOT_PATH="
+set "ARG_SVN_WCROOT_PATH_ABS="
 
 :FLAGS_LOOP
 
@@ -68,6 +73,7 @@ if not "%FLAG%" == "" (
   ) else if "%FLAG%" == "-wcroot" (
     set ARG_SVN_WCROOT=1
     set "ARG_SVN_WCROOT_PATH=%~2"
+    set "ARG_SVN_WCROOT_PATH_ABS=%~dpf2"
     shift
     shift
   ) else (
@@ -78,6 +84,9 @@ if not "%FLAG%" == "" (
   rem read until no flags
   goto FLAGS_LOOP
 )
+
+set "BRANCH_PATH=%CD%"
+if not "%~1" == "" set "BRANCH_PATH=%~dpf1"
 
 if %ARG_SVN_REVISION_RANGE_IS_SET% NEQ 0 ^
 if "%ARG_SVN_REVISION_RANGE%" == "" (
@@ -97,17 +106,22 @@ if "%ARG_SVN_WCROOT_PATH%" == "" (
   exit /b 251
 ) >&2
 
+if "%ARG_SVN_WCROOT_PATH%" == "" (
+  set "ARG_SVN_WCROOT_PATH=."
+  set "ARG_SVN_WCROOT_PATH_ABS=%BRANCH_PATH%"
+)
+
 rem test SVN WC root path
 if %ARG_SVN_WCROOT% NEQ 0 (
   call :TEST_WCROOT_PATH || goto :EOF
-) else set "SVN_WCROOT_PATH=%CD%"
+) else set "SVN_WCROOT_PATH=%BRANCH_PATH%"
 
 goto TEST_WCROOT_PATH_END
 
 :TEST_WCROOT_PATH
-set "SVN_WCROOT_PATH=%ARG_SVN_WCROOT_PATH:/=\%"
+set "SVN_WCROOT_PATH=%ARG_SVN_WCROOT_PATH_ABS%"
 
-call set "SVN_BRANCH_REL_SUB_PATH=%%CD:%SVN_WCROOT_PATH%=%%"
+call set "SVN_BRANCH_REL_SUB_PATH=%%BRANCH_PATH:%SVN_WCROOT_PATH%=%%"
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
   if "%SVN_BRANCH_REL_SUB_PATH:~0,1%" == "\" (
     set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:~1%"
@@ -115,8 +129,8 @@ if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
 )
 
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" ^
-if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%CD%" (
-  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH%" CD="%CD:\=/%".
+if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%BRANCH_PATH%" (
+  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
   exit /b 250
 ) >&2
 
@@ -126,8 +140,8 @@ exit /b 0
 
 :TEST_WCROOT_PATH_END
 
-if not exist "%SVN_WCROOT_PATH%/.svn/wc.db" (
-  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH%/.svn/wc.db"
+if not exist "%SVN_WCROOT_PATH%\.svn\wc.db" (
+  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 249
 ) >&2
 
@@ -145,7 +159,7 @@ rem check on supported wc.db user version
 call "%%?~dp0%%impl/svn_get_wc_db_user_ver.bat"
 
 if "%WC_DB_USER_VERSION%" == "" (
-  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%CD:\=/%/.svn/wc.db"
+  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%SVN_WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 240
 ) >&2
 

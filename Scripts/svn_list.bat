@@ -6,7 +6,9 @@ rem Description:
 rem   Script do SVN list with additional functionality like offline mode.
 
 rem Examples:
-rem 1. pushd "..." && ( call svn_list.bat -offline -R branch/current > files.lst & popd )
+rem 1. call svn_list.bat -offline branch/current > files.lst
+rem 2. pushd branch/current && ( call svn_list.bat -offline . > files.lst & popd )
+rem 3. pushd branch/current && ( call svn_list.bat -offline > files.lst & popd )
 
 rem Drop last error level
 cd .
@@ -25,6 +27,7 @@ set ARG_SVN_REVISION_RANGE_IS_SET=0
 set "ARG_SVN_REVISION_RANGE="
 set ARG_SVN_WCROOT=0
 set "ARG_SVN_WCROOT_PATH="
+set "ARG_SVN_WCROOT_PATH_ABS="
 
 rem svn flags
 set "SVN_CMD_FLAG_ARGS="
@@ -49,6 +52,7 @@ if not "%FLAG%" == "" (
   ) else if "%FLAG%" == "-wcroot" (
     set ARG_SVN_WCROOT=1
     set "ARG_SVN_WCROOT_PATH=%~2"
+    set "ARG_SVN_WCROOT_PATH_ABS=%~dpf2"
     shift
   ) else (
     set SVN_CMD_FLAG_ARGS=%SVN_CMD_FLAG_ARGS%%1 
@@ -59,6 +63,9 @@ if not "%FLAG%" == "" (
   rem read until no flags
   goto FLAGS_LOOP
 )
+
+set "BRANCH_PATH=%CD%"
+if not "%~1" == "" set "BRANCH_PATH=%~dpf1"
 
 if %ARG_SVN_REVISION_RANGE_IS_SET% NEQ 0 ^
 if "%ARG_SVN_REVISION_RANGE%" == "" (
@@ -79,17 +86,22 @@ if "%ARG_SVN_WCROOT_PATH%" == "" (
   exit /b 251
 ) >&2
 
+if "%ARG_SVN_WCROOT_PATH%" == "" (
+  set "ARG_SVN_WCROOT_PATH=."
+  set "ARG_SVN_WCROOT_PATH_ABS=%BRANCH_PATH%"
+)
+
 rem test SVN WC root path
 if %ARG_SVN_WCROOT% NEQ 0 (
   call :TEST_WCROOT_PATH || goto :EOF
-) else set "SVN_WCROOT_PATH=%CD%"
+) else set "SVN_WCROOT_PATH=%BRANCH_PATH%"
 
 goto TEST_WCROOT_PATH_END
 
 :TEST_WCROOT_PATH
-set "SVN_WCROOT_PATH=%ARG_SVN_WCROOT_PATH:/=\%"
+set "SVN_WCROOT_PATH=%ARG_SVN_WCROOT_PATH_ABS%"
 
-call set "SVN_BRANCH_REL_SUB_PATH=%%CD:%SVN_WCROOT_PATH%=%%"
+call set "SVN_BRANCH_REL_SUB_PATH=%%BRANCH_PATH:%SVN_WCROOT_PATH%=%%"
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
   if "%SVN_BRANCH_REL_SUB_PATH:~0,1%" == "\" (
     set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:~1%"
@@ -97,8 +109,8 @@ if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
 )
 
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" ^
-if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%CD%" (
-  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH%" CD="%CD:\=/%".
+if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%BRANCH_PATH%" (
+  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
   exit /b 250
 ) >&2
 
@@ -114,8 +126,8 @@ if %FLAG_SVN_OFFLINE% NEQ 0 goto CHECK_WCROOT_PATH_DB
 goto CHECK_WCROOT_PATH_DB_END
 
 :CHECK_WCROOT_PATH_DB
-if not exist "%SVN_WCROOT_PATH%/.svn/wc.db" (
-  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH%/.svn/wc.db"
+if not exist "%SVN_WCROOT_PATH%\.svn\wc.db" (
+  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 249
 ) >&2
 
@@ -149,7 +161,7 @@ if %ARG_SVN_WCROOT% NEQ 0 (
 )
 
 if %FLAG_SVN_OFFLINE% NEQ 0 (
-  call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch ".svn/wc.db" ".headers off" "with new_nodes as ( select case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from nodes_base where local_relpath != ''%%SQLITE_EXP_REVISION_RANGE_SUFFIX%% and presence != 'not-present') select %%SQLITE_EXP_SELECT_CMD_LINE%%order by local_relpath_new asc"
+  call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%SVN_WCROOT_PATH%\.svn\wc.db" ".headers off" "with new_nodes as ( select case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from nodes_base where local_relpath != ''%%SQLITE_EXP_REVISION_RANGE_SUFFIX%% and presence != 'not-present') select %%SQLITE_EXP_SELECT_CMD_LINE%%order by local_relpath_new asc"
 ) else (
   svn ls %SVN_CMD_FLAG_ARGS%
 )
