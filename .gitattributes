@@ -27,6 +27,7 @@ Scripts/print_svn_changesets_diff_lst.bat -text
 Scripts/remove_branch_workingset_files.bat -text
 Scripts/svn_changeset.bat -text
 Scripts/svn_check_out.bat -text
+Scripts/svn_externals_list.bat -text
 Scripts/svn_find_rev_by_diff_text.sh -text
 Scripts/svn_has_changes.bat -text
 Scripts/svn_list.bat -text
