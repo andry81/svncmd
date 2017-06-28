@@ -10,6 +10,9 @@ rem 1. call svn_list.bat -offline branch/current > files.lst
 rem 2. pushd branch/current && ( call svn_list.bat -offline . > files.lst & popd )
 rem 3. pushd branch/current && ( call svn_list.bat -offline > files.lst & popd )
 
+rem TODO:
+rem 1. offline mode w/ or w/o -R
+
 rem Drop last error level
 cd .
 
@@ -67,10 +70,15 @@ if not "%FLAG%" == "" (
 set "BRANCH_PATH=%CD%"
 if not "%~1" == "" set "BRANCH_PATH=%~dpf1"
 
+if not exist "%BRANCH_PATH%\" (
+  echo.%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".
+  exit /b 255
+)
+
 if %ARG_SVN_REVISION_RANGE_IS_SET% NEQ 0 ^
 if "%ARG_SVN_REVISION_RANGE%" == "" (
   echo.%?~nx0%: error: revision range is not set.
-  exit /b 253
+  exit /b 254
 ) >&2
 
 :ARGSN_LOOP
@@ -83,7 +91,7 @@ if not "%~1" == "" (
 if %ARG_SVN_WCROOT% NEQ 0 ^
 if "%ARG_SVN_WCROOT_PATH%" == "" (
   echo.%?~nx0%: error: SVN WC root path should not be empty.
-  exit /b 251
+  exit /b 255
 ) >&2
 
 if "%ARG_SVN_WCROOT_PATH%" == "" (
@@ -111,7 +119,7 @@ if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" ^
 if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%BRANCH_PATH%" (
   echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
-  exit /b 250
+  exit /b 252
 ) >&2
 
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:\=/%"
@@ -128,7 +136,7 @@ goto CHECK_WCROOT_PATH_DB_END
 :CHECK_WCROOT_PATH_DB
 if not exist "%SVN_WCROOT_PATH%\.svn\wc.db" (
   echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH:\=/%/.svn/wc.db"
-  exit /b 249
+  exit /b 251
 ) >&2
 
 :CHECK_WCROOT_PATH_DB_END

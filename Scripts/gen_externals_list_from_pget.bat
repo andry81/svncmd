@@ -6,6 +6,9 @@ rem Description:
 rem   Generate externals CSV list from dumped svn:externals file.
 rem
 
+rem TODO:
+rem 1. add `-prefix_path "<prefix_path>"` flag to ignore externals with different <prefix_path> path
+
 rem Drop last error level
 cd .
 
@@ -164,7 +167,6 @@ for /F "eol=	 tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
 rem absolute URI or nothing
 set "EXTERNAL_URI=-"
 
-if %FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL% NEQ 0 goto IGNORE_URI_TRANSFORM
 if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 call "%%SVNCMD_TOOLS_ROOT%%/make_url_absolute.bat" "%%DIR_URL%%" "%%EXTERNAL_URI_PATH%%" "%%REPO_ROOT%%"
