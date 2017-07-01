@@ -57,12 +57,12 @@ exit /b %LASTERROR%
 
 :MAIN
 rem script flags
-set FLAG_SVN_OFFLINE=0
-set ARG_SVN_WCROOT=0
-set FLAG_SVN_NO_URI_TRANSFORM=0
-set "ARG_SVN_NO_URI_TRANSFORM="
-set "ARG_SVN_WCROOT_PATH="
-set "ARG_SVN_WCROOT_PATH_ABS="
+set FLAG_OFFLINE=0
+set FLAG_WCROOT=0
+set FLAG_NO_URI_TRANSFORM=0
+set "FLAG_TEXT_NO_URI_TRANSFORM="
+set "FLAG_WCROOT="
+set "FLAG_TEXT_WCROOT_ABS="
 
 :FLAGS_LOOP
 
@@ -74,15 +74,15 @@ if not "%FLAG:~0,1%" == "-" set "FLAG="
 
 if not "%FLAG%" == "" (
   if "%FLAG%" == "-offline" (
-    set FLAG_SVN_OFFLINE=1
+    set FLAG_OFFLINE=1
   ) else if "%FLAG%" == "-wcroot" (
-    set ARG_SVN_WCROOT=1
-    set "ARG_SVN_WCROOT_PATH=%~2"
-    set "ARG_SVN_WCROOT_PATH_ABS=%~dpf2"
+    set FLAG_WCROOT=1
+    set "FLAG_WCROOT=%~2"
+    set "FLAG_TEXT_WCROOT_ABS=%~dpf2"
     shift
   ) else if "%FLAG%" == "-no_uri_transform" (
-    set FLAG_SVN_NO_URI_TRANSFORM=1
-    set "ARG_SVN_NO_URI_TRANSFORM= -no_uri_transform"
+    set FLAG_NO_URI_TRANSFORM=1
+    set "FLAG_TEXT_NO_URI_TRANSFORM= -no_uri_transform"
     shift
   ) else (
     echo.%?~nx0%: error: invalid flag: %FLAG%
@@ -103,26 +103,26 @@ if not exist "%BRANCH_PATH%\" (
   exit /b 255
 )
 
-if %ARG_SVN_WCROOT% NEQ 0 ^
-if "%ARG_SVN_WCROOT_PATH%" == "" (
+if %FLAG_WCROOT% NEQ 0 ^
+if "%FLAG_WCROOT%" == "" (
   echo.%?~nx0%: error: SVN WC root path should not be empty.
   exit /b 254
 ) >&2
 
-if "%ARG_SVN_WCROOT_PATH%" == "" (
-  set "ARG_SVN_WCROOT_PATH=."
-  set "ARG_SVN_WCROOT_PATH_ABS=%BRANCH_PATH%"
+if "%FLAG_WCROOT%" == "" (
+  set "FLAG_WCROOT=."
+  set "FLAG_TEXT_WCROOT_ABS=%BRANCH_PATH%"
 )
 
 rem test SVN WC root path
-if %ARG_SVN_WCROOT% NEQ 0 (
+if %FLAG_WCROOT% NEQ 0 (
   call :TEST_WCROOT_PATH || goto :EOF
 ) else set "SVN_WCROOT_PATH=%BRANCH_PATH%"
 
 goto TEST_WCROOT_PATH_END
 
 :TEST_WCROOT_PATH
-set "SVN_WCROOT_PATH=%ARG_SVN_WCROOT_PATH_ABS%"
+set "SVN_WCROOT_PATH=%FLAG_TEXT_WCROOT_ABS%"
 
 call set "SVN_BRANCH_REL_SUB_PATH=%%BRANCH_PATH:%SVN_WCROOT_PATH%=%%"
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
@@ -163,19 +163,19 @@ exit /b
 
 rem filter output only for the current directory path
 set "SQLITE_EXP_SELECT_CMD_LINE=* from new_externals "
-if %FLAG_SVN_OFFLINE% NEQ 0 ^
-if %ARG_SVN_WCROOT% NEQ 0 (
+if %FLAG_OFFLINE% NEQ 0 ^
+if %FLAG_WCROOT% NEQ 0 (
   if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
     set "SQLITE_EXP_SELECT_CMD_LINE=substr(local_relpath_new, length('%SVN_BRANCH_REL_SUB_PATH%/')+1) as local_relpath_new_suffix from new_externals where substr(local_relpath_new, 1, length('%SVN_BRANCH_REL_SUB_PATH%/')) == '%SVN_BRANCH_REL_SUB_PATH%/' collate nocase and local_relpath_new_suffix != '' "
   )
 )
 
-if %FLAG_SVN_OFFLINE% NEQ 0 (
+if %FLAG_OFFLINE% NEQ 0 (
   call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%SVN_WCROOT_PATH%\.svn\wc.db" ".headers off" "with new_externals as ( select case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from externals where local_relpath != '' and presence != 'not-present') select %%SQLITE_EXP_SELECT_CMD_LINE%%"
   exit /b
 )
 
-if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
+if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 svn info . --non-interactive > "%INFO_FILE_TMP%" || exit /b 251
 
@@ -201,4 +201,4 @@ rem TODO:
 rem 1. add `-prefix_path "<prefix_path>"` flag to the gen_externals_list_from_pget.bat script to ignore externals with different <prefix_path> path
 
 rem convert externals into CSV list
-call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat"%%ARG_SVN_NO_URI_TRANSFORM%% "%%EXTERNALS_FILE_TMP%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" || exit /b 247
+call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat"%%FLAG_TEXT_NO_URI_TRANSFORM%% "%%EXTERNALS_FILE_TMP%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" || exit /b 247

@@ -41,13 +41,13 @@ set "?~nx0=%~nx0"
 set "?~dp0=%~dp0"
 
 rem script flags
-set ARG_SVN_REVISION_RANGE_IS_SET=0
-set "ARG_SVN_REVISION_RANGE="
-set ARG_SVN_NODES_TABLE_IS_SET=0
-set "ARG_SVN_NODES_TABLE="
-set ARG_SVN_WCROOT=0
-set "ARG_SVN_WCROOT_PATH="
-set "ARG_SVN_WCROOT_PATH_ABS="
+set FLAG_REVISION_RANGE=0
+set "FLAG_TEXT_REVISION_RANGE="
+set FLAG_NODES_TABLE=0
+set "FLAG_TEXT_NODES_TABLE="
+set FLAG_WCROOT=0
+set "FLAG_TEXT_WCROOT="
+set "FLAG_TEXT_WCROOT_ABS="
 
 :FLAGS_LOOP
 
@@ -60,20 +60,20 @@ if not "%FLAG:~0,1%" == "-" set "FLAG="
 if not "%FLAG%" == "" (
   if "%FLAG%" == "-r" (
     rem consume next argument into flags
-    set ARG_SVN_REVISION_RANGE_IS_SET=1
-    set "ARG_SVN_REVISION_RANGE=%~2"
+    set FLAG_REVISION_RANGE=1
+    set "FLAG_TEXT_REVISION_RANGE=%~2"
     shift
     shift
   ) else if "%FLAG%" == "-t" (
     rem consume next argument into flags
-    set ARG_SVN_NODES_TABLE_IS_SET=1
-    set "ARG_SVN_NODES_TABLE=%~2"
+    set FLAG_NODES_TABLE=1
+    set "FLAG_TEXT_NODES_TABLE=%~2"
     shift
     shift
   ) else if "%FLAG%" == "-wcroot" (
-    set ARG_SVN_WCROOT=1
-    set "ARG_SVN_WCROOT_PATH=%~2"
-    set "ARG_SVN_WCROOT_PATH_ABS=%~dpf2"
+    set FLAG_WCROOT=1
+    set "FLAG_TEXT_WCROOT=%~2"
+    set "FLAG_TEXT_WCROOT_ABS=%~dpf2"
     shift
     shift
   ) else (
@@ -93,38 +93,38 @@ if not exist "%BRANCH_PATH%\" (
   exit /b 255
 )
 
-if %ARG_SVN_REVISION_RANGE_IS_SET% NEQ 0 ^
-if "%ARG_SVN_REVISION_RANGE%" == "" (
+if %FLAG_REVISION_RANGE% NEQ 0 ^
+if "%FLAG_TEXT_REVISION_RANGE%" == "" (
   echo.%?~nx0%: error: revision range is not set.
   exit /b 254
 ) >&2
 
-if %ARG_SVN_NODES_TABLE_IS_SET% NEQ 0 ^
-if "%ARG_SVN_NODES_TABLE%" == "" (
+if %FLAG_NODES_TABLE% NEQ 0 ^
+if "%FLAG_TEXT_NODES_TABLE%" == "" (
   echo.%?~nx0%: error: SVN WC database node table name suffix is not set.
   exit /b 253
 ) >&2
 
-if %ARG_SVN_WCROOT% NEQ 0 ^
-if "%ARG_SVN_WCROOT_PATH%" == "" (
+if %FLAG_WCROOT% NEQ 0 ^
+if "%FLAG_TEXT_WCROOT%" == "" (
   echo.%?~nx0%: error: SVN WC root path should not be empty.
   exit /b 252
 ) >&2
 
-if "%ARG_SVN_WCROOT_PATH%" == "" (
-  set "ARG_SVN_WCROOT_PATH=."
-  set "ARG_SVN_WCROOT_PATH_ABS=%BRANCH_PATH%"
+if "%FLAG_TEXT_WCROOT%" == "" (
+  set "FLAG_TEXT_WCROOT=."
+  set "FLAG_TEXT_WCROOT_ABS=%BRANCH_PATH%"
 )
 
 rem test SVN WC root path
-if %ARG_SVN_WCROOT% NEQ 0 (
+if %FLAG_WCROOT% NEQ 0 (
   call :TEST_WCROOT_PATH || goto :EOF
 ) else set "SVN_WCROOT_PATH=%BRANCH_PATH%"
 
 goto TEST_WCROOT_PATH_END
 
 :TEST_WCROOT_PATH
-set "SVN_WCROOT_PATH=%ARG_SVN_WCROOT_PATH_ABS%"
+set "SVN_WCROOT_PATH=%FLAG_TEXT_WCROOT_ABS%"
 
 call set "SVN_BRANCH_REL_SUB_PATH=%%BRANCH_PATH:%SVN_WCROOT_PATH%=%%"
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
@@ -174,20 +174,20 @@ if %WC_DB_USER_VERSION% LSS 31 (
 
 rem parse -r argument value
 set "SQLITE_EXP_REVISION_RANGE_SUFFIX="
-if %ARG_SVN_REVISION_RANGE_IS_SET% NEQ 0 call "%%?~dp0%%impl/svn_arg_parse-r.bat" "%%ARG_SVN_REVISION_RANGE%%"
+if %FLAG_REVISION_RANGE% NEQ 0 call "%%?~dp0%%impl/svn_arg_parse-r.bat" "%%FLAG_TEXT_REVISION_RANGE%%"
 if not "%SQLITE_EXP_REVISION_RANGE%" == "" set "SQLITE_EXP_REVISION_RANGE_SUFFIX= and (%SQLITE_EXP_REVISION_RANGE%)"
 
-if "%ARG_SVN_NODES_TABLE%" == "" (
+if "%FLAG_TEXT_NODES_TABLE%" == "" (
   set "SQLITE_EXP_NODES_TABLE=nodes_base"
-) else if not "%ARG_SVN_NODES_TABLE%" == "-" (
-  set "SQLITE_EXP_NODES_TABLE=nodes_%ARG_SVN_NODES_TABLE%"
+) else if not "%FLAG_TEXT_NODES_TABLE%" == "-" (
+  set "SQLITE_EXP_NODES_TABLE=nodes_%FLAG_TEXT_NODES_TABLE%"
 ) else (
   set "SQLITE_EXP_NODES_TABLE=nodes"
 )
 
 rem filter output only for the current directory path
 set "SQLITE_EXP_SELECT_CMD_LINE=* from new_nodes "
-if %ARG_SVN_WCROOT% NEQ 0 ^
+if %FLAG_WCROOT% NEQ 0 ^
 if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
   set "SQLITE_EXP_SELECT_CMD_LINE=revision, substr(local_relpath_new, length('%SVN_BRANCH_REL_SUB_PATH%/')+1) as local_relpath_new_suffix from new_nodes where substr(local_relpath_new, 1, length('%SVN_BRANCH_REL_SUB_PATH%/')) == '%SVN_BRANCH_REL_SUB_PATH%/' collate nocase and local_relpath_new_suffix != '' "
 )
