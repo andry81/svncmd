@@ -21,8 +21,10 @@ call "%%~dp0__init__.bat" || goto :EOF
 set "?~nx0=%~nx0"
 
 rem script flags
-set FLAG_SVN_NO_URI_TRANSFORM=0
-set FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL=0
+set FLAG_NO_URI_TRANSFORM=0
+set FLAG_MAKE_DIR_PATH_PREFIX_REL=0
+set FLAG_PREFIX_PATH=0
+set "FLAG_TEXT_PREFIX_PATH="
 
 :FLAGS_LOOP
 
@@ -34,10 +36,15 @@ if not "%FLAG:~0,1%" == "-" set "FLAG="
 
 if not "%FLAG%" == "" (
   if "%FLAG%" == "-no_uri_transform" (
-    set FLAG_SVN_NO_URI_TRANSFORM=1
+    set FLAG_NO_URI_TRANSFORM=1
     shift
   ) else if "%FLAG%" == "-make_dir_path_prefix_rel" (
-    set FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL=1
+    set FLAG_MAKE_DIR_PATH_PREFIX_REL=1
+    shift
+  ) else if "%FLAG%" == "-prefix_path" (
+    set FLAG_PREFIX_PATH=1
+    set "FLAG_TEXT_PREFIX_PATH=%~2"
+    shift
     shift
   ) else (
     echo.%?~nx0%: error: invalid flag: %FLAG%
@@ -62,8 +69,8 @@ if not exist "%EXTERNALS_FILE%" (
   exit /b 2
 ) >&2
 
-if %FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL% NEQ 0 goto CHECK_DIR_URL
-if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_ARGS_CHECK
+if %FLAG_MAKE_DIR_PATH_PREFIX_REL% NEQ 0 goto CHECK_DIR_URL
+if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_ARGS_CHECK
 
 if "%REPO_ROOT%" == "" (
   echo.%?~nx0%: error: `Repository Root` argument is not set.
@@ -167,7 +174,7 @@ for /F "eol=	 tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
 rem absolute URI or nothing
 set "EXTERNAL_URI=-"
 
-if %FLAG_SVN_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
+if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 call "%%SVNCMD_TOOLS_ROOT%%/make_url_absolute.bat" "%%DIR_URL%%" "%%EXTERNAL_URI_PATH%%" "%%REPO_ROOT%%"
 if %ERRORLEVEL% NEQ 0 (
@@ -178,7 +185,7 @@ EXTERNAL_PATH="%EXTERNAL_URI_PATH%" REPOSITORY_ROOT="%REPO_ROOT%" RESULT="%RETUR
 set "EXTERNAL_URI=%RETURN_VALUE%"
 
 :IGNORE_URI_TRANSFORM
-if %FLAG_SVN_MAKE_DIR_PATH_PREFIX_REL% EQU 0 goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
+if %FLAG_MAKE_DIR_PATH_PREFIX_REL% EQU 0 goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
 
 call set "EXTERNAL_DIR_PATH_SUFFIX=%%EXTERNAL_DIR_PATH_PREFIX:%DIR_URL%=%%"
 if "%EXTERNAL_DIR_PATH_SUFFIX%" == "" goto TRANSFORM_DIR_PATH_PREFIX
