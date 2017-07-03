@@ -6,9 +6,6 @@ rem Description:
 rem   Generate externals CSV list from dumped svn:externals file.
 rem
 
-rem TODO:
-rem 1. add `-prefix_path "<prefix_path>"` flag to ignore externals with different <prefix_path> path
-
 rem Drop last error level
 cd .
 
@@ -25,6 +22,7 @@ set FLAG_NO_URI_TRANSFORM=0
 set FLAG_MAKE_DIR_PATH_PREFIX_REL=0
 set FLAG_PREFIX_PATH=0
 set "FLAG_TEXT_PREFIX_PATH="
+set FLAG_LOCAL_PATHS_ONLY=0
 
 :FLAGS_LOOP
 
@@ -46,6 +44,9 @@ if not "%FLAG%" == "" (
     set "FLAG_TEXT_PREFIX_PATH=%~2"
     shift
     shift
+  ) else if "%FLAG%" == "-l" (
+    set FLAG_LOCAL_PATHS_ONLY=1
+    shift
   ) else (
     echo.%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
@@ -55,32 +56,39 @@ if not "%FLAG%" == "" (
   goto FLAGS_LOOP
 )
 
+if %FLAG_PREFIX_PATH% NEQ 0 ^
+if "%FLAG_TEXT_PREFIX_PATH%" == "" (
+  echo.%?~nx0%: error: prefix path is empty.
+  exit /b 1
+)
+
 set "EXTERNALS_FILE=%~dpf1"
 set "REPO_ROOT=%~2"
 set "DIR_URL=%~3"
 
 if "%EXTERNALS_FILE%" == "" (
   echo.%?~nx0%: error: externals file is not set.
-  exit /b 1
+  exit /b 2
 ) >&2
 
 if not exist "%EXTERNALS_FILE%" (
   echo.%?~nx0%: error: externals file does not exist: "%EXTERNALS_FILE%".
-  exit /b 2
+  exit /b 3
 ) >&2
 
 if %FLAG_MAKE_DIR_PATH_PREFIX_REL% NEQ 0 goto CHECK_DIR_URL
 if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_ARGS_CHECK
+if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto IGNORE_URI_ARGS_CHECK
 
 if "%REPO_ROOT%" == "" (
   echo.%?~nx0%: error: `Repository Root` argument is not set.
-  exit /b 3
+  exit /b 4
 ) >&2
 
 :CHECK_DIR_URL
 if "%DIR_URL%" == "" (
   echo.%?~nx0%: error: `URL` argument is not set.
-  exit /b 4
+  exit /b 5
 ) >&2
 
 :IGNORE_URI_ARGS_CHECK
@@ -175,6 +183,7 @@ rem absolute URI or nothing
 set "EXTERNAL_URI=-"
 
 if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
+if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 call "%%SVNCMD_TOOLS_ROOT%%/make_url_absolute.bat" "%%DIR_URL%%" "%%EXTERNAL_URI_PATH%%" "%%REPO_ROOT%%"
 if %ERRORLEVEL% NEQ 0 (
@@ -186,6 +195,7 @@ set "EXTERNAL_URI=%RETURN_VALUE%"
 
 :IGNORE_URI_TRANSFORM
 if %FLAG_MAKE_DIR_PATH_PREFIX_REL% EQU 0 goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
+if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
 
 call set "EXTERNAL_DIR_PATH_SUFFIX=%%EXTERNAL_DIR_PATH_PREFIX:%DIR_URL%=%%"
 if "%EXTERNAL_DIR_PATH_SUFFIX%" == "" goto TRANSFORM_DIR_PATH_PREFIX
@@ -200,8 +210,44 @@ set "EXTERNAL_DIR_PATH_PREFIX=%EXTERNAL_DIR_PATH_SUFFIX%"
 
 :IGNORE_DIR_PATH_PREFIX_TRANSFORM
 if "%EXTERNAL_DIR_PATH_PREFIX%" == "" set EXTERNAL_DIR_PATH_PREFIX=.
-if "%EXTERNAL_URI_REV_OPERATIVE%" == "" set EXTERNAL_URI_REV_OPERATIVE=0
-if "%EXTERNAL_URI_REV_PEG%" == "" set EXTERNAL_URI_REV_PEG=0
+if "%EXTERNAL_URI_REV_OPERATIVE%" == "" set EXTERNAL_URI_REV_OPERATIVE=-
+if "%EXTERNAL_URI_REV_PEG%" == "" set EXTERNAL_URI_REV_PEG=-
 
+if %FLAG_PREFIX_PATH% EQU 0 goto IGNORE_PREFIX_PATH
+
+if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
+  call "%%CONTOOLS_ROOT%%/subtract_relative_path.bat" "%%FLAG_TEXT_PREFIX_PATH%%" "%%EXTERNAL_DIR_PATH_PREFIX%%/%%EXTERNAL_DIR_PATH%%"
+) else (
+  call "%%CONTOOLS_ROOT%%/subtract_relative_path.bat" "%%FLAG_TEXT_PREFIX_PATH%%" "%%EXTERNAL_DIR_PATH%%"
+)
+if %ERRORLEVEL% NEQ 0 exit /b 0
+
+set "EXTERNAL_PATH=%RETURN_VALUE%"
+
+if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto PRINT_EXTERNAL_PATH
+goto PRINT_EXTERNAL_RECORD
+
+:IGNORE_PREFIX_PATH
+if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 (
+  if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
+    set "EXTERNAL_PATH=%EXTERNAL_DIR_PATH_PREFIX%/%EXTERNAL_DIR_PATH%"
+  ) else (
+    set "EXTERNAL_PATH=%EXTERNAL_DIR_PATH%"
+  )
+)
+
+if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto PRINT_EXTERNAL_PATH
+goto PRINT_EXTERNAL_RECORD
+
+:PRINT_EXTERNAL_PATH
+rem special form of the echo command to ignore special characters in the echo value.
+for /F "eol=	 tokens=* delims=" %%i in ("%EXTERNAL_PATH%") do (echo.%%i)
+
+exit /b 0
+
+:PRINT_EXTERNAL_RECORD
 rem TODO: EXTERNAL_DIR_PATH_PREFIX can be repo URL path, transformation required in case of compare with another list with local paths in the first parameter 
-echo.%EXTERNAL_DIR_PATH_PREFIX%^|%EXTERNAL_DIR_PATH%^|%EXTERNAL_URI_REV_OPERATIVE%^|%EXTERNAL_URI_REV_PEG%^|%EXTERNAL_URI%
+rem special form of the echo command to ignore special characters in the echo value.
+for /F "eol=	 tokens=* delims=" %%i in ("%EXTERNAL_DIR_PATH_PREFIX%|%EXTERNAL_DIR_PATH%|%EXTERNAL_URI_REV_OPERATIVE%|%EXTERNAL_URI_REV_PEG%|%EXTERNAL_URI%") do (echo.%%i)
+
+exit /b 0

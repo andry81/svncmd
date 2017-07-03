@@ -93,6 +93,9 @@ if not exist "%BRANCH_PATH%\" (
   exit /b 255
 )
 
+set "WCROOT_PATH=%FLAG_TEXT_WCROOT%"
+set "WCROOT_PATH_ABS=%FLAG_TEXT_WCROOT_ABS%"
+
 if %FLAG_REVISION_RANGE% NEQ 0 ^
 if "%FLAG_TEXT_REVISION_RANGE%" == "" (
   echo.%?~nx0%: error: revision range is not set.
@@ -106,52 +109,55 @@ if "%FLAG_TEXT_NODES_TABLE%" == "" (
 ) >&2
 
 if %FLAG_WCROOT% NEQ 0 ^
-if "%FLAG_TEXT_WCROOT%" == "" (
+if "%WCROOT_PATH%" == "" (
   echo.%?~nx0%: error: SVN WC root path should not be empty.
   exit /b 252
 ) >&2
 
-if "%FLAG_TEXT_WCROOT%" == "" (
-  set "FLAG_TEXT_WCROOT=."
-  set "FLAG_TEXT_WCROOT_ABS=%BRANCH_PATH%"
+if "%WCROOT_PATH%" == "" (
+  set "WCROOT_PATH=."
+  set "WCROOT_PATH_ABS=%BRANCH_PATH%"
 )
 
 rem test SVN WC root path
 if %FLAG_WCROOT% NEQ 0 (
   call :TEST_WCROOT_PATH || goto :EOF
-) else set "SVN_WCROOT_PATH=%BRANCH_PATH%"
+) else (
+  set "WCROOT_PATH=%BRANCH_PATH%"
+  set "BRANCH_REL_SUB_PATH="
+)
 
 goto TEST_WCROOT_PATH_END
 
 :TEST_WCROOT_PATH
-set "SVN_WCROOT_PATH=%FLAG_TEXT_WCROOT_ABS%"
+set "WCROOT_PATH=%WCROOT_PATH_ABS%"
 
-call set "SVN_BRANCH_REL_SUB_PATH=%%BRANCH_PATH:%SVN_WCROOT_PATH%=%%"
-if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
-  if "%SVN_BRANCH_REL_SUB_PATH:~0,1%" == "\" (
-    set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:~1%"
+call set "BRANCH_REL_SUB_PATH=%%BRANCH_PATH:%WCROOT_PATH%=%%"
+if not "%BRANCH_REL_SUB_PATH%" == "" (
+  if "%BRANCH_REL_SUB_PATH:~0,1%" == "\" (
+    set "BRANCH_REL_SUB_PATH=%BRANCH_REL_SUB_PATH:~1%"
   )
 )
 
-if not "%SVN_BRANCH_REL_SUB_PATH%" == "" ^
-if /i not "%SVN_WCROOT_PATH%\%SVN_BRANCH_REL_SUB_PATH%" == "%BRANCH_PATH%" (
-  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: SVN_WCROOT_PATH="%SVN_WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
+if not "%BRANCH_REL_SUB_PATH%" == "" ^
+if /i not "%WCROOT_PATH%\%BRANCH_REL_SUB_PATH%" == "%BRANCH_PATH%" (
+  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: WCROOT_PATH="%WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
   exit /b 251
 ) >&2
 
-if not "%SVN_BRANCH_REL_SUB_PATH%" == "" set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:\=/%"
+if not "%BRANCH_REL_SUB_PATH%" == "" set "BRANCH_REL_SUB_PATH=%BRANCH_REL_SUB_PATH:\=/%"
 
 exit /b 0
 
 :TEST_WCROOT_PATH_END
 
-if not exist "%SVN_WCROOT_PATH%\.svn\wc.db" (
-  echo.%?~nx0%: error: SVN WC database file is not found: "%SVN_WCROOT_PATH:\=/%/.svn/wc.db"
+if not exist "%WCROOT_PATH%\.svn\wc.db" (
+  echo.%?~nx0%: error: SVN WC database file is not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 250
 ) >&2
 
-if /i not "%SVN_WCROOT_PATH%" == "%CD%" (
-  pushd "%SVN_WCROOT_PATH%" && (
+if /i not "%WCROOT_PATH%" == "%CD%" (
+  pushd "%WCROOT_PATH%" && (
     call :IMPL
     popd
   )
@@ -164,7 +170,7 @@ rem check on supported wc.db user version
 call "%%?~dp0%%impl/svn_get_wc_db_user_ver.bat"
 
 if "%WC_DB_USER_VERSION%" == "" (
-  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%SVN_WCROOT_PATH:\=/%/.svn/wc.db"
+  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 249
 ) >&2
 
@@ -186,10 +192,10 @@ if "%FLAG_TEXT_NODES_TABLE%" == "" (
 )
 
 rem filter output only for the current directory path
-set "SQLITE_EXP_SELECT_CMD_LINE=* from new_nodes "
+set "SQLITE_EXP_WHERE_FIRST_FILTER="
 if %FLAG_WCROOT% NEQ 0 ^
-if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
-  set "SQLITE_EXP_SELECT_CMD_LINE=revision, substr(local_relpath_new, length('%SVN_BRANCH_REL_SUB_PATH%/')+1) as local_relpath_new_suffix from new_nodes where substr(local_relpath_new, 1, length('%SVN_BRANCH_REL_SUB_PATH%/')) == '%SVN_BRANCH_REL_SUB_PATH%/' collate nocase and local_relpath_new_suffix != '' "
+if not "%BRANCH_REL_SUB_PATH%" == "" (
+  set "SQLITE_EXP_WHERE_FIRST_FILTER= and substr(local_relpath || '/', 1, length('%BRANCH_REL_SUB_PATH%/')) == '%BRANCH_REL_SUB_PATH%/' collate nocase"
 )
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%SVN_WCROOT_PATH%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "with new_nodes as ( select revision, case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from %%SQLITE_EXP_NODES_TABLE%% where local_relpath != ''%%SQLITE_EXP_REVISION_RANGE_SUFFIX%%) select %%SQLITE_EXP_SELECT_CMD_LINE%%order by local_relpath_new asc"
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%WCROOT_PATH%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "select revision, case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from %%SQLITE_EXP_NODES_TABLE%% where local_relpath != ''%%SQLITE_EXP_REVISION_RANGE_SUFFIX%%%%SQLITE_EXP_WHERE_FIRST_FILTER%% order by local_relpath asc"
