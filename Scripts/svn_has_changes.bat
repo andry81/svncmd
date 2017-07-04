@@ -83,6 +83,12 @@ set "DIR_PATH_PREFIX=%~1"
 set "DIR_PATH_SUBDIR=%~2"
 
 if "%DIR_PATH_PREFIX%" == "" goto DIR_PATH_PREFIX_ERROR
+
+set "DIR_PATH_PREFIX=%DIR_PATH_PREFIX:/=\%"
+
+rem remove trailing back slash
+if "%DIR_PATH_PREFIX:~-1%" == "\" set "DIR_PATH_PREFIX=%DIR_PATH_PREFIX:~0,-1%"
+
 if not exist "%DIR_PATH_PREFIX%\" goto DIR_PATH_PREFIX_ERROR
 goto DIR_PATH_PREFIX_END
 
@@ -95,6 +101,12 @@ goto DIR_PATH_PREFIX_END
 :DIR_PATH_PREFIX_END
 
 if "%DIR_PATH_SUBDIR%" == "" goto DIR_PATH_SUBDIR_END
+
+set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:/=\%"
+
+rem remove trailing back slash
+if "%DIR_PATH_SUBDIR:~-1%" == "\" set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:~0,-1%"
+
 if "%DIR_PATH_SUBDIR:~1,1%" == ":" goto DIR_PATH_SUBDIR_ERROR
 if not exist "%DIR_PATH_PREFIX%\%DIR_PATH_SUBDIR%\" goto DIR_PATH_SUBDIR_ERROR
 goto DIR_PATH_SUBDIR_END
