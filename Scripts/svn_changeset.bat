@@ -163,7 +163,13 @@ if /i not "%WCROOT_PATH%" == "%CD%" (
   )
 ) else call :IMPL
 
-exit /b
+(
+  endlocal
+  rem restore chcp variables
+  set "CURRENT_CP=%CURRENT_CP%"
+  set "LAST_CP=%LAST_CP%"
+  exit /b
+)
 
 :IMPL
 rem check on supported wc.db user version
