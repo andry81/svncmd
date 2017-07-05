@@ -186,26 +186,15 @@ if "%SVN_BRANCH_URI%" == "" (
   exit /b 1
 ) >&2
 
-call "%%CONTOOLS_ROOT%%/get_datetime.bat"
-set "SYNC_DATE=%RETURN_VALUE:~0,4%_%RETURN_VALUE:~4,2%_%RETURN_VALUE:~6,2%"
-set "SYNC_TIME=%RETURN_VALUE:~8,2%_%RETURN_VALUE:~10,2%_%RETURN_VALUE:~12,2%_%RETURN_VALUE:~15,3%"
+call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 
-set "GEN_BRANCH_TEMP_FILE_DIR=%TEMP%\%?~n0%.%SYNC_DATE%.%SYNC_TIME%"
-set "BRANCH_ROOT_INFO_FILE_TMP=%GEN_BRANCH_TEMP_FILE_DIR%\$root_info.txt"
-
-rem create temporary files to store local context output
-if exist "%GEN_BRANCH_TEMP_FILE_DIR%\" (
-  echo.%?~nx0%: error: temporary generated directory GEN_BRANCH_TEMP_FILE_DIR is already exist: "%GEN_BRANCH_TEMP_FILE_DIR%"
-  exit /b 2
-) >&2
-
-mkdir "%GEN_BRANCH_TEMP_FILE_DIR%"
+set "BRANCH_ROOT_INFO_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$root_info.txt"
 
 call :MAIN
 set LASTERROR=%ERRORLEVEL%
 
 rem cleanup temporary files
-rmdir /S /Q "%GEN_BRANCH_TEMP_FILE_DIR%"
+call "%%CONTOOLS_ROOT%%/std/free_temp_dir.bat"
 
 exit /b %LASTERROR%
 
@@ -294,9 +283,9 @@ if %FLAG_SVN_REL_FILE_PATHS_ONLY% NEQ 0 (
 
 set "BRANCH_ROOT_PATH=%SVN_BRANCH_PATH%"
 
-set "BRANCH_EXTERNALS_INFO_FILE_TMP=%GEN_BRANCH_TEMP_FILE_DIR%\$info.txt"
-set "BRANCH_EXTERNALS_LIST_FILE_TMP=%GEN_BRANCH_TEMP_FILE_DIR%\$externals.lst"
-set "BRANCH_ROOT_ALL_FILES_LIST_FILE_TMP=%GEN_BRANCH_TEMP_FILE_DIR%\root_all_files.lst"
+set "BRANCH_EXTERNALS_INFO_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$info.txt"
+set "BRANCH_EXTERNALS_LIST_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$externals.lst"
+set "BRANCH_ROOT_ALL_FILES_LIST_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\root_all_files.lst"
 
 set "BRANCH_WORKINGSET_CATALOG_BINARY_DIFF_DIR=%BRANCH_WORKINGSET_CATALOG_DIR%"
 

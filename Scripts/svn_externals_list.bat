@@ -21,38 +21,21 @@ if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
 
 call "%%~dp0__init__.bat" || goto :EOF
 
+set "?~n0=%~n0"
 set "?~nx0=%~nx0"
 set "?~dp0=%~dp0"
 
-rem read the date and time
-set "DATETIME_VALUE="
-for /F "usebackq eol=	 tokens=1,2 delims==" %%i in (`wmic os get LocalDateTime /VALUE 2^> nul`) do if "%%i" == "LocalDateTime" set "DATETIME_VALUE=%%j"
+call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 
-if "%DATETIME_VALUE%" == "" goto DATETIME_VALUE_END
-
-set "DATE_VALUE=%DATETIME_VALUE:~0,4%_%DATETIME_VALUE:~4,2%_%DATETIME_VALUE:~6,2%"
-set "TIME_VALUE=%DATETIME_VALUE:~8,2%_%DATETIME_VALUE:~10,2%_%DATETIME_VALUE:~12,2%_%DATETIME_VALUE:~15,3%"
-
-:DATETIME_VALUE_END
-
-set "SCRIPT_TMP_DIR=%TEMP%\%DATE_VALUE%.%TIME_VALUE%"
-
-set "INFO_FILE_TMP=%SCRIPT_TMP_DIR%\$info.txt"
-set "EXTERNALS_FILE_TMP=%SCRIPT_TMP_DIR%\$externals.txt"
-set "EXTERNALS_LIST_FILE_TMP=%SCRIPT_TMP_DIR%\externals.lst"
-
-if exist "%SCRIPT_TMP_DIR%\" (
-  echo.%?~nx0%: error: unique temporary directory must not exist before it's creation: "%SCRIPT_TMP_DIR%\".
-  exit /b -254
-) >&2
-
-mkdir "%SCRIPT_TMP_DIR%"
+set "INFO_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$info.txt"
+set "EXTERNALS_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$externals.txt"
+set "EXTERNALS_LIST_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\externals.lst"
 
 call :MAIN %%*
 set LASTERROR=%ERRORLEVEL%
 
 rem cleanup temporary files
-rmdir /S /Q "%SCRIPT_TMP_DIR%"
+call "%%CONTOOLS_ROOT%%/std/free_temp_dir.bat"
 
 exit /b %LASTERROR%
 

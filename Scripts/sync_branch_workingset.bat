@@ -156,35 +156,16 @@ set "BRANCH_ROOT_EXTERNALS_FILE=%~dpf5"
 set "BRANCH_WORKINGSET_FILE=%~dpf6"
 set "BRANCH_WORKINGSET_CATALOG_DIR=%~dpf7"
 
-call "%%CONTOOLS_ROOT%%/get_datetime.bat"
-set "SYNC_DATE=%RETURN_VALUE:~0,4%_%RETURN_VALUE:~4,2%_%RETURN_VALUE:~6,2%"
-set "SYNC_TIME=%RETURN_VALUE:~8,2%_%RETURN_VALUE:~10,2%_%RETURN_VALUE:~12,2%_%RETURN_VALUE:~15,3%"
+call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 
-set "SYNC_BRANCH_TEMP_FILE_DIR=%TEMP%\%?~n0%.%SYNC_DATE%.%SYNC_TIME%"
-set "SQLITE_OUT_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\sqlite_out.txt"
-set "BRANCH_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info.txt"
-set "BRANCH_BASE_REV_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info_base.txt"
-set "BRANCH_FROM_EXTERNALS_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_from.txt"
-set "BRANCH_FROM_EXTERNALS_LIST_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_from.lst"
-set "BRANCH_TO_EXTERNALS_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_to.txt"
-set "BRANCH_TO_EXTERNALS_LIST_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$externals_to.lst"
-set "BRANCH_TO_EXTERNALS_INFO_FILE_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\$info_externals_to.txt"
-rem set "GEN_BRANCH_WORKINGSET_BASE_DIR_TMP=%SYNC_BRANCH_TEMP_FILE_DIR%\gen_workingset"
-
-rem create temporary files to store local context output
-if exist "%SYNC_BRANCH_TEMP_FILE_DIR%\" (
-  echo.%?~nx0%: error: temporary generated directory SYNC_BRANCH_TEMP_FILE_DIR already exist: "%SYNC_BRANCH_TEMP_FILE_DIR%"
-  exit /b 4
-) >&2
-
-mkdir "%SYNC_BRANCH_TEMP_FILE_DIR%" || (
-  echo.%?~nx0%: error: could not create temporary diretory: "%SYNC_BRANCH_TEMP_FILE_DIR%"
-  exit /b 5
-) >&2
-rem mkdir "%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%" || (
-rem   echo.%?~nx0%: error: could not create temporary diretory: "%GEN_BRANCH_WORKINGSET_BASE_DIR_TMP%"
-rem   exit /b 6
-rem ) >&2
+set "SQLITE_OUT_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\sqlite_out.txt"
+set "BRANCH_INFO_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$info.txt"
+set "BRANCH_BASE_REV_INFO_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$info_base.txt"
+set "BRANCH_FROM_EXTERNALS_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$externals_from.txt"
+set "BRANCH_FROM_EXTERNALS_LIST_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$externals_from.lst"
+set "BRANCH_TO_EXTERNALS_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$externals_to.txt"
+set "BRANCH_TO_EXTERNALS_LIST_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$externals_to.lst"
+set "BRANCH_TO_EXTERNALS_INFO_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$info_externals_to.txt"
 
 rem have to set a current directory for shortened path values in output from svn commands
 pushd "%BRANCH_PATH%" && (
@@ -194,19 +175,19 @@ pushd "%BRANCH_PATH%" && (
 set LASTERROR=%ERRORLEVEL%
 
 rem cleanup temporary files
-rmdir /S /Q "%SYNC_BRANCH_TEMP_FILE_DIR%"
+call "%%CONTOOLS_ROOT%%/std/free_temp_dir.bat"
 
 exit /b %LASTERROR%
 
 :MAIN
 if not exist  "%BRANCH_WORKINGSET_FILE%" (
   echo.%?~nx0%: error: BRANCH_WORKINGSET_FILE does not exist: "%BRANCH_WORKINGSET_FILE%".
-  exit /b 7
+  exit /b 4
 ) >&2
 
 if not exist "%BRANCH_WORKINGSET_CATALOG_DIR%\" (
   echo.%?~nx0%: error: BRANCH_WORKINGSET_CATALOG_DIR does not exist: "%BRANCH_WORKINGSET_CATALOG_DIR%"
-  exit /b 8
+  exit /b 5
 ) >&2
 
 rem convert back slashes to forward slashes
@@ -240,7 +221,7 @@ set /A BRANCH_ROOT_FILES_EXIST_COUNTER=%BRANCH_ROOT_INFO_FILE_EXIST%+%BRANCH_ROO
 if %BRANCH_ROOT_FILES_EXIST_COUNTER% GTR 0 ^
 if %BRANCH_ROOT_FILES_EXIST_COUNTER% LSS 2 (
   echo.%?~nx0%: error: BRANCH_ROOT_INFO_FILE and BRANCH_ROOT_DIFF_FILE are not consistent: INFO_FILE="%BRANCH_ROOT_INFO_FILE%" DIFF_FILE="%BRANCH_ROOT_DIFF_FILE%".
-  exit /b 9
+  exit /b 6
 ) >&2
 
 if %BRANCH_ROOT_FILES_EXIST_COUNTER% EQU 0 goto SYNC_WORKINGSET

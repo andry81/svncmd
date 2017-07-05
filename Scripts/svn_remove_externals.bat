@@ -131,30 +131,16 @@ goto ERROR_FROM_EXTERNALS_LIST_END
 ) >&2
 :ERROR_FROM_EXTERNALS_LIST_END
 
-call "%%CONTOOLS_ROOT%%/get_datetime.bat"
-set "SYNC_DATE=%RETURN_VALUE:~0,4%_%RETURN_VALUE:~4,2%_%RETURN_VALUE:~6,2%"
-set "SYNC_TIME=%RETURN_VALUE:~8,2%_%RETURN_VALUE:~10,2%_%RETURN_VALUE:~12,2%_%RETURN_VALUE:~15,3%"
+call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 
-set "SYNC_TEMP_FILE_DIR=%TEMP%\%?~n0%.%SYNC_DATE%.%SYNC_TIME%"
-set "SYNC_EXTERNALS_DIFF_LIST_FILE_TMP=%SYNC_TEMP_FILE_DIR%\$externals_diff.lst"
-set "EXTERNAL_INFO_FILE_TMP=%SYNC_TEMP_FILE_DIR%\$info.txt"
-
-rem create temporary files to store local context output
-if exist "%SYNC_TEMP_FILE_DIR%\" (
-  echo.%?~nx0%: error: temporary generated directory SYNC_TEMP_FILE_DIR already exist: "%SYNC_TEMP_FILE_DIR%"
-  exit /b 10
-) >&2
-
-mkdir "%SYNC_TEMP_FILE_DIR%" || (
-  echo.%?~nx0%: error: could not create temporary diretory: "%SYNC_TEMP_FILE_DIR%"
-  exit /b 11
-) >&2
+set "SYNC_EXTERNALS_DIFF_LIST_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$externals_diff.lst"
+set "EXTERNAL_INFO_FILE_TMP=%SCRIPT_TEMP_CURRENT_DIR%\$info.txt"
 
 call :MAIN
 set LASTERROR=%ERRORLEVEL%
 
 rem cleanup temporary files
-rmdir /S /Q "%SYNC_TEMP_FILE_DIR%"
+call "%%CONTOOLS_ROOT%%/std/free_temp_dir.bat"
 
 exit /b %LASTERROR%
 
