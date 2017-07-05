@@ -37,7 +37,13 @@ set LASTERROR=%ERRORLEVEL%
 rem cleanup temporary files
 call "%%CONTOOLS_ROOT%%/std/free_temp_dir.bat"
 
-exit /b %LASTERROR%
+(
+  endlocal
+  rem restore chcp variables
+  set "CURRENT_CP=%CURRENT_CP%"
+  set "LAST_CP=%LAST_CP%"
+  exit /b %LASTERROR%
+)
 
 :MAIN
 rem script flags
