@@ -1024,7 +1024,7 @@ set HAS_TO_RESOLVE_ADD_FIRST_FILE=1
 set HAS_TO_RESOLVE_REMOVE_FIRST_FILE=1
 
 rem resolve binary differences by indexing difference file on unresolved state values
-call "%%CONTOOLS_ROOT%%/index_patch_file.bat" BRANCH_DIFF_FILE_INDEX "%%BRANCH_DIFF_FILE%%"
+call "%%CONTOOLS_ROOT%%/diff/index_patch_file.bat" BRANCH_DIFF_FILE_INDEX "%%BRANCH_DIFF_FILE%%"
 
 if %RETURN_VALUE% LSS 1 exit /b 0
 for /L %%i in (1,1,%RETURN_VALUE%) do (
