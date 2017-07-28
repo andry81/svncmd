@@ -41,7 +41,7 @@ if not exist "%DOWNSTREAM_SVN_CHANGESET%" (
 )
 
 rem Drop last error level
-cd .
+type nul>nul
 
 call "%%~dp0__init__.bat" || goto :EOF
 

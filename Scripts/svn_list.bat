@@ -14,7 +14,7 @@ rem TODO:
 rem 1. offline mode w/ or w/o -R
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 

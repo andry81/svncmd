@@ -35,7 +35,7 @@ rem Examples:
 rem 1. call print_svn_changesets_diff_lst.bat svn_changesets_diff.lst
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 

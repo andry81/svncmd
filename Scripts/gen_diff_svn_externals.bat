@@ -38,7 +38,7 @@ rem 1. call gen_diff_svn_workingset.bat svn_extenals1.lst svn_workingset2.lst sv
 rem    type svn_workingset_changeset.lst
 
 rem Drop last error level
-cd .
+type nul>nul
 
 rem enable delayed expansion to speed overall code iterations
 setlocal ENABLEDELAYEDEXPANSION

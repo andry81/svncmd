@@ -7,7 +7,7 @@ rem   Generate externals CSV list from workingset file.
 rem
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 

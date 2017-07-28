@@ -58,7 +58,7 @@ rem    of the same repository. So script currenly does not resolve such infinite
 rem    recursion (even if the -R flag is not set).
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 
@@ -964,6 +964,6 @@ exit /b 0
 :CMD
 echo.^>%*
 rem Drop last error code
-cd .
+type nul>nul
 (%*)
 exit /b

@@ -41,7 +41,7 @@ rem Drop return value
 set "RETURN_VALUE="
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 

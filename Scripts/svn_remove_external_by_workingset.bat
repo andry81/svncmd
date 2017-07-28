@@ -10,7 +10,7 @@ rem Examples:
 rem 1. call svn_remove_external_by_workingset.bat branch/current branch_workingset.lst ./proj1 proj1_subdir ext_path 1 1
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 
@@ -344,6 +344,6 @@ exit /b 0
 :CMD
 echo.^>%*
 rem Drop last error code
-cd .
+type nul>nul
 (%*)
 exit /b

@@ -13,7 +13,7 @@ rem 2. pushd branch/current && ( call svn_externals_list.bat -offline . > extern
 rem 3. pushd branch/current && ( call svn_externals_list.bat -offline > externals.lst & popd )
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 
