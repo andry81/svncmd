@@ -7,7 +7,7 @@ rem   Generate externals CSV list from dumped svn:externals file.
 rem
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 

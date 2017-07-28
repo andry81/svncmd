@@ -19,7 +19,7 @@ rem    type current_root_status.txt
 rem    type current_all_status.txt
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 

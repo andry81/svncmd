@@ -27,7 +27,7 @@ rem    rem RETURN_VALUE=https:
 set "RETURN_VALUE="
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 

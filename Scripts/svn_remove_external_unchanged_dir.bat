@@ -16,7 +16,7 @@ rem Examples:
 rem 1. call svn_remove_external_unchanged_dir.bat branch/current/proj1 proj1_subdir ext_dir
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 
@@ -161,6 +161,6 @@ exit /b 1
 :CMD
 echo.^>%*
 rem Drop last error code
-cd .
+type nul>nul
 (%*)
 exit /b

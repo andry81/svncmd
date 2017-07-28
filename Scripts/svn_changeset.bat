@@ -29,7 +29,7 @@ rem 9. rem Read none 66 revision files including empty revision number.
 rem    pushd "..." && ( call svn_changeset.bat -r !66- > files.lst & popd )
 
 rem Drop last error level
-cd .
+type nul>nul
 
 setlocal
 
