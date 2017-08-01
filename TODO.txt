@@ -51,18 +51,26 @@ Specific test cases:
 
     Result: the file file1.txt should not be left uncommitted
 
-  2. SCV repo structure:
+  2. SVN repo structure:
     /Y/A
-    /Y/A/B
+    /Y/A/V/B
 
     WC structure of externals in the directory X:
     A -> /Y/A
-    B -> /Y/A/B
+    B -> /Y/A/V/B
 
     The operations set to test:
-    1. change external B from /Y/A/B to /Y/B
-    2. Physically (w/o svn command) rename or remove the /Y/B directory (created by external update)
-    3. move and rename directory /Y/A/B to /Y/B
-    4. Commit changes as revision Z
+    1. change external B from /Y/A/V/B to /Y/B for the directory X
+    2. physically (w/o svn command) rename or remove the /X/B directory (created by external update)
+    3. svn move+rename directory /X/A/V/B to /X/B
+    4. remove WC directory /X/A/V as left behind empty after svn move+rename
+    5. Commit changes as revision Z
+    6. update to the head
+    7. update to the Z-1 revision
+    8. update to the head again
 
-    Result: The WC versioned directory structure in revion Z must be the save as in the revision Z-1, except the /X/B is taken externally w/o intermediate path /A/
+    The SVN repo structure in the revision Z:
+    /Y/A
+    /Y/B
+
+    Result: The WC versioned directory structure in revion Z must be the same as in the revision Z-1, except the /X/B is taken externally w/o intermediate path A/V
