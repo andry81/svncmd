@@ -52,25 +52,37 @@ Specific test cases:
     Result: the file file1.txt should not be left uncommitted
 
   2. SVN repo structure:
-    /Y/A
-    /Y/A/V/B
+    /EXT/A
+    /EXT/B
+
+    /ROOT
+    /ROOT/V/B
 
     WC structure of externals in the directory X:
-    A -> /Y/A
-    B -> /Y/A/V/B
+    A -> /ROOT
+    B -> /ROOT/V/B
 
     The operations set to test:
-    1. change external B from /Y/A/V/B to /Y/B for the directory X
-    2. physically (w/o svn command) rename or remove the /X/B directory (created by external update)
-    3. svn move+rename directory /X/A/V/B to /X/B
-    4. remove WC directory /X/A/V as left behind empty after svn move+rename
+    1. move content of the /ROOT into /ROOT/A
+    2. move and rename directory /ROOT/A/V/B to /ROOT/B
+    3. change external A from /ROOT to /ROOT/A for the directory X
+    4. change external B from /ROOT/V/B to /ROOT/B for the directory X
+    5. rename or remove the /X/B directory (created by external update)
+    4. remove directory /ROOT/A/V as left behind empty after svn move and rename
     5. Commit changes as revision Z
     6. update to the head
     7. update to the Z-1 revision
     8. update to the head again
 
     The SVN repo structure in the revision Z:
-    /Y/A
-    /Y/B
+    /EXT/A
+    /EXT/B
+
+    /ROOT/A
+    /ROOT/B
+
+    WC structure of externals in the directory X:
+    A -> /ROOT/A
+    B -> /ROOT/B
 
     Result: The WC versioned directory structure in revion Z must be the same as in the revision Z-1, except the /X/B is taken externally w/o intermediate path A/V
