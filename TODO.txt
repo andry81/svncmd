@@ -46,3 +46,6 @@ SVN buggy operations:
     3. commit
     4. file file1.txt left uncommitted
 so on...
+
+Add:
+  - svn_rebase.bat script as addition to the svn relocate command. This will be offline command with direct access to the wc.db sqlite database file to change the repos_path by base path mask to new base path.
