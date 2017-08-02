@@ -11,7 +11,7 @@ rem 2. pushd branch/current && ( call svn_list.bat -offline . > files.lst & popd
 rem 3. pushd branch/current && ( call svn_list.bat -offline > files.lst & popd )
 
 rem TODO:
-rem 1. offline mode w/ or w/o -R
+rem 1. offline mode w/ or w/o -R (recursion)
 
 rem Drop last error level
 type nul>nul

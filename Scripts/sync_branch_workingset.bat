@@ -26,6 +26,10 @@ rem  -ac - auto cleanup all branches before relocate/revert/update to mainly rem
 rem  -ar - auto revert any branch changes.
 rem  -arloc - auto relocate to URL from workingset if previous URL is different (repository location + in repository relative path change).
 
+rem TODO:
+rem  -arldir - auto relocate in repository directory path (with online checks by default)
+rem  -offline - suppress online interference
+
 rem Examples:
 rem 1. call sync_branch_workingset.bat -R branch/current root_info.txt root_diff.patch root_externals.lst workingset.lst workingset
 rem    svn info branch/current > root_info_synced.txt
