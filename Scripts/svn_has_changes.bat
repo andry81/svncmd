@@ -7,7 +7,7 @@ rem   Script do filter SVN status for changed versioned items or unversioned
 rem   items.
 
 rem Flags:
-rem  -r - process externals recursively.
+rem  -R - process externals recursively.
 rem  -stat-exclude-? - exclude status lines for items not under version
 rem     control (? prefixed) from "svn status" output.
 rem  -stat-include-X - include status lines for unversioned directories created
@@ -63,7 +63,7 @@ if not "%FLAG%" == "" (
     set FLAG_SVN_STATUS_INCLUDE_X=1
     set "FLAG_TEXT_SVN_STATUS_INCLUDE_X=X"
     set "FLAG_TEXT_SVN_STATUS_EXCLUDE_X="
-  ) else if "%FLAG%" == "-r" (
+  ) else if "%FLAG%" == "-R" (
     set FLAG_SVN_EXTERNALS_RECURSIVE=1
     set "FLAG_TEXT_SVN_IGNORE_EXTERNALS="
   ) else if "%FLAG%" == "-stat-exclude-versioned" (

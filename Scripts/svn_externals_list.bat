@@ -24,6 +24,7 @@ call "%%~dp0__init__.bat" || goto :EOF
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
 set "?~dp0=%~dp0"
+set "?~dpf0=%~dpf0"
 
 call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 
@@ -47,7 +48,11 @@ call "%%CONTOOLS_ROOT%%/std/free_temp_dir.bat"
 
 :MAIN
 rem script flags
+set FLAG_RECURSIVE=0
+set FLAG_PREFIX_PATH=0
+set "FLAG_TEXT_PREFIX_PATH="
 set FLAG_OFFLINE=0
+set "FLAG_TEXT_OFFLINE="
 set FLAG_WCROOT=0
 set FLAG_NO_URI_TRANSFORM=0
 set "FLAG_TEXT_NO_URI_TRANSFORM="
@@ -67,6 +72,7 @@ if not "%FLAG:~0,1%" == "-" set "FLAG="
 if not "%FLAG%" == "" (
   if "%FLAG%" == "-offline" (
     set FLAG_OFFLINE=1
+    set "FLAG_TEXT_OFFLINE= -offline"
   ) else if "%FLAG%" == "-wcroot" (
     set FLAG_WCROOT=1
     set "FLAG_TEXT_WCROOT=%~2"
@@ -78,6 +84,12 @@ if not "%FLAG%" == "" (
   ) else if "%FLAG%" == "-l" (
     set FLAG_LOCAL_PATHS_ONLY=1
     set "FLAG_TEXT_LOCAL_PATHS_ONLY= -l"
+  ) else if "%FLAG%" == "-R" (
+    set FLAG_RECURSIVE=1
+  ) else if "%FLAG%" == "-prefix_path" (
+    set FLAG_PREFIX_PATH=1
+    set "FLAG_TEXT_PREFIX_PATH=%~2"
+    shift
   ) else (
     echo.%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
@@ -166,6 +178,28 @@ if /i not "%WCROOT_PATH%" == "%CD%" (
 )
 
 :IMPL
+rem self recursion check
+if "%WCROOT_EXTERNALS%" == "" (
+  set WCROOT_EXTERNALS=1
+) else if %WCROOT_EXTERNALS%0 NEQ 0 (
+  set WCROOT_EXTERNALS=0
+)
+
+set "PREFIX_PATH=%FLAG_TEXT_PREFIX_PATH%"
+if "%PREFIX_PATH%" == "" set "PREFIX_PATH=."
+
+set "PREFIX_PATH_PREFIX=%FLAG_TEXT_PREFIX_PATH%"
+
+if "%PREFIX_PATH_PREFIX%" == "." set "PREFIX_PATH_PREFIX="
+
+if not "%PREFIX_PATH_PREFIX%" == "" set "PREFIX_PATH_PREFIX=%PREFIX_PATH_PREFIX:\=/%"
+
+if not "%PREFIX_PATH_PREFIX%" == "" (
+  if not "/" == "%PREFIX_PATH_PREFIX:~-1%" (
+    set "PREFIX_PATH_PREFIX=%PREFIX_PATH_PREFIX%/"
+  )
+)
+
 if %FLAG_OFFLINE% EQU 0 goto IGNORE_WC_DB
 
 rem check on supported wc.db user version
@@ -192,7 +226,29 @@ if not "%BRANCH_REL_SUB_PATH%" == "" (
 
 set "SQLINE_EXP_EXTERNALS_LIST=select%SQLITE_EXP_SELECT_FIRST_FILTER% from externals where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER%"
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%"
+if %FLAG_RECURSIVE% EQU 0 (
+  call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%"
+  exit /b
+)
+
+rem make recursion
+call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%" > "%EXTERNALS_LIST_FILE_TMP%"
+
+for /F "usebackq eol=	 tokens=* delims=" %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
+  set "LOCAL_PATH=%%i"
+  call :PROCESS_LOCAL_EXTERNAL_RECORD || goto :EOF
+)
+
+exit /b 0
+
+:PROCESS_LOCAL_EXTERNAL_RECORD
+set "LOCAL_PREFIX_PATH=%PREFIX_PATH_PREFIX%%LOCAL_PATH%"
+if "/" == "%LOCAL_PREFIX_PATH:~-1%" set "LOCAL_PREFIX_PATH=%LOCAL_PREFIX_PATH:~0,-1%"
+
+rem special form of the echo command to ignore special characters in the echo value.
+for /F "eol=	 tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PATH%") do (echo.%%i)
+
+call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%% -l -prefix_path "%%LOCAL_PREFIX_PATH%%" "%%LOCAL_PATH%%"
 
 exit /b
 
@@ -231,8 +287,26 @@ if "%REPOROOT%" == "" (
 set "REPOPATH=%REPOROOT%"
 if not "%REPO_RELPATH%" == "" set "REPOPATH=%REPOPATH%/%REPO_RELPATH%"
 
+set "LOCAL_PREFIX_SUFFIX=%LOCAL_PREFIX%"
+if "%LOCAL_PREFIX_SUFFIX%" == "." ^
+if not "%PREFIX_PATH_PREFIX%" == "" (
+  set "LOCAL_PREFIX_SUFFIX="
+  if "/" == "%PREFIX_PATH_PREFIX:~-1%" (
+    set "PREFIX_PATH_PREFIX=%PREFIX_PATH_PREFIX:~0,-1%"
+  )
+)
+
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "eol=	 tokens=* delims=" %%i in ("%LOCAL_PREFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
+for /F "eol=	 tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
+
+if %FLAG_RECURSIVE% EQU 0 exit /b
+
+rem make recursion
+if not "%LOCAL_PREFIX%" == "." (
+  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%LOCAL_PREFIX%%/%%EXTERNAL_PATH%%" "%%LOCAL_PREFIX%%/%%EXTERNAL_PATH%%"
+) else (
+  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%EXTERNAL_PATH%%" "%%EXTERNAL_PATH%%"
+)
 
 exit /b
 
@@ -267,10 +341,58 @@ if "%BRANCH_REPO_ROOT%" == "" (
 
 :IGNORE_URI_TRANSFORM
 rem from externals
-svn pget svn:externals . -R --non-interactive > "%EXTERNALS_FILE_TMP%" || exit /b 228
+svn pget svn:externals . -R --non-interactive > "%EXTERNALS_FILE_TMP%" || exit /b 247
 
 set "CMD_LINE_PREFIX_PATH="
+
+rem ignore prefix path in recursion
+if %WCROOT_EXTERNALS% EQU 0 ^
 if not "%BRANCH_REL_SUB_PATH%" == "" set CMD_LINE_PREFIX_PATH= -prefix_path "%BRANCH_REL_SUB_PATH%"
 
-rem convert externals into CSV list
-call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat"%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%%%%CMD_LINE_PREFIX_PATH%% "%%EXTERNALS_FILE_TMP%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" || exit /b 245
+if %FLAG_RECURSIVE% EQU 0 (
+  rem convert externals into CSV list
+  call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat"%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%%%%CMD_LINE_PREFIX_PATH%% "%%EXTERNALS_FILE_TMP%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" || exit /b 246
+  exit /b 0
+)
+
+rem make recursion
+call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat"%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%%%%CMD_LINE_PREFIX_PATH%% "%%EXTERNALS_FILE_TMP%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" > "%EXTERNALS_LIST_FILE_TMP%" || exit /b 245
+
+for /F "usebackq eol=	 tokens=1,2,3,4,5 delims=|" %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
+  set "LOCAL_PREFIX=%%i"
+  set "EXTERNAL_PATH=%%j"
+  set "OPERATIVE_REV=%%k"
+  set "PEG_REV=%%l"
+  set "REPOPATH=%%m"
+  call :PROCESS_PGET_EXTERNAL_RECORD || goto :EOF
+)
+
+exit /b 0
+
+:PROCESS_PGET_EXTERNAL_RECORD
+set "LOCAL_PREFIX_SUFFIX=%LOCAL_PREFIX%"
+if "%LOCAL_PREFIX_SUFFIX%" == "." ^
+if not "%PREFIX_PATH_PREFIX%" == "" (
+  set "LOCAL_PREFIX_SUFFIX="
+  if "/" == "%PREFIX_PATH_PREFIX:~-1%" (
+    set "PREFIX_PATH_PREFIX=%PREFIX_PATH_PREFIX:~0,-1%"
+  )
+)
+
+if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 (
+  rem special form of the echo command to ignore special characters in the echo value.
+  for /F "eol=	 tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%") do (echo.%%i)
+) else (
+  rem special form of the echo command to ignore special characters in the echo value.
+  for /F "eol=	 tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
+)
+
+set "EXTERNAL_PATH_SUFFIX=%EXTERNAL_PATH%"
+
+rem make recursion
+if not "%LOCAL_PREFIX%" == "." (
+  if not "%EXTERNAL_PATH_SUFFIX%" == "" set "EXTERNAL_PATH_SUFFIX=/%EXTERNAL_PATH_SUFFIX%"
+  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%LOCAL_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%" "%%LOCAL_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%"
+) else (
+  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%" "%%EXTERNAL_PATH%%"
+)
