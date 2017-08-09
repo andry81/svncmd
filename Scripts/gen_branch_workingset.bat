@@ -102,10 +102,10 @@ set FLAG_FINDSTR_HAS_EXCLUDES=0
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-offline" (
     set FLAG_SVN_OFFLINE=1
     set "FLAG_TEXT_SVN_OFFLINE=-offline"
@@ -181,7 +181,7 @@ set "BRANCH_ROOT_ALLFILES_HASH_FILE=%~dpf7"
 set "BRANCH_ROOT_STATUS_FILE=%~dpf8"
 set "BRANCH_ROOT_ALLSTATUS_FILE=%~dpf9"
 
-if "%SVN_BRANCH_URI%" == "" (
+if not defined SVN_BRANCH_URI (
   echo.%?~nx0%: error: SVN_BRANCH_URI is not set.
   exit /b 1
 ) >&2
@@ -252,7 +252,7 @@ if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
 
 rem SVN_BRANCH_WCROOT_PATH must be base for the SVN_BRANCH_PATH, will be tested inside svn_changeset.bat/svn_list.bat scripts
 if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 set "SVN_BRANCH_WCROOT_PATH=%RETURN_VALUE%"
-if not "%SVN_BRANCH_WCROOT_PATH%" == "" set "SVN_BRANCH_WCROOT_PATH=%SVN_BRANCH_WCROOT_PATH:\=/%"
+if defined SVN_BRANCH_WCROOT_PATH set "SVN_BRANCH_WCROOT_PATH=%SVN_BRANCH_WCROOT_PATH:\=/%"
 
 rem Is branch URI is a local repo URL?
 set SVN_BRANCH_PATH_IS_LOCAL_REPO_URL=0
@@ -294,7 +294,7 @@ if not exist "%BRANCH_WORKINGSET_FILE_DIR%" (
   exit /b 10
 ) >&2
 
-if "%BRANCH_WORKINGSET_FILE%" == "" (
+if not defined BRANCH_WORKINGSET_FILE (
   echo.%?~nx0%: error: SVN branch workingset file is not set.
   exit /b 11
 ) >&2
@@ -307,7 +307,7 @@ if %SVN_BRANCH_PATH_IS_WC_URL% EQU 0 (
     exit /b 12
   ) >&2
 
-  if "%BRANCH_ROOT_ALLSTATUS_FILE%" == "" if "%BRANCH_ROOT_STATUS_FILE%" == "" (
+  if not defined BRANCH_ROOT_ALLSTATUS_FILE if not defined BRANCH_ROOT_STATUS_FILE (
     echo.%?~nx0%: error: at least one file path must be defined to generate SVN status information.
     exit /b 13
   ) >&2
@@ -364,7 +364,7 @@ for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /S /B /A:D "*.svn" 2^>nul`
   call :BRANCH_SUB_PATH "%%SVN_BRANCH_SUB_PATH%%\.." || goto :EOF
 )
 
-if "%SVN_BRANCH_SUB_PATH_LAST%" == "" (
+if not defined SVN_BRANCH_SUB_PATH_LAST (
   echo.%?~nx0%: warning: SVN version control directories is not found: "%SVN_BRANCH_CANONICAL_PATH%".
   exit /b -1
 ) >&2
@@ -378,11 +378,11 @@ exit /b 0
 :BRANCH_SUB_PATH
 set "SVN_BRANCH_SUB_PATH=%~dpf1"
 
-if "%SVN_BRANCH_SUB_PATH_LAST%" == "" goto BRANCH_SUB_PATH_VALID
+if not defined SVN_BRANCH_SUB_PATH_LAST goto BRANCH_SUB_PATH_VALID
 
 call set "SVN_BRANCH_SUB_PATH_LAST_SUFFIX=%%SVN_BRANCH_SUB_PATH:%SVN_BRANCH_SUB_PATH_LAST%=%%"
 rem ignore duplication and recursion
-if "%SVN_BRANCH_SUB_PATH_LAST_SUFFIX%" == "" exit /b 0
+if not defined SVN_BRANCH_SUB_PATH_LAST_SUFFIX exit /b 0
 if "%SVN_BRANCH_SUB_PATH_LAST_SUFFIX:~0,1%" == "\" exit /b 0
 
 :BRANCH_SUB_PATH_VALID
@@ -398,7 +398,7 @@ set "SVN_BRANCH_WCROOT_PATH=%SVN_BRANCH_SUB_PATH%"
 
 rem test path on consistency
 call set "SVN_BRANCH_REL_SUB_PATH=%%SVN_BRANCH_SUB_PATH:%CD%=%%"
-if not "%SVN_BRANCH_REL_SUB_PATH%" == "" (
+if defined SVN_BRANCH_REL_SUB_PATH (
   if "%SVN_BRANCH_REL_SUB_PATH:~0,1%" == "\" set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:~1%"
 ) else (
   echo.%?~nx0%: error: SVN branch path should not be a current directory here: SVN_BRANCH_SUB_PATH="%SVN_BRANCH_SUB_PATH%" CD="%CD:\=/%".
@@ -411,7 +411,7 @@ if /i not "%CD%\%SVN_BRANCH_REL_SUB_PATH%" == "%SVN_BRANCH_SUB_PATH%" (
   exit /b 17
 ) >&2
 
-if not "%SVN_BRANCH_REL_SUB_PATH%" == "" set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:\=/%"
+if defined SVN_BRANCH_REL_SUB_PATH set "SVN_BRANCH_REL_SUB_PATH=%SVN_BRANCH_REL_SUB_PATH:\=/%"
 
 set "BRANCH_WORKINGSET_CATALOG_DIR=%BRANCH_WORKINGSET_CATALOG_DIR%\%SVN_BRANCH_REL_SUB_PATH:/=--%"
 set "BRANCH_ROOT_INFO_FILE=%BRANCH_WORKINGSET_CATALOG_DIR%\$info.txt"
@@ -477,7 +477,7 @@ if %FLAG_SVN_DIFF_RA% NEQ 0 set "BRANCH_ROOT_LAST_REV=%RETURN_VALUE%"
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_ROOT_INFO_FILE%%" "Revision"
 set "BRANCH_ROOT_CURRENT_REV=%RETURN_VALUE%"
-if "%BRANCH_ROOT_CURRENT_REV%" == "" (
+if not defined BRANCH_ROOT_CURRENT_REV (
   echo.%?~nx0%: error: `Revision` property is not found in SVN info file: "%BRANCH_ROOT_INFO_FILE%".
   exit /b 23
 ) >&2
@@ -551,7 +551,7 @@ if not exist "%BRANCH_ROOT_EXTERNALS_FILE%" (
   exit /b 29
 ) >&2
 
-if "%BRANCH_WORKINGSET_CATALOG_DIR%" == "" (
+if not defined BRANCH_WORKINGSET_CATALOG_DIR (
   echo.%?~nx0%: error: BRANCH_WORKINGSET_CATALOG_DIR is not set, workingset won't be generated.
   exit /b 30
 ) >&2
@@ -580,7 +580,7 @@ if %FLAG_SVN_LIST_FILES% NEQ 0 (
     svn ls "%SVN_BRANCH_CANONICAL_PATH%" --depth infinity --non-interactive > "%BRANCH_ROOT_FILES_FILE%" 2>nul
   )
 
-  if not "%BRANCH_EXTERNAL_BASE_PATH%" == "" (
+  if defined BRANCH_EXTERNAL_BASE_PATH (
     type "%BRANCH_ROOT_FILES_FILE%" | "%GNUWIN32_ROOT%/bin/sed.exe" -e "s|^|%BRANCH_EXTERNAL_BASE_PATH%/|" >> "%BRANCH_ROOT_ALLFILES_FILE%"
   ) else (
     type "%BRANCH_ROOT_FILES_FILE%" >> "%BRANCH_ROOT_ALLFILES_FILE%"
@@ -608,7 +608,7 @@ if %SVN_BRANCH_PATH_IS_WC_URL% EQU 0 (
   rem always create an empty file
   type nul > "%BRANCH_ROOT_ALLSTATUS_FILE%"
 
-  if not "%BRANCH_ROOT_ALLSTATUS_FILE%" == "" (
+  if defined BRANCH_ROOT_ALLSTATUS_FILE (
     rem set a current directory for "svn status" command to reduce path lengths in output
     pushd "%SVN_BRANCH_PATH%" && (
       if %FLAG_FINDSTR_HAS_EXCLUDES% EQU 0 (
@@ -623,7 +623,7 @@ if %SVN_BRANCH_PATH_IS_WC_URL% EQU 0 (
   rem always create an empty file
   type nul > "%BRANCH_ROOT_STATUS_FILE%"
 
-  if not "%BRANCH_ROOT_STATUS_FILE%" == "" (
+  if defined BRANCH_ROOT_STATUS_FILE (
     rem set a current directory for "svn status" command to reduce path lengths in output
     pushd "%SVN_BRANCH_PATH%" && (
       if %FLAG_FINDSTR_HAS_EXCLUDES% EQU 0 (
@@ -699,14 +699,14 @@ set "BRANCH_EXTERNAL_DIR_PATH_PREFIX="
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "URL"
 set "BRANCH_DIR_URL=%RETURN_VALUE%"
-if "%BRANCH_DIR_URL%" == "" (
+if not defined BRANCH_DIR_URL (
   echo.%?~nx0%: error: `URL` property is not found in SVN info file: "%BRANCH_INFO_FILE%".
   exit /b 40
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "Repository Root"
 set "BRANCH_REPO_ROOT=%RETURN_VALUE%"
-if "%BRANCH_REPO_ROOT%" == "" (
+if not defined BRANCH_REPO_ROOT (
   echo.%?~nx0%: error: `Repository Root` property is not found in SVN info file: "%BRANCH_INFO_FILE%".
   exit /b 41
 ) >&2
@@ -721,21 +721,21 @@ goto EXTRACT_ROOT_EXTERNALS_IMPL
 :PROCESS_ROOT_BRANCH_PATH
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_ROOT_INFO_FILE%%" "Revision"
 set "BRANCH_EXTERNAL_CURRENT_REV=%RETURN_VALUE%"
-if "%BRANCH_EXTERNAL_CURRENT_REV%" == "" (
+if not defined BRANCH_EXTERNAL_CURRENT_REV (
   echo.%?~nx0%: error: `Revision` property is not found in SVN info file: "%BRANCH_ROOT_INFO_FILE%".
   exit /b 42
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_ROOT_INFO_FILE%%" "Last Changed Rev"
 set "BRANCH_EXTERNAL_LAST_REV=%RETURN_VALUE%"
-if "%BRANCH_EXTERNAL_LAST_REV%" == "" (
+if not defined BRANCH_EXTERNAL_LAST_REV (
   echo.%?~nx0%: error: `Last Changed Rev` property is not found in SVN info file: "%BRANCH_ROOT_INFO_FILE%".
   exit /b 43
 ) >&2
 
 rem use svnversion utility output instead of current revision if have any, because more informative
 set "BRANCH_EXTERNAL_CURRENT_REV_VERID_STR=%BRANCH_EXTERNAL_CURRENT_REV%"
-if not "%BRANCH_VERID%" == "" set "BRANCH_EXTERNAL_CURRENT_REV_VERID_STR=%BRANCH_VERID%"
+if defined BRANCH_VERID set "BRANCH_EXTERNAL_CURRENT_REV_VERID_STR=%BRANCH_VERID%"
 
 (echo.%BRANCH_EXTERNAL_CURRENT_REV%^|%BRANCH_EXTERNAL_LAST_REV%^|%BRANCH_EXTERNAL_CURRENT_REV_VERID_STR%^|%BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH%^|%BRANCH_DIR_URL%^|0^|0)>> "%BRANCH_WORKINGSET_FILE%"
 echo.%BRANCH_EXTERNAL_CURRENT_REV%^|%BRANCH_EXTERNAL_LAST_REV%^|%BRANCH_EXTERNAL_CURRENT_REV_VERID_STR%^|%BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH%^|%BRANCH_DIR_URL%^|0^|0
@@ -747,12 +747,12 @@ setlocal
 
 set /A BRANCH_NEST_INDEX+=1
 
-if not "%BRANCH_EXTERNAL_BASE_PATH%" == "" (
+if defined BRANCH_EXTERNAL_BASE_PATH (
   set "BRANCH_EXTERNAL_BASE_PATH=%BRANCH_EXTERNAL_BASE_PATH%/%BRANCH_EXTERNAL_DIR_PATH%"
 ) else (
   set "BRANCH_EXTERNAL_BASE_PATH=%BRANCH_EXTERNAL_DIR_PATH%"
 )
-if not "%BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH%" == "" (
+if defined BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH (
   set "BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH=%BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH%:%BRANCH_WORKINGSET_CATALOG_DIR_PATH%"
 ) else (
   set "BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH=%BRANCH_WORKINGSET_CATALOG_DIR_PATH%"
@@ -783,26 +783,26 @@ if "%BRANCH_EXTERNAL_URI_REV_PEG%" == "-" set "BRANCH_EXTERNAL_URI_REV_PEG="
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "Path"
 set "BRANCH_WORKING_PATH=%RETURN_VALUE%"
-if "%BRANCH_WORKING_PATH%" == "" (
+if not defined BRANCH_WORKING_PATH (
   echo.%?~nx0%: error: `Path` property is not found in SVN info file: "%BRANCH_INFO_FILE%".
   exit /b 44
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "URL"
 set "BRANCH_DIR_URL=%RETURN_VALUE%"
-if "%BRANCH_DIR_URL%" == "" (
+if not defined BRANCH_DIR_URL (
   echo.%?~nx0%: error: `URL` property is not found in SVN info file: "%BRANCH_INFO_FILE%".
   exit /b 45
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "Repository Root"
 set "BRANCH_REPO_ROOT=%RETURN_VALUE%"
-if "%BRANCH_REPO_ROOT%" == "" (
+if not defined BRANCH_REPO_ROOT (
   echo.%?~nx0%: error: `Repository Root` property is not found in SVN info file: "%BRANCH_INFO_FILE%".
   exit /b 46
 ) >&2
 
-if "%BRANCH_EXTERNAL_DIR_PATH_PREFIX%" == "" goto BRANCH_EXTERNAL_DIR_PATH_PREFIX_EMPTY
+if not defined BRANCH_EXTERNAL_DIR_PATH_PREFIX goto BRANCH_EXTERNAL_DIR_PATH_PREFIX_EMPTY
 
 rem remove root URL from BRANCH_EXTERNAL_DIR_PATH_PREFIX if SVN_BRANCH_URI is canonical
 
@@ -815,7 +815,7 @@ if "%BRANCH_DIR_URL%%BRANCH_EXTERNAL_DIR_PATH_PREFIX_SUFFIX%" == "%BRANCH_EXTERN
   set "BRANCH_EXTERNAL_DIR_PATH_PREFIX=%BRANCH_EXTERNAL_DIR_PATH_PREFIX_SUFFIX%"
 )
 
-if "%BRANCH_EXTERNAL_DIR_PATH_PREFIX%" == "" set BRANCH_EXTERNAL_DIR_PATH_PREFIX=.
+if not defined BRANCH_EXTERNAL_DIR_PATH_PREFIX set BRANCH_EXTERNAL_DIR_PATH_PREFIX=.
 if "%BRANCH_EXTERNAL_DIR_PATH_PREFIX:~0,1%" == "/" set "BRANCH_EXTERNAL_DIR_PATH_PREFIX=%BRANCH_EXTERNAL_DIR_PATH_PREFIX:~1%"
 
 :BRANCH_EXTERNAL_DIR_PATH_PREFIX_IS_WC_URL_END
@@ -884,14 +884,14 @@ if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_WORKINGSET_CATALOG_PATH%%/$info.txt" "Revision"
 set "BRANCH_EXTERNAL_CURRENT_REV=%RETURN_VALUE%"
-if "%BRANCH_EXTERNAL_CURRENT_REV%" == "" (
+if not defined BRANCH_EXTERNAL_CURRENT_REV (
   echo.%?~nx0%: error: `Revision` property is not found in SVN info file: "%BRANCH_WORKINGSET_CATALOG_PATH%/$info.txt".
   exit /b 48
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_WORKINGSET_CATALOG_PATH%%/$info.txt" "Last Changed Rev"
 set "BRANCH_EXTERNAL_LAST_REV=%RETURN_VALUE%"
-if "%BRANCH_EXTERNAL_LAST_REV%" == "" (
+if not defined BRANCH_EXTERNAL_LAST_REV (
   echo.%?~nx0%: error: `Last Changed Rev` property is not found in SVN info file: "%BRANCH_WORKINGSET_CATALOG_PATH%/$info.txt".
   exit /b 49
 ) >&2
@@ -958,7 +958,7 @@ if %FLAG_SVN_LIST_FILES% NEQ 0 (
   )
 
   set "BRANCH_EXTERNAL_DIR_PATH_PREFIX2="
-  if not "%BRANCH_EXTERNAL_BASE_PATH%" == "" set "BRANCH_EXTERNAL_DIR_PATH_PREFIX2=%BRANCH_EXTERNAL_BASE_PATH%/"
+  if defined BRANCH_EXTERNAL_BASE_PATH set "BRANCH_EXTERNAL_DIR_PATH_PREFIX2=%BRANCH_EXTERNAL_BASE_PATH%/"
 )
 
 if %FLAG_SVN_LIST_FILES% NEQ 0 (
@@ -982,14 +982,14 @@ if %SVN_BRANCH_PATH_IS_WC_URL% EQU 0 (
 )
 
 set "BRANCH_WORKINGSET_CATALOG_DIR_PATH_PREFIX="
-if not "%BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH%" == "" set "BRANCH_WORKINGSET_CATALOG_DIR_PATH_PREFIX=%BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH%:"
+if defined BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH set "BRANCH_WORKINGSET_CATALOG_DIR_PATH_PREFIX=%BRANCH_EXTERNAL_WORKINGSET_CATALOG_BASE_PATH%:"
 
 rem use svnversion utility output instead of current revision if have any, because more informative
 set "BRANCH_EXTERNAL_CURRENT_REV_VERID_STR=%BRANCH_EXTERNAL_CURRENT_REV%"
-if not "%BRANCH_VERID%" == "" set "BRANCH_EXTERNAL_CURRENT_REV_VERID_STR=%BRANCH_VERID%"
+if defined BRANCH_VERID set "BRANCH_EXTERNAL_CURRENT_REV_VERID_STR=%BRANCH_VERID%"
 
-if "%BRANCH_EXTERNAL_URI_REV_PEG%" == "" set BRANCH_EXTERNAL_URI_REV_PEG=-
-if "%BRANCH_EXTERNAL_URI_REV_OPERATIVE%" == "" set BRANCH_EXTERNAL_URI_REV_OPERATIVE=-
+if not defined BRANCH_EXTERNAL_URI_REV_PEG set BRANCH_EXTERNAL_URI_REV_PEG=-
+if not defined BRANCH_EXTERNAL_URI_REV_OPERATIVE set BRANCH_EXTERNAL_URI_REV_OPERATIVE=-
 
 (echo.%BRANCH_EXTERNAL_CURRENT_REV%^|%BRANCH_EXTERNAL_LAST_REV%^|%BRANCH_EXTERNAL_CURRENT_REV_VERID_STR%^|%BRANCH_WORKINGSET_CATALOG_DIR_PATH_PREFIX%%BRANCH_WORKINGSET_CATALOG_DIR_PATH%^|%BRANCH_EXTERNAL_URI%^|%BRANCH_EXTERNAL_URI_REV_PEG%^|%BRANCH_EXTERNAL_URI_REV_OPERATIVE%)>> "%BRANCH_WORKINGSET_FILE%"
 echo.%BRANCH_EXTERNAL_CURRENT_REV%^|%BRANCH_EXTERNAL_LAST_REV%^|%BRANCH_EXTERNAL_CURRENT_REV_VERID_STR%^|%BRANCH_WORKINGSET_CATALOG_DIR_PATH_PREFIX%%BRANCH_WORKINGSET_CATALOG_DIR_PATH%^|%BRANCH_EXTERNAL_URI%^|%BRANCH_EXTERNAL_URI_REV_PEG%^|%BRANCH_EXTERNAL_URI_REV_OPERATIVE%
@@ -1052,8 +1052,8 @@ call set "BRANCH_DIFF_FILE_INDEX_NODIFF=%%%BRANCH_DIFF_FILE_INDEX_VAR%.NODIFF%%"
 call set "BRANCH_DIFF_FILE_INDEX_NONEXISTENT_BEFORE=%%%BRANCH_DIFF_FILE_INDEX_VAR%.NONEXISTENT_BEFORE%%"
 call set "BRANCH_DIFF_FILE_INDEX_NONEXISTENT_AFTER=%%%BRANCH_DIFF_FILE_INDEX_VAR%.NONEXISTENT_AFTER%%"
 
-if "%BRANCH_DIFF_FILE_INDEX_NONEXISTENT_BEFORE%" == "" set BRANCH_DIFF_FILE_INDEX_NONEXISTENT_BEFORE=0
-if "%BRANCH_DIFF_FILE_INDEX_NONEXISTENT_AFTER%" == "" set BRANCH_DIFF_FILE_INDEX_NONEXISTENT_AFTER=0
+if not defined BRANCH_DIFF_FILE_INDEX_NONEXISTENT_BEFORE set BRANCH_DIFF_FILE_INDEX_NONEXISTENT_BEFORE=0
+if not defined BRANCH_DIFF_FILE_INDEX_NONEXISTENT_AFTER set BRANCH_DIFF_FILE_INDEX_NONEXISTENT_AFTER=0
 
 if %BRANCH_DIFF_FILE_INDEX_NONEXISTENT_AFTER% EQU 0 (
   if not exist "%BRANCH_DIFF_FILE_INDEX_FILE%" (

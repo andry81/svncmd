@@ -25,10 +25,10 @@ set FLAG_SVN_EXTERNALS_RECURSIVE=0
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-R" (
     set FLAG_SVN_EXTERNALS_RECURSIVE=1
     set "FLAG_SVN_EXTERNALS_PROPGET=-R"
@@ -45,7 +45,7 @@ if not "%FLAG%" == "" (
 set "BRANCH_WORKINGSET_FILE=%~dpf1"
 set "BRANCH_WORKINGSET_CATALOG_DIR=%~dpf2"
 
-if "%BRANCH_WORKINGSET_FILE%" == "" (
+if not defined BRANCH_WORKINGSET_FILE (
   echo.%?~nx0%: error: branch workingset file is not set.
   exit /b 1
 ) >&2
@@ -55,7 +55,7 @@ if not exist "%BRANCH_WORKINGSET_FILE%" (
   exit /b 2
 ) >&2
 
-if "%BRANCH_WORKINGSET_CATALOG_DIR%" == "" (
+if not defined BRANCH_WORKINGSET_CATALOG_DIR (
   echo.%?~nx0%: error: branch workingset catalog is not set.
   exit /b 3
 ) >&2
@@ -76,12 +76,12 @@ for /F "usebackq eol=# tokens=4,5,6,7 delims=|" %%i in ("%BRANCH_WORKINGSET_FILE
 exit /b 0
 
 :BRANCH_WORKINGSET_LINE
-if "%BRANCH_DECORATED_PATH%" == "" (
+if not defined BRANCH_DECORATED_PATH (
   echo.%?~nx0%: error: found empty branch path in workingset.
   exit /b 10
 ) >&2
 
-if "%BRANCH_URI%" == "" (
+if not defined BRANCH_URI (
   echo.%?~nx0%: error: found empty branch uri in workingset.
   exit /b 11
 ) >&2
@@ -123,7 +123,7 @@ if %BRANCH_DECORATED_PATH_SIZE% LSS 1 (
 set "BRANCH_EXTERNAL_DIR_PATH=%BRANCH_DECORATED_PATH_FILE%"
 if "%BRANCH_EXTERNAL_DIR_PATH:~0,1%" == "#" set "BRANCH_EXTERNAL_DIR_PATH=%BRANCH_EXTERNAL_DIR_PATH:~1%"
 
-if "%BRANCH_DECORATED_PATH_DIR%" == "" set BRANCH_DECORATED_PATH_DIR=.
+if not defined BRANCH_DECORATED_PATH_DIR set BRANCH_DECORATED_PATH_DIR=.
 set "BRANCH_EXTERNAL_DIR_PATH_PREFIX=%BRANCH_DECORATED_PATH_DIR::#=/%"
 set "BRANCH_EXTERNAL_DIR_PATH_PREFIX=%BRANCH_EXTERNAL_DIR_PATH_PREFIX::=/%"
 if "%BRANCH_EXTERNAL_DIR_PATH_PREFIX:~0,1%" == "#" set "BRANCH_EXTERNAL_DIR_PATH_PREFIX=%BRANCH_EXTERNAL_DIR_PATH_PREFIX:~1%"

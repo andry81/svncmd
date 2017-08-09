@@ -28,10 +28,10 @@ set "SVN_CMD_FLAG_ARGS="
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-r" (
     set SVN_CMD_FLAG_ARGS=%SVN_CMD_FLAG_ARGS%%1 %2
     shift
@@ -49,17 +49,17 @@ set "SVN_BASE_PATH=%~dpf1"
 set "SVN_URL_PATH=%~2"
 set "SVN_REF_PATH=%~3"
 
-if not "%SVN_BASE_PATH%" == "" set "SVN_BASE_PATH=%SVN_BASE_PATH:\=/%"
-if not "%SVN_URL_PATH%" == "" set "SVN_URL_PATH=%SVN_URL_PATH:\=/%"
-if not "%SVN_REF_PATH%" == "" set "SVN_REF_PATH=%SVN_REF_PATH:\=/%"
+if defined SVN_BASE_PATH set "SVN_BASE_PATH=%SVN_BASE_PATH:\=/%"
+if defined SVN_URL_PATH set "SVN_URL_PATH=%SVN_URL_PATH:\=/%"
+if defined SVN_REF_PATH set "SVN_REF_PATH=%SVN_REF_PATH:\=/%"
 
-if not "%SVN_URL_PATH%" == "" ^
+if defined SVN_URL_PATH ^
 if "%SVN_URL_PATH:~-1%" == "/" set "SVN_URL_PATH=%SVN_URL_PATH:~0,-1%"
 
 rem parse 3 arguments into 2: local path + svn url
 set "SVN_UP_DIR=%SVN_BASE_PATH%"
 
-if not "%SVN_REF_PATH%" == "" goto SVN_REF_PATH_NOT_EMPTY
+if defined SVN_REF_PATH goto SVN_REF_PATH_NOT_EMPTY
 goto SVN_REF_PATH_EMPTY
 
 :SVN_REF_PATH_NOT_EMPTY
@@ -67,8 +67,8 @@ set "SVN_UP_DIR=%SVN_UP_DIR%/%SVN_REF_PATH%"
 goto SVN_REF_PATH_END
 
 :SVN_REF_PATH_EMPTY
-if not "%SVN_URL_PATH%" == "" call :GET_URL_FILE_NAME "%%SVN_URL_PATH%%"
-if not "%SVN_URL_PATH%" == "" set "SVN_UP_DIR=%SVN_UP_DIR%/%URL_FILE_NAME%"
+if defined SVN_URL_PATH call :GET_URL_FILE_NAME "%%SVN_URL_PATH%%"
+if defined SVN_URL_PATH set "SVN_UP_DIR=%SVN_UP_DIR%/%URL_FILE_NAME%"
 
 :SVN_REF_PATH_END
 echo."%SVN_UP_DIR%" ^<- "%SVN_URL_PATH%" ^("%SVN_REF_PATH%"^)
@@ -97,9 +97,9 @@ set "SVN_URL_PATH_PREFIX=%RETURN_VALUE%"
 
 rem strip until empty
 :GET_URL_FILE_NAME_STRIP_LOOP
-if not "%SVN_URL_PATH_PREFIX%" == "" set "SVN_URL_PATH_SUFFIX=%SVN_URL_PATH_PREFIX:*/=%"
+if defined SVN_URL_PATH_PREFIX set "SVN_URL_PATH_SUFFIX=%SVN_URL_PATH_PREFIX:*/=%"
 
-if not "%SVN_URL_PATH_SUFFIX%" == "" ^
+if defined SVN_URL_PATH_SUFFIX ^
 if not "%SVN_URL_PATH_PREFIX%" == "%SVN_URL_PATH_SUFFIX%" (
   set "SVN_URL_PATH_PREFIX=%SVN_URL_PATH_SUFFIX%"
 

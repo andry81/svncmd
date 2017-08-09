@@ -31,10 +31,10 @@ set "BARE_FLAGS="
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-ignore_nested_externals_local_changes" (
     set FLAG_SVN_IGNORE_NESTED_EXTERNALS_LOCAL_CHANGES=1
     set BARE_FLAGS=%BARE_FLAGS% %1
@@ -62,7 +62,7 @@ set "EXTERNAL_DIR_PATH=%~5"
 set "REPOS_ID=%~6"
 set "WC_ID=%~7"
 
-if "%SYNC_BRANCH_PATH%" == "" goto NO_SYNC_BRANCH_PATH
+if not defined SYNC_BRANCH_PATH goto NO_SYNC_BRANCH_PATH
 if not exist "%SYNC_BRANCH_PATH%\" goto NO_SYNC_BRANCH_PATH
 
 goto NO_SYNC_BRANCH_PATH_END
@@ -73,7 +73,7 @@ goto NO_SYNC_BRANCH_PATH_END
 ) >&2
 :NO_SYNC_BRANCH_PATH_END
 
-if "%WORKINGSET_FILE%" == "" goto NO_WORKINGSET_FILE
+if not defined WORKINGSET_FILE goto NO_WORKINGSET_FILE
 if not exist "%WORKINGSET_FILE%" goto NO_WORKINGSET_FILE
 
 goto NO_WORKINGSET_FILE_END
@@ -84,7 +84,7 @@ goto NO_WORKINGSET_FILE_END
 ) >&2
 :NO_WORKINGSET_FILE_END
 
-if "%WCROOT_PATH%" == "" goto ERROR_WCROOT_PATH
+if not defined WCROOT_PATH goto ERROR_WCROOT_PATH
 if "%WCROOT_PATH:~1,1%" == ":" goto ERROR_WCROOT_PATH
 call :SET_WCROOT_PATH_ABS "%%SYNC_BRANCH_PATH_ABS%%/%%WCROOT_PATH%%"
 
@@ -120,8 +120,8 @@ if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
   set "EXTERNAL_BRANCH_PATH_ABS=%WCROOT_PATH_ABS:\=/%"
 )
 
-if "%EXTERNAL_DIR_PATH_PREFIX%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
-if "%EXTERNAL_DIR_PATH%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
+if not defined EXTERNAL_DIR_PATH_PREFIX goto ERROR_EXTERNAL_BRANCH_PATH
+if not defined EXTERNAL_DIR_PATH goto ERROR_EXTERNAL_BRANCH_PATH
 if not exist "%EXTERNAL_BRANCH_PATH_ABS%/.svn/wc.db" goto ERROR_EXTERNAL_BRANCH_PATH
 
 goto ERROR_EXTERNAL_BRANCH_PATH_END
@@ -132,12 +132,12 @@ goto ERROR_EXTERNAL_BRANCH_PATH_END
 ) >&2
 :ERROR_EXTERNAL_BRANCH_PATH_END
 
-if "%REPOS_ID%" == "" (
+if not defined REPOS_ID (
   echo.%?~nx0%: error: invalid REPOS_ID: REPOS_ID="%REPOS_ID%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 5
 ) >&2
 
-if "%WC_ID%" == "" (
+if not defined WC_ID (
   echo.%?~nx0%: error: invalid WC_ID: WC_ID="%WC_ID%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 6
 ) >&2
@@ -190,7 +190,7 @@ rem use the base revision externals list.
 
 set "WORKINGSET_BRANCH_CURRENT_REV_FOUND="
 set "WORKINGSET_BRANCH_URI_FOUND="
-if "%WORKINGSET_FILE%" == "" goto IGNORE_WORKINGSET_REVISION_SEARCH
+if not defined WORKINGSET_FILE goto IGNORE_WORKINGSET_REVISION_SEARCH
 
 :WORKINGSET_SEARCH_LOOP
 for /F "usebackq eol=# tokens=1,4,5 delims=|" %%i in ("%WORKINGSET_FILE%") do (
@@ -204,12 +204,12 @@ for /F "usebackq eol=# tokens=1,4,5 delims=|" %%i in ("%WORKINGSET_FILE%") do (
 goto BRANCH_WORKINGSET_LINE_END
 
 :BRANCH_WORKINGSET_LINE
-if "%SYNC_BRANCH_CURRENT_REV%" == "" (
+if not defined SYNC_BRANCH_CURRENT_REV (
   echo.%?~nx0%: error: found empty branch current revision in workingset: WORKINGSET_FILE="%WORKINGSET_FILE%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 20
 ) >&2
 
-if "%SYNC_BRANCH_DECORATED_PATH%" == "" (
+if not defined SYNC_BRANCH_DECORATED_PATH (
   echo.%?~nx0%: error: found empty branch path in workingset: WORKINGSET_FILE="%WORKINGSET_FILE%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH_ABS% SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH%""
   exit /b 21
 ) >&2
@@ -230,7 +230,7 @@ call set "SYNC_BRANCH_DECORATED_PATH_BUF_PREFIX=%%SYNC_BRANCH_DECORATED_PATH_BUF
 
 if /i not "%SYNC_BRANCH_DECORATED_PATH_BUF_PREFIX%%SYNC_BRANCH_DECORATED_PATH_EXP%" == "%SYNC_BRANCH_DECORATED_PATH_BUF%" exit /b 0
 
-if "%SYNC_BRANCH_DECORATED_PATH_BUF_PREFIX%" == "" set SYNC_BRANCH_DECORATED_PATH_BUF_PREFIX=.
+if not defined SYNC_BRANCH_DECORATED_PATH_BUF_PREFIX set SYNC_BRANCH_DECORATED_PATH_BUF_PREFIX=.
 
 rem translate workingset branch path into workingset catalog path (reduced) and branch path (unreduced)
 set "SYNC_BRANCH_UNREDUCED_PATH_PREFIX=%SYNC_BRANCH_DECORATED_PATH_BUF_PREFIX::#=/%"
@@ -253,7 +253,7 @@ pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
   rem from externals
   svn pget svn:externals . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 30 )
 
-  if not "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" == "" (
+  if defined WORKINGSET_BRANCH_CURRENT_REV_FOUND (
     svn pget svn:externals -r "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" . -R --non-interactive > "%BRANCH_TO_EXTERNALS_FILE_TMP%" || ( popd & exit /b 31 )
   )
 
@@ -267,7 +267,7 @@ if %ERRORLEVEL% NEQ 0 (
   exit /b 32
 ) >&2
 
-if "%WORKINGSET_BRANCH_CURRENT_REV_FOUND%" == "" (
+if not defined WORKINGSET_BRANCH_CURRENT_REV_FOUND (
   set "BRANCH_TO_EXTERNALS_LIST_FILE_TMP=%BRANCH_FROM_EXTERNALS_LIST_FILE_TMP%"
   goto NO_TO_EXTERNALS
 )
@@ -306,7 +306,7 @@ exit /b 0
 
 :REMOVE_SVN_FILE_PATH
 rem safe checks
-if "%SVN_FILE_PATH%" == "" exit /b 0
+if not defined SVN_FILE_PATH exit /b 0
 if "%SVN_FILE_PATH%" == "." exit /b 0
 if "%SVN_FILE_PATH:~-1%" == "/" (
   rmdir /Q "%SVN_FILE_PATH:/=\%" 2>nul && echo.- "%EXTERNAL_BRANCH_PATH%/%SVN_FILE_PATH%"

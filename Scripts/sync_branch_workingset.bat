@@ -89,10 +89,10 @@ set FLAG_SVN_AUTO_RELOCATE=0
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-R" (
     set FLAG_SVN_EXTERNALS_RECURSIVE=1
     set "FLAG_TEXT_SVN_EXTERNALS_RECURSIVE=-R"
@@ -129,7 +129,7 @@ if not "%FLAG%" == "" (
 
 set "BRANCH_PATH=%~1"
 
-if "%BRANCH_PATH%" == "" (
+if not defined BRANCH_PATH (
   echo.%?~nx0%: error: BRANCH_PATH is not set.
   exit /b 1
 ) >&2
@@ -269,17 +269,17 @@ for /F "usebackq eol=# tokens=1,4,5,6,7 delims=|" %%i in ("%BRANCH_WORKINGSET_FI
 exit /b 0
 
 :SYNC_BRANCH_WORKINGSET_LINE
-if "%SYNC_BRANCH_CURRENT_REV%" == "" (
+if not defined SYNC_BRANCH_CURRENT_REV (
   echo.%?~nx0%: error: found empty branch current revision in workingset.
   exit /b 10
 ) >&2
 
-if "%SYNC_BRANCH_DECORATED_PATH%" == "" (
+if not defined SYNC_BRANCH_DECORATED_PATH (
   echo.%?~nx0%: error: found empty branch path in workingset.
   exit /b 11
 ) >&2
 
-if "%SYNC_BRANCH_URI%" == "" (
+if not defined SYNC_BRANCH_URI (
   echo.%?~nx0%: error: found empty branch uri in workingset.
   exit /b 12
 ) >&2
@@ -335,7 +335,7 @@ call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%SYNC_BRANCH_PARENT_PATH%%" : SYNC_
 
 if "%SYNC_BRANCH_EXT_PATH:~0,1%" == "#" set "SYNC_BRANCH_EXT_PATH=%SYNC_BRANCH_EXT_PATH:~1%"
 
-if "%SYNC_BRANCH_PARENT_PATH%" == "" set SYNC_BRANCH_PARENT_PATH=.
+if not defined SYNC_BRANCH_PARENT_PATH set SYNC_BRANCH_PARENT_PATH=.
 if "%SYNC_BRANCH_PARENT_PATH:~0,1%" == "#" set SYNC_BRANCH_PARENT_PATH=.
 
 set "SYNC_BRANCH_PARENT_PATH=%SYNC_BRANCH_PARENT_PATH::#=/%"
@@ -345,10 +345,10 @@ set "SYNC_BRANCH_DEF_LOCAL_REL_PATH=%SYNC_BRANCH_PARENT_PATH%"
 if "%SYNC_BRANCH_DEF_LOCAL_REL_PATH%" == "." set "SYNC_BRANCH_DEF_LOCAL_REL_PATH="
 
 set "SYNC_BRANCH_LOCAL_REL_PATH="
-if not "%SYNC_BRANCH_PARENT_PATH%" == "" ^
+if defined SYNC_BRANCH_PARENT_PATH ^
 if not "%SYNC_BRANCH_PARENT_PATH%" == "." set "SYNC_BRANCH_LOCAL_REL_PATH=%SYNC_BRANCH_PARENT_PATH%"
 
-if not "%SYNC_BRANCH_LOCAL_REL_PATH%" == "" (
+if defined SYNC_BRANCH_LOCAL_REL_PATH (
   set "SYNC_BRANCH_LOCAL_REL_PATH=%SYNC_BRANCH_LOCAL_REL_PATH%/%SYNC_BRANCH_EXT_PATH%"
 ) else (
   set "SYNC_BRANCH_LOCAL_REL_PATH=%SYNC_BRANCH_EXT_PATH%"
@@ -366,14 +366,14 @@ setlocal
 rem retrieve workingset URL and Repository Root properties
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "URL"
 set "BRANCH_WORKINGSET_DIR_URL=%RETURN_VALUE%"
-if "%BRANCH_WORKINGSET_DIR_URL%" == "" (
+if not defined BRANCH_WORKINGSET_DIR_URL (
   echo.%?~nx0%: error: `URL` property is not found in SVN info file: BRANCH_PATH="%BRANCH_PATH%" BRANCH_INFO_FILE="%BRANCH_INFO_FILE%".
   exit /b 30
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "Repository Root"
 set "BRANCH_WORKINGSET_REPO_ROOT=%RETURN_VALUE%"
-if "%BRANCH_WORKINGSET_REPO_ROOT%" == "" (
+if not defined BRANCH_WORKINGSET_REPO_ROOT (
   echo.%?~nx0%: error: `Repository Root` property is not found in SVN workingset info file: BRANCH_PATH="%BRANCH_PATH%" BRANCH_INFO_FILE="%BRANCH_INFO_FILE%".
   exit /b 31
 ) >&2
@@ -384,7 +384,7 @@ if %SYNC_BRANCH_IS_ROOT% EQU 0 goto SKIP_CURRENT_REV_FROM_INFO
 rem workingset root current revision
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "Revision"
 set "SYNC_BRANCH_CURRENT_REV=%RETURN_VALUE%"
-if "%SYNC_BRANCH_CURRENT_REV%" == "" (
+if not defined SYNC_BRANCH_CURRENT_REV (
   echo.%?~nx0%: error: `Revision` property is not found in SVN workingset info file: BRANCH_PATH="%BRANCH_PATH%" BRANCH_INFO_FILE="%BRANCH_INFO_FILE%".
   exit /b 32
 ) >&2
@@ -392,13 +392,13 @@ if "%SYNC_BRANCH_CURRENT_REV%" == "" (
 :SKIP_CURRENT_REV_FROM_INFO
 rem call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE%%" "VerID"
 rem set "BRANCH_WORKINGSET_SVNVERSION_VALUE=%RETURN_VALUE%"
-rem if "%BRANCH_WORKINGSET_SVNVERSION_VALUE%" == "" set BRANCH_WORKINGSET_SVNVERSION_VALUE=0
+rem if not defined BRANCH_WORKINGSET_SVNVERSION_VALUE set BRANCH_WORKINGSET_SVNVERSION_VALUE=0
 
 call set "BRANCH_WORKINGSET_REPO_REL_PATH=%%BRANCH_WORKINGSET_DIR_URL:*%BRANCH_WORKINGSET_REPO_ROOT%=%%"
 
 rem WORKAROUND: 
 rem   Fix for "invalid command" output.
-if "%BRANCH_WORKINGSET_REPO_REL_PATH%" == "" set BRANCH_WORKINGSET_REPO_REL_PATH=/
+if not defined BRANCH_WORKINGSET_REPO_REL_PATH set BRANCH_WORKINGSET_REPO_REL_PATH=/
 
 rem echo "BRANCH_WORKINGSET_REPO_REL_PATH=%BRANCH_WORKINGSET_REPO_REL_PATH%"
 rem echo "BRANCH_WORKINGSET_DIR_URL=%BRANCH_WORKINGSET_DIR_URL%"
@@ -408,7 +408,7 @@ if "%BRANCH_WORKINGSET_REPO_REL_PATH%" == "/" goto BRANCH_WORKINGSET_ROOT_DIR_UR
 
 if not "%BRANCH_WORKINGSET_REPO_REL_PATH%" == "%BRANCH_WORKINGSET_DIR_URL%" ^
 if "%BRANCH_WORKINGSET_REPO_ROOT%%BRANCH_WORKINGSET_REPO_REL_PATH%" == "%BRANCH_WORKINGSET_DIR_URL%" (
-  if "%BRANCH_WORKINGSET_REPO_REL_PATH%" == "" goto BRANCH_WORKINGSET_ROOT_DIR_URL_VALID
+  if not defined BRANCH_WORKINGSET_REPO_REL_PATH goto BRANCH_WORKINGSET_ROOT_DIR_URL_VALID
   if "%BRANCH_WORKINGSET_REPO_REL_PATH:~0,1%" == "/" goto BRANCH_WORKINGSET_ROOT_DIR_URL_VALID
 )
 
@@ -419,9 +419,9 @@ if "%BRANCH_WORKINGSET_REPO_ROOT%%BRANCH_WORKINGSET_REPO_REL_PATH%" == "%BRANCH_
 
 :BRANCH_WORKINGSET_ROOT_DIR_URL_VALID
 
-if not "%BRANCH_WORKINGSET_REPO_REL_PATH%" == "" ^
+if defined BRANCH_WORKINGSET_REPO_REL_PATH ^
 if "%BRANCH_WORKINGSET_REPO_REL_PATH:~0,1%" == "/" set "BRANCH_WORKINGSET_REPO_REL_PATH=%BRANCH_WORKINGSET_REPO_REL_PATH:~1%"
-if "%BRANCH_WORKINGSET_REPO_REL_PATH%" == "" set BRANCH_WORKINGSET_REPO_REL_PATH=.
+if not defined BRANCH_WORKINGSET_REPO_REL_PATH set BRANCH_WORKINGSET_REPO_REL_PATH=.
 
 rem fresh checkout
 if %FLAG_SVN_FRESH_CHECKOUT% NEQ 0 ^
@@ -455,14 +455,14 @@ pushd "%SYNC_BRANCH_PATH%" && (
 rem read branch info file
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_BASE_REV_INFO_FILE_TMP%%" "URL"
 set "BRANCH_BASE_REV_DIR_URL=%RETURN_VALUE%"
-if "%BRANCH_BASE_REV_DIR_URL%" == "" (
+if not defined BRANCH_BASE_REV_DIR_URL (
   echo.%?~nx0%: error: `URL` property is not found in temporary SVN info file requested from the branch: BRANCH_PATH="%BRANCH_PATH%".
   exit /b 43
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_BASE_REV_INFO_FILE_TMP%%" "Repository Root"
 set "BRANCH_BASE_REV_REPO_ROOT=%RETURN_VALUE%"
-if "%BRANCH_BASE_REV_REPO_ROOT%" == "" (
+if not defined BRANCH_BASE_REV_REPO_ROOT (
   echo.%?~nx0%: error: `Repository Root` property is not found in temporary SVN info file requested from the branch: BRANCH_PATH="%BRANCH_PATH%".
   exit /b 44
 ) >&2
@@ -471,7 +471,7 @@ call set "SYNC_BRANCH_BASE_REV_REPO_REL_PATH=%%BRANCH_BASE_REV_DIR_URL:*%BRANCH_
 
 rem WORKAROUND:
 rem   Fix for "invalid command" output.
-if "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "" set SYNC_BRANCH_BASE_REV_REPO_REL_PATH=/
+if not defined SYNC_BRANCH_BASE_REV_REPO_REL_PATH set SYNC_BRANCH_BASE_REV_REPO_REL_PATH=/
 
 rem echo "SYNC_BRANCH_BASE_REV_REPO_REL_PATH=%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%"
 rem echo "BRANCH_BASE_REV_DIR_URL=%BRANCH_BASE_REV_DIR_URL%"
@@ -481,7 +481,7 @@ if "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "/" goto BRANCH_ROOT_DIR_URL_VALID
 
 if not "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "%BRANCH_BASE_REV_DIR_URL%" ^
 if "%BRANCH_BASE_REV_REPO_ROOT%%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "%BRANCH_BASE_REV_DIR_URL%" (
-  if "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "" goto BRANCH_ROOT_DIR_URL_VALID
+  if not defined SYNC_BRANCH_BASE_REV_REPO_REL_PATH goto BRANCH_ROOT_DIR_URL_VALID
   if "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH:~0,1%" == "/" goto BRANCH_ROOT_DIR_URL_VALID
 )
 
@@ -492,9 +492,9 @@ if "%BRANCH_BASE_REV_REPO_ROOT%%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "%BRANCH
 
 :BRANCH_ROOT_DIR_URL_VALID
 
-if not "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "" ^
+if defined SYNC_BRANCH_BASE_REV_REPO_REL_PATH ^
 if "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH:~0,1%" == "/" set "SYNC_BRANCH_BASE_REV_REPO_REL_PATH=%SYNC_BRANCH_BASE_REV_REPO_REL_PATH:~1%"
-if "%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%" == "" set SYNC_BRANCH_BASE_REV_REPO_REL_PATH=.
+if not defined SYNC_BRANCH_BASE_REV_REPO_REL_PATH set SYNC_BRANCH_BASE_REV_REPO_REL_PATH=.
 
 rem if auto relocate to workingset repository
 if %FLAG_SVN_AUTO_RELOCATE% NEQ 0 goto IGNORE_BRANCH_REPO_REL_PATH_COMPARE
@@ -718,21 +718,21 @@ pushd "%SYNC_BRANCH_PATH%" && (
 rem read parent branch info file
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_INFO_FILE_TMP%%" "Repository UUID"
 set "BRANCH_REPOSITORY_UUID=%RETURN_VALUE%"
-if "%BRANCH_REPOSITORY_UUID%" == "" (
+if not defined BRANCH_REPOSITORY_UUID (
   echo.%?~nx0%: error: `Repository UUID` property is not found in temporary SVN info file requested from the branch: BRANCH_PATH="%SYNC_BRANCH_PATH%".
   exit /b 82
 ) >&2
 
 call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'REPOSITORY' where uuid='%%BRANCH_REPOSITORY_UUID%%'" > "%SQLITE_OUT_FILE_TMP%"
 set /P REPOS_ID=< "%SQLITE_OUT_FILE_TMP%"
-if "%REPOS_ID%" == "" (
+if not defined REPOS_ID (
   echo.%?~nx0%: error: SVN database `REPOSITORY id` request has failed: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
   exit /b 90
 ) >&2
 
 call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'WCROOT' where local_abspath is null or local_abspath = ''" > "%SQLITE_OUT_FILE_TMP%"
 set /P WC_ID=< "%SQLITE_OUT_FILE_TMP%"
-if "%WC_ID%" == "" (
+if not defined WC_ID (
   echo.%?~nx0%: error: SVN database `WCROOT id` request has failed: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
   exit /b 91
 ) >&2
@@ -745,7 +745,7 @@ set "SQLITE_EXP_WHERE=where wc_id = '%WC_ID%' and local_relpath = '%SYNC_BRANCH_
 call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from 'EXTERNALS' %%SQLITE_EXP_WHERE%%" > "%SQLITE_OUT_FILE_TMP%"
 set /P PREV_WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 
-if not "%PREV_WC_ID%" == "" goto UPDATE_EXTERNALS_RECORD
+if defined PREV_WC_ID goto UPDATE_EXTERNALS_RECORD
 goto TRY_INSERT_EXTERNALS_RECORD
 
 :UPDATE_EXTERNALS_RECORD
@@ -765,7 +765,7 @@ call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn
 set /P PREV_WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 
 rem check if insert already done
-if not "%PREV_WC_ID%" == "" goto TRY_INSERT_EXTERNALS_RECORD_END
+if defined PREV_WC_ID goto TRY_INSERT_EXTERNALS_RECORD_END
 
 :INSERT_EXTERNALS_RECORD
 rem Insert record into the WC EXTERNALS table to link the external directory to the WC root.
@@ -919,7 +919,7 @@ exit /b 0
 
 :SVN_ADD_FILE
 rem safe checks
-if "%BRANCH_FILE_PATH%" == "" exit /b 0
+if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
 rem add only unversionned files
 svn info "%BRANCH_FILE_PATH%" >nul 2>nul && exit /b 0
@@ -928,7 +928,7 @@ exit /b 0
 
 :SVN_ADD_FILE_DIR
 rem safe checks
-if "%DIR_PATH%" == "" exit /b 0
+if not defined DIR_PATH exit /b 0
 if "%DIR_PATH%" == "." exit /b 0
 if not exist "%DIR_PATH%\" mkdir "%DIR_PATH%"
 rem add only unversionned directories
@@ -938,14 +938,14 @@ exit /b 0
 
 :SVN_REMOVE_FILE
 rem safe checks
-if "%BRANCH_FILE_PATH%" == "" exit /b 0
+if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
 if exist "%BRANCH_FILE_PATH%" ( call :REMOVE_VERSIONNED || goto :EOF )
 exit /b 0
 
 :REMOVE_VERSIONNED
 rem safe checks
-if "%BRANCH_FILE_PATH%" == "" exit /b 0
+if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
 rem remove only versionned files
 svn info "%BRANCH_FILE_PATH%" >nul 2>nul || exit /b 0
@@ -954,7 +954,7 @@ exit /b 0
 
 :REMOVE_UNVERSIONNED
 rem safe checks
-if "%BRANCH_FILE_PATH%" == "" exit /b 0
+if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
 rem remove only unversionned files
 svn info "%BRANCH_FILE_PATH%" >nul 2>nul && exit /b 0

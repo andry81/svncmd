@@ -28,7 +28,7 @@ if not exist "%INFO_PARAM_FILE%" (
   exit /b 1
 ) >&2
 
-if "%INFO_PARAM_NAME%" == "" (
+if not defined INFO_PARAM_NAME (
   echo.%~nx0: error: info param name is not set.
   exit /b 2
 ) >&2

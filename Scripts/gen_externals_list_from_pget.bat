@@ -29,10 +29,10 @@ set FLAG_LOCAL_PATHS_ONLY=0
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-no_uri_transform" (
     set FLAG_NO_URI_TRANSFORM=1
     shift
@@ -57,7 +57,7 @@ if not "%FLAG%" == "" (
 )
 
 if %FLAG_PREFIX_PATH% NEQ 0 ^
-if "%FLAG_TEXT_PREFIX_PATH%" == "" (
+if not defined FLAG_TEXT_PREFIX_PATH (
   echo.%?~nx0%: error: prefix path is empty.
   exit /b 1
 )
@@ -66,7 +66,7 @@ set "EXTERNALS_FILE=%~dpf1"
 set "REPO_ROOT=%~2"
 set "DIR_URL=%~3"
 
-if "%EXTERNALS_FILE%" == "" (
+if not defined EXTERNALS_FILE (
   echo.%?~nx0%: error: externals file is not set.
   exit /b 2
 ) >&2
@@ -80,13 +80,13 @@ if %FLAG_MAKE_DIR_PATH_PREFIX_REL% NEQ 0 goto CHECK_DIR_URL
 if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_ARGS_CHECK
 if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto IGNORE_URI_ARGS_CHECK
 
-if "%REPO_ROOT%" == "" (
+if not defined REPO_ROOT (
   echo.%?~nx0%: error: `Repository Root` argument is not set.
   exit /b 4
 ) >&2
 
 :CHECK_DIR_URL
-if "%DIR_URL%" == "" (
+if not defined DIR_URL (
   echo.%?~nx0%: error: `URL` argument is not set.
   exit /b 5
 ) >&2
@@ -106,9 +106,9 @@ for /F "usebackq eol=# tokens=1,* delims= " %%i in ("%EXTERNALS_FILE%") do (
 exit /b 0
 
 :PARSE_EXTERNAL_PATH_EXP
-if "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%" == "" exit /b 0
-if not "%EXTERNAL_PATH_EXP%" == "" ^
-if not "%EXTERNAL_DIR_PATH%" == "" goto PARSE_EXTERNAL_PATH_EXP_OK
+if not defined EXTERNAL_PATH_EXP if not defined EXTERNAL_DIR_PATH exit /b 0
+if defined EXTERNAL_PATH_EXP ^
+if defined EXTERNAL_DIR_PATH goto PARSE_EXTERNAL_PATH_EXP_OK
 
 (
   echo.%?~nx0%: error: svn:externals property line is not recognized in file: "%EXTERNALS_FILE%": "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%".
@@ -131,7 +131,7 @@ exit /b 0
 if "%EXTERNAL_DIR_PATH:~0,1%" == "#" exit /b 0
 
 if "%EXTERNAL_DIR_PATH:~0,1%" == "-" (
-  if not "%EXTERNAL_PATH_EXP%" == "" set "EXTERNAL_DIR_PATH_PREFIX=%EXTERNAL_PATH_EXP:\=/%"
+  if defined EXTERNAL_PATH_EXP set "EXTERNAL_DIR_PATH_PREFIX=%EXTERNAL_PATH_EXP:\=/%"
   set "EXTERNAL_PATH_EXP="
   set "EXTERNAL_DIR_PATH="
   for /F "eol=	 tokens=2,* delims= " %%i in ("%EXTERNAL_DIR_PATH%") do (
@@ -147,7 +147,7 @@ rem echo "EXTERNAL_PATH_EXP=%EXTERNAL_PATH_EXP%"
 rem continue search for SVN revision arguments
 set "EXTERNAL_URI_REV_OPERATIVE="
 
-if not "%EXTERNAL_PATH_EXP%" == "" ^
+if defined EXTERNAL_PATH_EXP ^
 if "%EXTERNAL_PATH_EXP:~0,2%" == "-r" (
   set "EXTERNAL_PATH_EXP="
   set "EXTERNAL_DIR_PATH="
@@ -160,9 +160,9 @@ if "%EXTERNAL_PATH_EXP:~0,2%" == "-r" (
 
 rem echo ==== %NEST_INDEX% %EXTERNAL_DIR_PATH% ===
 
-if "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%" == "" exit /b 0
-if not "%EXTERNAL_PATH_EXP%" == "" ^
-if not "%EXTERNAL_DIR_PATH%" == "" goto PARSE_EXTERNAL_PATH_EXP_OK2
+if not defined EXTERNAL_PATH_EXP if not defined EXTERNAL_DIR_PATH exit /b 0
+if defined EXTERNAL_PATH_EXP ^
+if defined EXTERNAL_DIR_PATH goto PARSE_EXTERNAL_PATH_EXP_OK2
 
 (
   echo.%?~nx0%: error: svn:externals `URL` or `Path` value is not recognized in file: "%EXTERNALS_FILE%": "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%".
@@ -198,7 +198,7 @@ if %FLAG_MAKE_DIR_PATH_PREFIX_REL% EQU 0 goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
 if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
 
 call set "EXTERNAL_DIR_PATH_SUFFIX=%%EXTERNAL_DIR_PATH_PREFIX:%DIR_URL%=%%"
-if "%EXTERNAL_DIR_PATH_SUFFIX%" == "" goto TRANSFORM_DIR_PATH_PREFIX
+if not defined EXTERNAL_DIR_PATH_SUFFIX goto TRANSFORM_DIR_PATH_PREFIX
 
 if not "%DIR_URL%%EXTERNAL_DIR_PATH_SUFFIX%" == "%EXTERNAL_DIR_PATH_PREFIX%" goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
 if not "%EXTERNAL_DIR_PATH_SUFFIX:~0,1%" == "/" goto IGNORE_DIR_PATH_PREFIX_TRANSFORM
@@ -209,9 +209,9 @@ set "EXTERNAL_DIR_PATH_SUFFIX=%EXTERNAL_DIR_PATH_SUFFIX:~1%"
 set "EXTERNAL_DIR_PATH_PREFIX=%EXTERNAL_DIR_PATH_SUFFIX%"
 
 :IGNORE_DIR_PATH_PREFIX_TRANSFORM
-if "%EXTERNAL_DIR_PATH_PREFIX%" == "" set EXTERNAL_DIR_PATH_PREFIX=.
-if "%EXTERNAL_URI_REV_OPERATIVE%" == "" set EXTERNAL_URI_REV_OPERATIVE=-
-if "%EXTERNAL_URI_REV_PEG%" == "" set EXTERNAL_URI_REV_PEG=-
+if not defined EXTERNAL_DIR_PATH_PREFIX set EXTERNAL_DIR_PATH_PREFIX=.
+if not defined EXTERNAL_URI_REV_OPERATIVE set EXTERNAL_URI_REV_OPERATIVE=-
+if not defined EXTERNAL_URI_REV_PEG set EXTERNAL_URI_REV_PEG=-
 
 if %FLAG_PREFIX_PATH% EQU 0 goto IGNORE_PREFIX_PATH
 

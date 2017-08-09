@@ -31,7 +31,7 @@ set "WCROOT_PATH=%~1"
 set "EXTERNAL_DIR_PATH_PREFIX=%~2"
 set "EXTERNAL_DIR_PATH=%~3"
 
-if "%SYNC_BRANCH_PATH%" == "" goto NO_SYNC_BRANCH_PATH
+if not defined SYNC_BRANCH_PATH goto NO_SYNC_BRANCH_PATH
 if not exist "%SYNC_BRANCH_PATH%\" goto NO_SYNC_BRANCH_PATH
 
 goto NO_SYNC_BRANCH_PATH_END
@@ -42,7 +42,7 @@ goto NO_SYNC_BRANCH_PATH_END
 ) >&2
 :NO_SYNC_BRANCH_PATH_END
 
-if "%WCROOT_PATH%" == "" goto ERROR_WCROOT_PATH
+if not defined WCROOT_PATH goto ERROR_WCROOT_PATH
 if not exist "%WCROOT_PATH%/.svn/wc.db" goto ERROR_WCROOT_PATH
 
 goto ERROR_WCROOT_PATH_END
@@ -60,8 +60,8 @@ if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
 )
 set "EXTERNAL_BRANCH_PATH=%WCROOT_PATH:\=/%/%EXTERNAL_BRANCH_PATH_PREFIX%"
 
-if "%EXTERNAL_DIR_PATH_PREFIX%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
-if "%EXTERNAL_DIR_PATH%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
+if not defined EXTERNAL_DIR_PATH_PREFIX goto ERROR_EXTERNAL_BRANCH_PATH
+if not defined EXTERNAL_DIR_PATH goto ERROR_EXTERNAL_BRANCH_PATH
 if not exist "%EXTERNAL_BRANCH_PATH%/.svn/wc.db" goto ERROR_EXTERNAL_BRANCH_PATH
 
 goto ERROR_EXTERNAL_BRANCH_PATH_END
@@ -83,7 +83,7 @@ exit /b
 
 :REMOVE_EXTERNAL_EMPTY_DIR_PATH
 rem safe checks
-if "%DIR_PATH%" == "" exit /b 0
+if not defined DIR_PATH exit /b 0
 if "%DIR_PATH%" == "." exit /b 0
 if "%DIR_PATH:~1,1%" == ":" exit /b 0
 rem test whole path on empty directory
@@ -111,7 +111,7 @@ set "DIR_PATH_ARR_TO_REMOVE_%DIR_PATH_OFFSET%="
 call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%DIR_PATH_PREFIX%%" /\ DIR_PATH_SUBDIR
 
 rem test path component on empty directory
-if "%DIR_PATH_PREFIX%" == "" goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
+if not defined DIR_PATH_PREFIX goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
 if "%DIR_PATH_PREFIX%" == "." goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
 
 if not exist "%DIR_PATH_PREFIX:/=\%\" exit /b 0
@@ -140,7 +140,7 @@ if %DIR_PATH_OFFSET% LEQ 0 exit /b 0
 
 call set "DIR_PATH_PREFIX=%%DIR_PATH_ARR_TO_REMOVE_%DIR_PATH_OFFSET%%%"
 
-if "%DIR_PATH_PREFIX%" == "" exit /b 0
+if not defined DIR_PATH_PREFIX exit /b 0
 
 call :CMD rmdir /S /Q "%%DIR_PATH_PREFIX:/=\%%" || exit /b 51
 

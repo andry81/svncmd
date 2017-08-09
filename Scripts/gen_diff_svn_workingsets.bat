@@ -140,11 +140,11 @@ if !SVN_WORKINGSET_SEARCH_T! EQU 0 (
       set WORKINGSETS_HAS_CHANGES=1
       (echo.^*^|!L_REPO!^|!L_REV!^|!R_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
     )
-  ) else if not "!L_REPO!" == "" (
+  ) else if defined L_REPO (
     set WORKINGSETS_HAS_CHANGES=1
     (echo.+^|!L_REPO!^|!L_REV!^|0)>>"!SVN_WORKINGSET_DIFF!"
   )
-) else if not "!R_REPO_FOUND!" == "" (
+) else if defined R_REPO_FOUND (
   if !WORKINGSET_REPO_FOUND! EQU 0 (
     set WORKINGSETS_HAS_CHANGES=1
     (echo.-^|!L_REPO!^|0^|!L_REV!)>>"!SVN_WORKINGSET_DIFF!"
@@ -195,8 +195,8 @@ set "!SVN_WORKINGSET_NUM_LINES_VAR!=!SVN_WORKINGSET_INDEX!"
 exit /b 0
 
 :LOAD_LINE_SVN_WORKINGSET
-if "!REPO!" == "" ( set "LASTERROR=10" && exit /b 1 )
-if "!REV!" == "" ( set "LASTERROR=11" && exit /b 1 )
+if not defined REPO ( set "LASTERROR=10" && exit /b 1 )
+if not defined REV ( set "LASTERROR=11" && exit /b 1 )
 if !REV! LSS 0 ( set "LASTERROR=12" && exit /b 1 )
 
 set /A SVN_WORKINGSET_INDEX+=1

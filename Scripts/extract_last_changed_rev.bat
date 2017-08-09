@@ -34,10 +34,10 @@ set FLAG_SVN_USE_CURRENT_REV=0
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-crev" (
     set FLAG_SVN_USE_CURRENT_REV=1
     shift
@@ -53,7 +53,7 @@ if not "%FLAG%" == "" (
 set "INFO_LAST_CHANGED_REV=%~1"
 set "SVNVERSION_VALUE=%~2"
 
-if "%INFO_LAST_CHANGED_REV%" == "" set INFO_LAST_CHANGED_REV=0
+if not defined INFO_LAST_CHANGED_REV set INFO_LAST_CHANGED_REV=0
 
 set "SVNVERSION_LAST_CHANGED_REV="
 set "SVNVERSION_LAST_MIXED_REV="
@@ -84,7 +84,7 @@ if %ERRORLEVEL% EQU 0 (
 
 call set "SVNVERSION_LAST_CHANGED_REV_NUM=%%SVNVERSION_LAST_CHANGED_REV:~0,%INDEX%%%"
 
-if "%SVNVERSION_LAST_MIXED_REV%" == "" set SVNVERSION_LAST_MIXED_REV=0
+if not defined SVNVERSION_LAST_MIXED_REV set SVNVERSION_LAST_MIXED_REV=0
 
 set INDEX=0
 :SVNVERSION_LAST_MIXED_REV_LOOP

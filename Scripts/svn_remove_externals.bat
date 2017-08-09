@@ -33,10 +33,10 @@ set "BARE_FLAGS="
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-ignore_nested_externals_local_changes" (
     set FLAG_SVN_IGNORE_NESTED_EXTERNALS_LOCAL_CHANGES=1
     set BARE_FLAGS=%BARE_FLAGS% %1
@@ -65,7 +65,7 @@ set "WCROOT_PATH_ABS=%~dpf3"
 set "TO_EXTERNALS_LIST=%~4"
 set "FROM_EXTERNALS_LIST=%~5"
 
-if "%SYNC_BRANCH_PATH%" == "" goto NO_SYNC_BRANCH_PATH
+if not defined SYNC_BRANCH_PATH goto NO_SYNC_BRANCH_PATH
 if not exist "%SYNC_BRANCH_PATH%\" goto NO_SYNC_BRANCH_PATH
 
 goto NO_SYNC_BRANCH_PATH_END
@@ -76,7 +76,7 @@ goto NO_SYNC_BRANCH_PATH_END
 ) >&2
 :NO_SYNC_BRANCH_PATH_END
 
-if "%WORKINGSET_FILE%" == "" goto NO_WORKINGSET_FILE
+if not defined WORKINGSET_FILE goto NO_WORKINGSET_FILE
 if not exist "%WORKINGSET_FILE%" goto NO_WORKINGSET_FILE
 
 goto NO_WORKINGSET_FILE_END
@@ -87,7 +87,7 @@ goto NO_WORKINGSET_FILE_END
 ) >&2
 :NO_WORKINGSET_FILE_END
 
-if "%WCROOT_PATH%" == "" goto ERROR_WCROOT_PATH
+if not defined WCROOT_PATH goto ERROR_WCROOT_PATH
 if "%WCROOT_PATH:~1,1%" == ":" goto ERROR_WCROOT_PATH
 call :SET_WCROOT_PATH_ABS "%%SYNC_BRANCH_PATH_ABS%%/%%WCROOT_PATH%%"
 
@@ -109,7 +109,7 @@ goto ERROR_WCROOT_PATH_END
 ) >&2
 :ERROR_WCROOT_PATH_END
 
-if "%TO_EXTERNALS_LIST%" == "" goto ERROR_TO_EXTERNALS_LIST
+if not defined TO_EXTERNALS_LIST goto ERROR_TO_EXTERNALS_LIST
 if not exist "%TO_EXTERNALS_LIST%" goto ERROR_TO_EXTERNALS_LIST
 
 goto ERROR_TO_EXTERNALS_LIST_END
@@ -120,7 +120,7 @@ goto ERROR_TO_EXTERNALS_LIST_END
 ) >&2
 :ERROR_TO_EXTERNALS_LIST_END
 
-if "%FROM_EXTERNALS_LIST%" == "" goto ERROR_FROM_EXTERNALS_LIST
+if not defined FROM_EXTERNALS_LIST goto ERROR_FROM_EXTERNALS_LIST
 if not exist "%FROM_EXTERNALS_LIST%" goto ERROR_FROM_EXTERNALS_LIST
 
 goto ERROR_FROM_EXTERNALS_LIST_END
@@ -157,7 +157,7 @@ if %ERRORLEVEL% NEQ 0 exit /b 0
 
 set "WC_ID="
 for /F "usebackq eol=	 tokens=* delims=" %%i in (`call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" "select id from "WCROOT" where local_abspath is null or local_abspath = ''"`) do set "WC_ID=%%i"
-if "%WC_ID%" == "" (
+if not defined WC_ID (
   echo.%?~nx0%: error: SVN database `WCROOT id` request has failed: "%WCROOT_PATH%/.svn/wc.db" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 21
 ) >&2
@@ -203,14 +203,14 @@ pushd "%EXTERNAL_BRANCH_PATH_TO_REMOVE%" && (
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%EXTERNAL_INFO_FILE_TMP%%" "Repository UUID"
 set "EXTERNAL_BRANCH_REPOSITORY_UUID=%RETURN_VALUE%"
-if "%EXTERNAL_BRANCH_REPOSITORY_UUID%" == "" (
+if not defined EXTERNAL_BRANCH_REPOSITORY_UUID (
   echo.%?~nx0%: error: `Repository UUID` property is not found in temporary SVN info file requested from the branch: BRANCH_PATH="%SYNC_BRANCH_PATH_TO_REMOVE%".
   exit /b 51
 ) >&2
 
 set "REPOS_ID="
 for /F "usebackq eol=	 tokens=* delims=" %%i in (`call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%EXTERNAL_BRANCH_PATH_TO_REMOVE%%/.svn/wc.db" ".headers off" "select id from "REPOSITORY" where uuid='%%EXTERNAL_BRANCH_REPOSITORY_UUID%%'"`) do set "REPOS_ID=%%i"
-if "%REPOS_ID%" == "" (
+if not defined REPOS_ID (
   echo.%?~nx0%: error: SVN database `REPOSITORY id` request has failed: "%EXTERNAL_BRANCH_PATH_TO_REMOVE%/.svn/wc.db".
   exit /b 52
 ) >&2

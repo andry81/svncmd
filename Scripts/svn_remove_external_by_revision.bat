@@ -33,10 +33,10 @@ set "BARE_FLAGS="
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-ignore_nested_externals_local_changes" (
     set FLAG_SVN_IGNORE_NESTED_EXTERNALS_LOCAL_CHANGES=1
     set "FLAG_TEXT_SVN_EXTERNALS_RECURSIVE="
@@ -68,7 +68,7 @@ set "EXTERNAL_DIR_PATH=%~5"
 set "REPOS_ID=%~6"
 set "WC_ID=%~7"
 
-if "%SYNC_BRANCH_PATH%" == "" goto NO_SYNC_BRANCH_PATH
+if not defined SYNC_BRANCH_PATH goto NO_SYNC_BRANCH_PATH
 if not exist "%SYNC_BRANCH_PATH%\" goto NO_SYNC_BRANCH_PATH
 
 goto NO_SYNC_BRANCH_PATH_END
@@ -79,7 +79,7 @@ goto NO_SYNC_BRANCH_PATH_END
 ) >&2
 :NO_SYNC_BRANCH_PATH_END
 
-if "%REVISION%" == "" goto INVALID_REVISION
+if not defined REVISION goto INVALID_REVISION
 if %REVISION% EQU 0 goto INVALID_REVISION
 
 goto INVALID_REVISION_END
@@ -90,7 +90,7 @@ goto INVALID_REVISION_END
 ) >&2
 :INVALID_REVISION_END
 
-if "%WCROOT_PATH%" == "" goto ERROR_WCROOT_PATH
+if not defined WCROOT_PATH goto ERROR_WCROOT_PATH
 if "%WCROOT_PATH:~1,1%" == ":" goto ERROR_WCROOT_PATH
 call :SET_WCROOT_PATH_ABS "%%SYNC_BRANCH_PATH_ABS%%/%%WCROOT_PATH%%"
 
@@ -113,8 +113,8 @@ goto ERROR_WCROOT_PATH_END
 :ERROR_WCROOT_PATH_END
 
 if %FLAG_SVN_NESTED_ONLY% NEQ 0 (
-  if "%EXTERNAL_DIR_PATH_PREFIX%" == "" set EXTERNAL_DIR_PATH_PREFIX=.
-  if "%EXTERNAL_DIR_PATH%" == "" set EXTERNAL_DIR_PATH=.
+  if not defined EXTERNAL_DIR_PATH_PREFIX set EXTERNAL_DIR_PATH_PREFIX=.
+  if not defined EXTERNAL_DIR_PATH set EXTERNAL_DIR_PATH=.
 )
 
 if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
@@ -133,8 +133,8 @@ if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
 
 if %FLAG_SVN_NESTED_ONLY% NEQ 0 goto IGNORE_EXTERNAL_DIR_PREFIX
 
-if "%EXTERNAL_DIR_PATH_PREFIX%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
-if "%EXTERNAL_DIR_PATH%" == "" goto ERROR_EXTERNAL_BRANCH_PATH
+if not defined EXTERNAL_DIR_PATH_PREFIX goto ERROR_EXTERNAL_BRANCH_PATH
+if not defined EXTERNAL_DIR_PATH goto ERROR_EXTERNAL_BRANCH_PATH
 if not exist "%EXTERNAL_BRANCH_PATH_ABS%/.svn/wc.db" goto ERROR_EXTERNAL_BRANCH_PATH
 
 goto ERROR_EXTERNAL_BRANCH_PATH_END
@@ -145,12 +145,12 @@ goto ERROR_EXTERNAL_BRANCH_PATH_END
 ) >&2
 :ERROR_EXTERNAL_BRANCH_PATH_END
 
-if "%REPOS_ID%" == "" (
+if not defined REPOS_ID (
   echo.%?~nx0%: error: invalid REPOS_ID: REPOS_ID="%REPOS_ID%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 5
 ) >&2
 
-if "%WC_ID%" == "" (
+if not defined WC_ID (
   echo.%?~nx0%: error: invalid WC_ID: WC_ID="%WC_ID%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 6
 ) >&2
@@ -220,7 +220,7 @@ echo 1
 rem read temporary info file
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_TO_EXTERNALS_INFO_FILE_TMP%%" "URL"
 set "BRANCH_CURRENT_REV_DIR_URL=%RETURN_VALUE%"
-if "%BRANCH_CURRENT_REV_DIR_URL%" == "" (
+if not defined BRANCH_CURRENT_REV_DIR_URL (
   echo.%?~nx0%: error: `URL` property is not found in temporary SVN info file requested from the branch: BRANCH_PATH="%SYNC_BRANCH_PATH%".
   exit /b 33
 ) >&2
@@ -264,7 +264,7 @@ exit /b 0
 
 :REMOVE_SVN_FILE_PATH
 rem safe checks
-if "%SVN_FILE_PATH%" == "" exit /b 0
+if not defined SVN_FILE_PATH exit /b 0
 if "%SVN_FILE_PATH%" == "." exit /b 0
 if "%SVN_FILE_PATH:~-1%" == "/" (
   rmdir /Q "%SVN_FILE_PATH:/=\%" 2>nul && echo.- "%EXTERNAL_BRANCH_PATH%/%SVN_FILE_PATH%"
