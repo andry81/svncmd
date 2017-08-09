@@ -192,7 +192,11 @@ if not "%BRANCH_REL_SUB_PATH%" == "" (
   set "SQLITE_EXP_WHERE_FIRST_FILTER= and substr(local_relpath || '/', 1, length('%BRANCH_REL_SUB_PATH%/')) == '%BRANCH_REL_SUB_PATH%/' collate nocase"
 )
 
-set "SQLINE_EXP_NODES_LIST=select substr(case when kind != 'dir' then local_relpath else local_relpath || '/' end, length('%BRANCH_REL_SUB_PATH%/')+1) as local_relpath_new from nodes_base where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER% order by local_relpath asc"
+if not "%BRANCH_REL_SUB_PATH%" == "" (
+  set "SQLINE_EXP_NODES_LIST=select substr(case when kind != 'dir' then local_relpath else local_relpath || '/' end, length('%BRANCH_REL_SUB_PATH%/')+1) as local_relpath_new from nodes_base where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER% order by local_relpath asc"
+) else (
+  set "SQLINE_EXP_NODES_LIST=select case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from nodes_base where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER% order by local_relpath asc"
+)
 
 call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%WCROOT_PATH%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_NODES_LIST%%"
 
