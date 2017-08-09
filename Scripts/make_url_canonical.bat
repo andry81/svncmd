@@ -41,7 +41,7 @@ set ?1=^^^>
 
 set "URL=%~1"
 
-if "%URL%" == "" exit /b 1
+if not defined URL exit /b 1
 
 if "%URL:/=%" == "%URL%" (
   endlocal
@@ -54,7 +54,7 @@ for /F "eol=	 tokens=1,* delims=:" %%i in ("%URL%") do (
   set "URL_PATH=%%j"
 )
 
-if "%URL_PATH%" == "" (
+if not defined URL_PATH (
   set "URL_PATH=%URL_SCHEME%"
   set "URL_SCHEME="
 )
@@ -71,9 +71,9 @@ if "%URL_PATH_PREFIX:~0,1%" == "/" set "URL_PATH_PREFIX=|%URL_PATH_PREFIX:~1%"
 
 call :IMPL
 rem restore // character sequence
-if not "%RETURN_VALUE%" == "" set "RETURN_VALUE=%RETURN_VALUE:|||=///%"
-if not "%RETURN_VALUE%" == "" set "RETURN_VALUE=%RETURN_VALUE:||=//%"
-if not "%RETURN_VALUE%" == "" set "RETURN_VALUE=%RETURN_VALUE::|=:/%"
+if defined RETURN_VALUE set "RETURN_VALUE=%RETURN_VALUE:|||=///%"
+if defined RETURN_VALUE set "RETURN_VALUE=%RETURN_VALUE:||=//%"
+if defined RETURN_VALUE set "RETURN_VALUE=%RETURN_VALUE::|=:/%"
 (
   endlocal
   set "RETURN_VALUE=%RETURN_VALUE%"
@@ -92,7 +92,7 @@ for /F "eol=	 tokens=1,* delims=/" %%i in ("%URL_PATH_PREFIX%") do (
 if %DEBUG%0 NEQ 0 echo "URL_PATH_PREFIX=%URL_PATH_PREFIX%"
 if %DEBUG%0 NEQ 0 echo "URL_PATH_SUFFIX=%URL_PATH_SUFFIX%" "%URL_PATH_SUFFIX:~0,2%" "%URL_PATH_SUFFIX:~0,1%" "%URL_PATH_SUFFIX:~1,1%"
 
-if "%URL_PATH_PREFIX%" == "" (
+if not defined URL_PATH_PREFIX (
   if %NUM_REDUCTIONS% NEQ 0 (
     rem Make reduction again until will nothing to reduce
     set COMPONENT_INDEX=0
@@ -104,15 +104,15 @@ if "%URL_PATH_PREFIX%" == "" (
   )
 
   if "%URL_SCHEME%" == "file" (
-    if not "%RETURN_VALUE%" == "" (
+    if defined RETURN_VALUE (
       set "RETURN_VALUE=%URL_SCHEME%:%RETURN_VALUE%"
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 1 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
     ) else (
       set "RETURN_VALUE=%URL_SCHEME%:"
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 2 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
     )
-  ) else if not "%URL_SCHEME%" == "" (
-    if not "%RETURN_VALUE%" == "" (
+  ) else if defined URL_SCHEME (
+    if defined RETURN_VALUE (
       set "RETURN_VALUE=%URL_SCHEME%:%RETURN_VALUE%"
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 3 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
     ) else (
@@ -126,10 +126,10 @@ if "%URL_PATH_PREFIX%" == "" (
   exit /b 0
 )
 
-if "%URL_PATH_SUFFIX%" == "" (
+if not defined URL_PATH_SUFFIX (
   if %COMPONENT_INDEX% NEQ 0 (
     if not "%URL_PATH_PREFIX%" == "." (
-      if not "%RETURN_VALUE%" == "" (
+      if defined RETURN_VALUE (
         set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
         if %DEBUG%0 NEQ 0 call echo   -%%?1%% 10 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
       ) else (
@@ -137,7 +137,7 @@ if "%URL_PATH_SUFFIX%" == "" (
         if %DEBUG%0 NEQ 0 call echo   -%%?1%% 11 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
       )
     )
-  ) else if not "%RETURN_VALUE%" == "" (
+  ) else if defined RETURN_VALUE (
     set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
     if %DEBUG%0 NEQ 0 call echo   -%%?1%% 12 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
   ) else (
@@ -147,7 +147,7 @@ if "%URL_PATH_SUFFIX%" == "" (
 ) else if not "%URL_PATH_SUFFIX:~0,2%" == ".." (
   if not "%URL_PATH_SUFFIX:~0,1%" == "." (
     if not "%URL_PATH_PREFIX%" == "." (
-      if not "%RETURN_VALUE%" == "" (
+      if defined RETURN_VALUE (
         set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
         if %DEBUG%0 NEQ 0 call echo   -%%?1%% 30 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
       ) else (
@@ -157,7 +157,7 @@ if "%URL_PATH_SUFFIX%" == "" (
     ) else if %COMPONENT_INDEX% NEQ 0 (
       set /A NUM_REDUCTIONS+=1
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 32 -%%?1%% NUM_REDUCTIONS="%%NUM_REDUCTIONS%%"
-    ) else if not "%RETURN_VALUE%" == "" (
+    ) else if defined RETURN_VALUE (
       set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 33 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
     ) else (
@@ -166,7 +166,7 @@ if "%URL_PATH_SUFFIX%" == "" (
     )
   ) else if not "%URL_PATH_SUFFIX:~1,1%" == "/" (
     if not "%URL_PATH_PREFIX%" == "." (
-      if not "%RETURN_VALUE%" == "" (
+      if defined RETURN_VALUE (
         set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
         if %DEBUG%0 NEQ 0 call echo   -%%?1%% 35 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
       ) else (
@@ -176,7 +176,7 @@ if "%URL_PATH_SUFFIX%" == "" (
     ) else if %COMPONENT_INDEX% NEQ 0 (
       set /A NUM_REDUCTIONS+=1
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 37 -%%?1%% NUM_REDUCTIONS="%%NUM_REDUCTIONS%%"
-    ) else if not "%RETURN_VALUE%" == "" (
+    ) else if defined RETURN_VALUE (
       set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 38 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
     ) else (
@@ -185,7 +185,7 @@ if "%URL_PATH_SUFFIX%" == "" (
     )
   ) else (
     if not "%URL_PATH_PREFIX%" == "." (
-      if not "%RETURN_VALUE%" == "" (
+      if defined RETURN_VALUE (
         set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
         if %DEBUG%0 NEQ 0 call echo   -%%?1%% 40 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
       ) else (
@@ -195,7 +195,7 @@ if "%URL_PATH_SUFFIX%" == "" (
     ) else if %COMPONENT_INDEX% NEQ 0 (
       set /A NUM_REDUCTIONS+=1
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 42 -%%?1%% NUM_REDUCTIONS="%%NUM_REDUCTIONS%%"
-    ) else if not "%RETURN_VALUE%" == "" (
+    ) else if defined RETURN_VALUE (
       set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
       if %DEBUG%0 NEQ 0 call echo   -%%?1%% 43 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
     ) else (
@@ -211,7 +211,7 @@ if "%URL_PATH_SUFFIX%" == "" (
   if %DEBUG%0 NEQ 0 call echo   -%%?1%% 45 -%%?1%% URL_PATH_SUFFIX="%%URL_PATH_SUFFIX%%" NUM_REDUCTIONS="%%NUM_REDUCTIONS%%"
 ) else (
   rem special case: ../..
-  if not "%RETURN_VALUE%" == "" (
+  if defined RETURN_VALUE (
     set "RETURN_VALUE=%RETURN_VALUE%/%URL_PATH_PREFIX%"
     if %DEBUG%0 NEQ 0 call echo   -%%?1%% 46 -%%?1%% RETURN_VALUE="%%RETURN_VALUE%%"
   ) else (

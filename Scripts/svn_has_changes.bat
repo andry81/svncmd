@@ -51,10 +51,10 @@ set FLAG_SVN_STATUS_EXCLUDE_VERSIONED=0
 rem flags always at first
 set "FLAG=%~1"
 
-if not "%FLAG%" == "" ^
+if defined FLAG ^
 if not "%FLAG:~0,1%" == "-" set "FLAG="
 
-if not "%FLAG%" == "" (
+if defined FLAG (
   if "%FLAG%" == "-stat-exclude-?" (
     set FLAG_SVN_STATUS_EXCLUDE_?=1
     set "FLAG_TEXT_SVN_STATUS_INCLUDE_?="
@@ -82,7 +82,7 @@ if not "%FLAG%" == "" (
 set "DIR_PATH_PREFIX=%~1"
 set "DIR_PATH_SUBDIR=%~2"
 
-if "%DIR_PATH_PREFIX%" == "" goto DIR_PATH_PREFIX_ERROR
+if not defined DIR_PATH_PREFIX goto DIR_PATH_PREFIX_ERROR
 
 set "DIR_PATH_PREFIX=%DIR_PATH_PREFIX:/=\%"
 
@@ -100,7 +100,7 @@ goto DIR_PATH_PREFIX_END
 
 :DIR_PATH_PREFIX_END
 
-if "%DIR_PATH_SUBDIR%" == "" goto DIR_PATH_SUBDIR_END
+if not defined DIR_PATH_SUBDIR goto DIR_PATH_SUBDIR_END
 
 set "DIR_PATH_SUBDIR=%DIR_PATH_SUBDIR:/=\%"
 
@@ -132,7 +132,7 @@ if %FLAG_SVN_STATUS_EXCLUDE_VERSIONED% NEQ 0 (
 )
 
 set "SVN_STATUS_FILE_PATH=%DIR_PATH_PREFIX%"
-if not "%DIR_PATH_SUBDIR%" == "" set "SVN_STATUS_FILE_PATH=%SVN_STATUS_FILE_PATH%\%DIR_PATH_SUBDIR%"
+if defined DIR_PATH_SUBDIR set "SVN_STATUS_FILE_PATH=%SVN_STATUS_FILE_PATH%\%DIR_PATH_SUBDIR%"
 
 rem findstr returns 0 on not empty list
 ( svn status "%SVN_STATUS_FILE_PATH%" --depth infinity %FLAG_TEXT_SVN_IGNORE_EXTERNALS% --non-interactive 2>nul || exit /b)%FINDSTR_EXP_FIRST_FILTER%%FINDSTR_EXP_SECOND_FILTER%

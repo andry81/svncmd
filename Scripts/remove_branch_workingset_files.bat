@@ -25,7 +25,7 @@ if not exist "%ROOT_FILES_DIR_PATH%\" (
   exit /b 1
 ) >&2
 
-if "%ROOT_FILES_NAME_PREFIX%" == "" (
+if not defined ROOT_FILES_NAME_PREFIX (
   echo.%~nx0: error: prefix name to root path must be set.
   exit /b 2
 ) >&2

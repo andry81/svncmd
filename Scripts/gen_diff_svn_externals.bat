@@ -172,11 +172,11 @@ if !SVN_WORKINGSET_SEARCH_T! EQU 0 (
       set WORKINGSETS_HAS_CHANGES=1
       (echo.+^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
     )
-  ) else if not "!L_LOCAL_PATH!" == "" (
+  ) else if defined L_LOCAL_PATH (
     set WORKINGSETS_HAS_CHANGES=1
     (echo.+^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
   )
-) else if not "!L_LOCAL_PATH!" == "" (
+) else if defined L_LOCAL_PATH (
   if !WORKINGSET_LOCAL_PATH_FOUND! EQU 0 (
     set WORKINGSETS_HAS_CHANGES=1
     (echo.-^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
@@ -249,11 +249,11 @@ set "%SVN_WORKINGSET_NUM_LINES_VAR%=!SVN_WORKINGSET_INDEX!"
 exit /b 0
 
 :LOAD_LINE_SVN_WORKINGSET
-if "!LOCAL_PATH!" == "" ( set "LASTERROR=10" && exit /b 1 )
-if "!EXT_PATH!" == "" ( set "LASTERROR=11" && exit /b 1 )
-if "!OP_REV!" == "" ( set "LASTERROR=12" && exit /b 1 )
-if "!PEG_REV!" == "" ( set "LASTERROR=13" && exit /b 1 )
-if "!REPO!" == "" ( set "LASTERROR=14" && exit /b 1 )
+if not defined LOCAL_PATH ( set "LASTERROR=10" && exit /b 1 )
+if not defined EXT_PATH ( set "LASTERROR=11" && exit /b 1 )
+if not defined OP_REV ( set "LASTERROR=12" && exit /b 1 )
+if not defined PEG_REV ( set "LASTERROR=13" && exit /b 1 )
+if not defined REPO ( set "LASTERROR=14" && exit /b 1 )
 if !OP_REV! LSS 0 ( set "LASTERROR=15" && exit /b 1 )
 if !PEG_REV! LSS 0 ( set "LASTERROR=16" && exit /b 1 )
 
