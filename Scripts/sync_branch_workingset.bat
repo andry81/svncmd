@@ -631,13 +631,13 @@ set BRANCH_DIFF_FILESIZE=%ERRORLEVEL%
 
 if %BRANCH_DIFF_FILESIZE% NEQ 0 pushd "%SYNC_BRANCH_PATH%" && (
   rem PREPROCESS_PATCH_EXTERNAL_REMOVE step, because:
-  rem   1. We must postprocess all removed external items after the patch below because a patch can update a directory externals property list but does not
+  rem   1. We must postprocess all removed external items before the patch below because a patch can update a directory externals property list but does not
   rem      physically remove directories associated with removed external items.
   rem Algorithm:
   rem   1. Request current externals list from being updated directory and compare it with externals list about to be apply. Then
   rem      find removed externals and physically remove them.
   rem   2. Additionally remove parent directories (in reverse order from child to parent) if they were a part of an external path and there is no
-  rem      any files or directories in it.
+  rem      unversioned files or directories in it.
   rem   3. Stop with an error if being removed external contains changes but the auto revert option is not set.
   call :PREPROCESS_PATCH_EXTERNAL_REMOVE || ( popd & goto :EOF )
 
