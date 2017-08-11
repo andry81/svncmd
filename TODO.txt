@@ -33,7 +33,7 @@ Tests for svn_changeset.bat:
   - in local repo (file:///) directory
   - in directory not under SVN control
 
-Tests for svn_changeset.bat:
+Tests for svn_list.bat:
   - in WC directory w/o .svn subdirectory, but w/ .svn subdirectory in parent directory
   - output from the script on SVN WC directory w/o .svn subdirectory, but w/ .svn subdirectory in parent directory w/ flags -offline -wcroot flags should be the same to the output w/o -offline flag and w/ --depth infinity --non-interactive flags
   - in local repo (file:///) directory
