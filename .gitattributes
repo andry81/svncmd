@@ -41,6 +41,10 @@ Scripts/sync_branch_workingset.bat -text
 /TODO.txt -text
 TestScripts/gen.bat -text
 TestScripts/sync.bat -text
+Tests/batscripts/.test_make_url_absolute/impl.bat -text
+Tests/batscripts/.test_make_url_absolute/init.bat -text
+Tests/batscripts/.test_make_url_canonical/impl.bat -text
+Tests/batscripts/.test_make_url_canonical/init.bat -text
 Tests/batscripts/__init__.bat -text
 Tests/batscripts/test_all.bat -text
 Tests/batscripts/test_make_url_absolute.bat -text
