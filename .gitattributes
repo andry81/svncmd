@@ -81,3 +81,4 @@ TestsExternal/batscript/test_all.bat -text
 TestsExternal/batscript/test_svn_changeset.bat -text
 /configure.bat -text
 /license.txt -text
+/svncmd.tag -text

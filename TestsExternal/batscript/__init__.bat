@@ -1,21 +1,23 @@
 @echo off
 
 rem exit if already initialized
-if 0%__INIT__% NEQ 0 exit /b 0
+if 0%__BATSCRIPT_INIT__% NEQ 0 exit /b 0
+
+set "TESTS_ROOT=%~dp0"
+set "TESTS_ROOT=%TESTS_ROOT:~0,-1%"
+set "TESTS_ROOT=%TESTS_ROOT:\=/%"
 
 rem initialize Tools "module"
-call "%%~dp0..\..\Tools\__init__.bat" || goto :EOF
+call "%%TESTS_ROOT%%/../../Tools/__init__.bat" || goto :EOF
 
-if "%CONFIG_ROOT%" == "" set "CONFIG_ROOT=%~dp0..\..\Config"
-set "CONFIG_ROOT=%CONFIG_ROOT:\=/%"
-if "%CONFIG_ROOT:~-1%" == "/" set "CONFIG_ROOT=%CONFIG_ROOT:~0,-1%"
+if "%CONFIG_ROOT%" == "" set "CONFIG_ROOT=%TESTS_ROOT%/../../Config"
 
 rem To avoid interference with already installed versions of tools we have to reset
 rem entire environment into initial state when the Windows just installed.
 rem Read windows version.
 call "%%CONTOOLS_ROOT%%/winver.bat"
 
-for /F "eol= tokens=1,2,* delims=|" %%i in ("%WINVER_VALUE%") do (
+for /F "eol=	 tokens=1,2,* delims=|" %%i in ("%WINVER_VALUE%") do (
   set "OSNAME=%%i"
 )
 
@@ -60,24 +62,25 @@ goto :EOF
 
 :RESET_ENV_AND_CONTINUE
 rem Reset environment
-set "__NEST_LVL="
-set "CONTOOLS_ROOT=%CONTOOLS_ROOT%"
 set "WINVER_VALUE="
 set "OSNAME="
 echo %~nx0: Resetting environment to defaults...
 call "%%CONTOOLS_ROOT%%/resetenv.bat" -p -e "%%CONFIG_ROOT%%/env/%%~1" >nul
 echo.
 
-rem basic variables
+rem initialize environment again
 set "TESTS_ROOT=%~dp0"
+set "TESTS_ROOT=%TESTS_ROOT:~0,-1%"
 set "TESTS_ROOT=%TESTS_ROOT:\=/%"
-if "%TESTS_ROOT:~-1%" == "/" set "TESTS_ROOT=%TESTS_ROOT:~0,-1%"
 
 rem initialize Tools "module"
 call "%%TESTS_ROOT%%/../../Tools/__init__.bat" || goto :EOF
 
 rem external tools root directory
 call :ABSPATH EXTERNAL_TOOLS_ROOT "%%TESTS_ROOT%%/../../ToolsExternal"
+
+rem external scripts for tests
+call :ABSPATH EXTERNAL_TEST_SCRIPTS_ROOT "%%TESTS_ROOT%%/../../TestScripts"
 
 rem python bin root
 call :ABSPATH TEST_PYTHON_BIN_ROOT "%%EXTERNAL_TOOLS_ROOT%%/python/python-win32/3.6.1"
@@ -89,13 +92,10 @@ rem python pytest module command line prefix
 call :ABSPATH TEST_PYTHON_PYTEST_CMD_LINE_PREFIX "%%TEST_PYTHON_EXE%%" -B -m pytest
 
 rem python search paths
-set "PYTHONPATH=%%TESTS_ROOT:\=/%%/pyscripts;%%TESTS_ROOT:\=/%%/pytests"
-
-rem nest level to call tests end logic in case of exit from a batch file with 0 nest level
-if "%__NEST_LVL%" == "" set __NEST_LVL=0
+set "PYTHONPATH=%EXTERNAL_TEST_SCRIPTS_ROOT:\=/%/pyscripts;%TESTS_ROOT:\=/%/pytests"
 
 rem declare initialized
-set __INIT__=1
+set __BATSCRIPT_INIT__=1
 
 exit /b 0
 

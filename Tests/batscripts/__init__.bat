@@ -7,9 +7,6 @@ set "TESTS_ROOT=%TESTS_ROOT:\=/%"
 rem initialize Tools "module"
 call "%%TESTS_ROOT%%/../../Tools/__init__.bat" || goto :EOF
 
-rem override some variables
-set "SVNCMD_TOOLS_ROOT=%TESTS_ROOT%/../../Scripts"
-
 rem initialize testlib "module"
 call "%%CONTOOLS_ROOT%%/testlib/__init__.bat" || goto :EOF
 
