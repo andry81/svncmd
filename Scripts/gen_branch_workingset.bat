@@ -1086,7 +1086,7 @@ if %HAS_TO_RESOLVE_COPY_FIRST_FILE% NEQ 0 (
   type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_copy.lst" || goto :EOF
 )
 
-call "%%CONTOOLS_ROOT%%/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_DIFF_DIR_PATH%%" /NJS || goto :EOF
+call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_DIFF_DIR_PATH%%" /NJS || goto :EOF
 
 rem register binary copy in the list
 (echo.%BRANCH_DIFF_FILE_INDEX_FILE%)>> "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_copy.lst"
