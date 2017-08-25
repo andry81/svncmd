@@ -23,8 +23,8 @@ Set of batch scripts for svn command line tools including svn command line tools
 The latest version is here: sf.net/p/svncmd
 
 WARNING:
-  Use the SVN access to find out new functionality and bug fixes:
-    https://svn.code.sf.net/p/svncmd/scripts/trunk
+  Use the SVN access to find out new functionality and bug fixes.
+  See the REPOSITORIES section.
 
 -------------------------------------------------------------------------------
 2. ### <a name="LICENSE">LICENSE</a>
