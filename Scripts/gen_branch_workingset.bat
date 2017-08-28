@@ -1078,6 +1078,10 @@ set "BRANCH_BINARY_FILE_NAME=%~nx1"
 
 set "BRANCH_BINARY_DIFF_DIR_PATH=%~dp2"
 
+rem xcopy will fail now if a directory path has slash character at the end
+set "BRANCH_BINARY_FILE_DIR=%BRANCH_BINARY_FILE_DIR:~0,-1%"
+set "BRANCH_BINARY_DIFF_DIR_PATH=%BRANCH_BINARY_DIFF_DIR_PATH:~0,-1%"
+
 if not exist "%BRANCH_BINARY_DIFF_DIR_PATH%" mkdir "%BRANCH_BINARY_DIFF_DIR_PATH%"
 
 if %HAS_TO_RESOLVE_COPY_FIRST_FILE% NEQ 0 (
