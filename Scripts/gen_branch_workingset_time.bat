@@ -23,7 +23,7 @@ type nul>nul
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 1 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 1 (echo.^>^>%0 %*) >&3
 
 call "%%~dp0__init__.bat" || goto :EOF
 

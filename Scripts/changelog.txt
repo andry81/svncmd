@@ -1,0 +1,4 @@
+2018.07.19:
+* fixed: typo
+* new: changelog for per changeset commit logs
+* new: svn/git ignore files

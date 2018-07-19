@@ -22,7 +22,7 @@ type nul>nul
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 5 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 5 (echo.^>^>%0 %*) >&3
 
 set "?~nx0=%~nx0"
 

@@ -6,7 +6,9 @@ Config/env/vars_win8.lst -text
 Config/env/vars_winxp.lst -text
 /README.md -text
 /README_EN.txt -text
+Scripts/.svnignore -text
 Scripts/KNOWN_ISSUES.txt -text
+Scripts/changelog.txt -text
 Scripts/check_svn_up_change.bat -text
 Scripts/extract_info_param.bat -text
 Scripts/extract_last_changed_rev.bat -text
