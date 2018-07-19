@@ -14,7 +14,7 @@ type nul>nul
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOCITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
 
 set "ROOT_FILES_DIR_PATH=%~1"
 set "ROOT_FILES_NAME_PREFIX=%~2"
