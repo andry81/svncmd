@@ -20,7 +20,7 @@ the svn command line tools (Win32) as is from:
 * VisualSVN
 * win32svn
 
-The latest version is here: sf.net/p/svncmd
+The latest version is here: https://sf.net/p/svncmd
 
 WARNING:
   Use the SVN access to find out new functionality and bug fixes.
