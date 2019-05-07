@@ -29,6 +29,10 @@ echo "%CONFIGURE_ROOT%/Scripts/Tools/__init__.bat"
   echo.set "CONTOOLS_ROOT=%%CONTOOLS_ROOT:\=/%%"
   echo.if "%%CONTOOLS_ROOT:~-1%%" == "/" set "CONTOOLS_ROOT=%%CONTOOLS_ROOT:~0,-1%%"
   echo.
+  echo.if not defined UTILITIES_ROOT set "UTILITIES_ROOT=%%CONTOOLS_ROOT%%/../../Utilities"
+  echo.set "UTILITIES_ROOT=%%UTILITIES_ROOT:\=/%%"
+  echo.if "%%UTILITIES_ROOT:~-1%%" == "/" set "UTILITIES_ROOT=%%UTILITIES_ROOT:~0,-1%%"
+  echo.
   echo.if not defined BUILD_TOOLS_ROOT set "BUILD_TOOLS_ROOT=%%CONTOOLS_ROOT%%/build"
   echo.set "BUILD_TOOLS_ROOT=%%BUILD_TOOLS_ROOT:\=/%%"
   echo.if "%%BUILD_TOOLS_ROOT:~-1%%" == "/" set "BUILD_TOOLS_ROOT=%%BUILD_TOOLS_ROOT:~0,-1%%"
@@ -84,6 +88,10 @@ echo."%CONFIGURE_ROOT%/Tools/__init__.bat"
   echo.set "CONTOOLS_ROOT=%%CONTOOLS_ROOT:\=/%%"
   echo.if "%%CONTOOLS_ROOT:~-1%%" == "/" set "CONTOOLS_ROOT=%%CONTOOLS_ROOT:~0,-1%%"
   echo.
+  echo.if not defined UTILITIES_ROOT set "UTILITIES_ROOT=%%CONTOOLS_ROOT%%/../Utilities"
+  echo.set "UTILITIES_ROOT=%%UTILITIES_ROOT:\=/%%"
+  echo.if "%%UTILITIES_ROOT:~-1%%" == "/" set "UTILITIES_ROOT=%%UTILITIES_ROOT:~0,-1%%"
+  echo.
   echo.if not defined BUILD_TOOLS_ROOT set "BUILD_TOOLS_ROOT=%%CONTOOLS_ROOT%%/build"
   echo.set "BUILD_TOOLS_ROOT=%%BUILD_TOOLS_ROOT:\=/%%"
   echo.if "%%BUILD_TOOLS_ROOT:~-1%%" == "/" set "BUILD_TOOLS_ROOT=%%BUILD_TOOLS_ROOT:~0,-1%%"
@@ -136,7 +144,7 @@ call "%%CONFIGURE_ROOT%%/Tools/__init__.bat" || goto :EOF
 
 rem deploy Windows UCRT dependencies
 for %%i in (%WINDOWS_UCRT_X86_DEPLOY_DIR_LIST%) do (
-  call :CMD "%%CONTOOLS_ROOT%%/xcopy_dir.bat" "%%CONFIGURE_ROOT%%/ToolsExternal/deps/Windows Kits/10/Redist/ucrt/DLLs/x86" "%%CONFIGURE_ROOT%%/%%i" || goto :EOF
+  call :CMD "%%CONTOOLS_ROOT%%/std/xcopy_dir.bat" "%%CONFIGURE_ROOT%%/ToolsExternal/deps/Windows Kits/10/Redist/ucrt/DLLs/x86" "%%CONFIGURE_ROOT%%/%%i" || goto :EOF
 )
 
 exit /b 0

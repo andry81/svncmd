@@ -81,6 +81,7 @@ TestsExternal/batscript/pytests/__init__.py -text
 TestsExternal/batscript/pytests/test_svn_changeset.py -text
 TestsExternal/batscript/test_all.bat -text
 TestsExternal/batscript/test_svn_changeset.bat -text
+/changelog.txt -text
 /configure.bat -text
 /license.txt -text
 /svncmd.tag -text

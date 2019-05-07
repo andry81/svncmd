@@ -1,0 +1,5 @@
+2019.05.07:
+* fixed: `configure.bat` script call
+* fixed: Tests: utilities usage from scripts
+* new: Utilities: `Utilities/bin` as an external directory
+* new: changelog file

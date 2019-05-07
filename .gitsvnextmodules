@@ -30,3 +30,11 @@
 	fetch = :refs/remotes/git-svn
 	remote = svn
 	type = dir
+[submodule "Utilities/bin"]
+	path = Utilities/bin
+	owner = Utilities
+	url = ^/../../contools/contools/trunk/Utilities/bin
+	branch = /
+	fetch = :refs/remotes/git-svn
+	remote = svn
+	type = dir
