@@ -1,3 +1,6 @@
+2019.06.27:
+* fixed: minor fixes
+
 2018.07.19:
 * fixed: typo
 * new: changelog for per changeset commit logs

@@ -48,7 +48,7 @@ if not exist "%SVN_CHANGESETS_DIFF%" (
 
 set "?1=^|"
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set REPO_MAXLEN=0
 call :LOAD_SVN_CHANGESETS_DIFF
@@ -102,7 +102,7 @@ set "REV_DEC=%~2"
 
 set FOR_INDEX=1
 :PRINT_SVN_CHANGESET_FOR_LOOP
-call :PRINT_LINE_SVN_CHANGESET || goto :EOF
+call :PRINT_LINE_SVN_CHANGESET || exit /b
 set /A FOR_INDEX+=1
 if %FOR_INDEX% GTR %SVN_CHANGESETS_DIFF_NUM_LINES% exit /b 0
 goto PRINT_SVN_CHANGESET_FOR_LOOP
@@ -159,7 +159,7 @@ exit /b 0
 
 :LOAD_SVN_CHANGESETS_DIFF
 set SVN_CHANGESET_DIFF_INDEX=0
-for /F "eol=# delims=| tokens=1,2,3,4" %%i in (%SVN_CHANGESETS_DIFF%) do ( call :LOAD_LINE_SVN_CHANGESETS_DIFF "%%i" "%%j" "%%k" "%%l" || goto :EOF )
+for /F "eol=# delims=| tokens=1,2,3,4" %%i in (%SVN_CHANGESETS_DIFF%) do ( call :LOAD_LINE_SVN_CHANGESETS_DIFF "%%i" "%%j" "%%k" "%%l" || exit /b )
 set "SVN_CHANGESETS_DIFF_NUM_LINES=%SVN_CHANGESET_DIFF_INDEX%"
 exit /b 0
 

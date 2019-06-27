@@ -25,7 +25,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 1 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 call "%%CONTOOLS_ROOT%%/get_datetime.bat"
 set "BEGIN_DATE=%RETURN_VALUE:~0,4%-%RETURN_VALUE:~4,2%-%RETURN_VALUE:~6,2%"

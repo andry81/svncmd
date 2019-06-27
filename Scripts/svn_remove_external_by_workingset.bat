@@ -16,7 +16,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
@@ -172,13 +172,13 @@ call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%BRANCH_LOCAL_REL_PATH%%" / "" BRAN
 
 pushd "%WCROOT_PATH_ABS%" && (
   rem remove nested externals recursively
-  call :SVN_REMOVE_EXTERNALS || ( popd & goto :EOF )
+  call :SVN_REMOVE_EXTERNALS || ( popd & exit /b )
   rem remove all versioned files and directories in the external directory
-  call :SVN_REMOVE_BY_LIST || ( popd & goto :EOF )
+  call :SVN_REMOVE_BY_LIST || ( popd & exit /b )
   rem remove parent path of the external directory if no unversioned files on the way
-  call :REMOVE_EXTERNAL_UNCHANGED_DIR_PATH || ( popd & goto :EOF )
+  call :REMOVE_EXTERNAL_UNCHANGED_DIR_PATH || ( popd & exit /b )
   rem remove record from the WC EXTERNALS table to unlink the external directory from the WC root.
-  call :REMOVE_WCROOT_EXTERNAL || ( popd & goto :EOF )
+  call :REMOVE_WCROOT_EXTERNAL || ( popd & exit /b )
   popd
 )
 
@@ -291,12 +291,12 @@ exit /b 0
 :SVN_REMOVE_BY_LIST
 rem set a current directory for "svn ls" command to reduce path lengths in output and from there the ".svn" directory search up to the root
 pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
-  call "%%SVNCMD_TOOLS_ROOT%%/svn_list.bat" -offline . --depth infinity --non-interactive > "%BRANCH_FILES_FILE_TMP%" 2>nul || ( popd & goto :EOF )
+  call "%%SVNCMD_TOOLS_ROOT%%/svn_list.bat" -offline . --depth infinity --non-interactive > "%BRANCH_FILES_FILE_TMP%" 2>nul || ( popd & exit /b )
 
   echo.Removing external directory content: "%EXTERNAL_BRANCH_PATH%"...
   for /F "usebackq eol=	 tokens=* delims=" %%i in (`sort /R "%BRANCH_FILES_FILE_TMP%"`) do (
     set "SVN_FILE_PATH=%%i"
-    call :REMOVE_SVN_FILE_PATH || ( popd & goto :EOF )
+    call :REMOVE_SVN_FILE_PATH || ( popd & exit /b )
   )
   echo.
   popd
