@@ -17,7 +17,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
@@ -168,9 +168,9 @@ for /F "usebackq eol=# tokens=1,2,3 delims=|" %%i in (`sort "%EXTERNALS_DIFF_LIS
   set "EXTERNAL_DIR_PATH_PREFIX=%%j"
   set "EXTERNAL_DIR_PATH=%%k"
   if "%%i" == "-" (
-    call :PROCESS_REMOVE || goto :EOF
+    call :PROCESS_REMOVE || exit /b
   ) else if "%%i" == " " (
-    if %FLAG_SVN_REMOVE_UNCHANGED% NEQ 0 ( call :PROCESS_REMOVE || goto :EOF )
+    if %FLAG_SVN_REMOVE_UNCHANGED% NEQ 0 ( call :PROCESS_REMOVE || exit /b )
   )
 )
 

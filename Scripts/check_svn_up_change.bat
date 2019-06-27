@@ -43,7 +43,7 @@ if not exist "%DOWNSTREAM_SVN_CHANGESET%" (
 rem Drop last error level
 type nul>nul
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 call "%%SVNCMD_TOOLS_ROOT%%/gen_diff_svn_changeset_lst.bat" "%%UPSTREAM_SVN_CHANGESET%%" "%%DOWNSTREAM_SVN_CHANGESET%%" "%%DOWNSTREAM_SVN_CHANGESETS_DIFF%%"
 set LASTERROR=%ERRORLEVEL%

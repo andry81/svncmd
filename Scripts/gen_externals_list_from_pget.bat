@@ -13,7 +13,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 4 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 
@@ -60,7 +60,7 @@ if %FLAG_PREFIX_PATH% NEQ 0 ^
 if not defined FLAG_TEXT_PREFIX_PATH (
   echo.%?~nx0%: error: prefix path is empty.
   exit /b 1
-)
+) >&2
 
 set "EXTERNALS_FILE=%~dpf1"
 set "REPO_ROOT=%~2"

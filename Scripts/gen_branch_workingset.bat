@@ -78,7 +78,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 1 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
@@ -333,7 +333,7 @@ if %SVN_BRANCH_PATH_IS_WC_URL%%FLAG_SVN_AUTO_DETECT% GTR 0 (
   )
 ) else call :MAIN_IMPL
 
-goto :EOF
+exit /b
 
 :MAIN_IMPL
 rem if auto discovery is enabled then do list directories under SVN version control recursively, otherwise use a requested directory directly
@@ -361,7 +361,7 @@ type nul > "%BRANCH_ROOT_ALLFILES_HASH_FILE%"
 set "SVN_BRANCH_SUB_PATH_LAST="
 for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /S /B /A:D "*.svn" 2^>nul`) do (
   set "SVN_BRANCH_SUB_PATH=%%i"
-  call :BRANCH_SUB_PATH "%%SVN_BRANCH_SUB_PATH%%\.." || goto :EOF
+  call :BRANCH_SUB_PATH "%%SVN_BRANCH_SUB_PATH%%\.." || exit /b
 )
 
 if not defined SVN_BRANCH_SUB_PATH_LAST (
@@ -370,7 +370,7 @@ if not defined SVN_BRANCH_SUB_PATH_LAST (
 ) >&2
 
 if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
-  if %FLAG_SVN_LIST_FILES% NEQ 0 ( call :GEN_BRANCH_ALL_FILES_HASH_LIST || goto :EOF )
+  if %FLAG_SVN_LIST_FILES% NEQ 0 ( call :GEN_BRANCH_ALL_FILES_HASH_LIST || exit /b )
 )
 
 exit /b 0
@@ -641,13 +641,13 @@ echo.  "%BRANCH_WORKINGSET_FILE%"
 echo.  "%BRANCH_WORKINGSET_CATALOG_DIR%"
 
 rem parse externals from the root recursively
-call :EXTRACT_ROOT_EXTERNALS || goto :EOF
+call :EXTRACT_ROOT_EXTERNALS || exit /b
 
 echo.
 
 if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
   if %BRANCH_AUTO_DETECT% EQU 0 (
-    if %FLAG_SVN_LIST_FILES% NEQ 0 ( call :GEN_BRANCH_ALL_FILES_HASH_LIST || goto :EOF )
+    if %FLAG_SVN_LIST_FILES% NEQ 0 ( call :GEN_BRANCH_ALL_FILES_HASH_LIST || exit /b )
   )
 )
 
@@ -673,7 +673,7 @@ call "%%CONTOOLS_ROOT%%/encoding/ansi2any.bat" "%%ICONV_DEFAULT_ANSI_LOCALE%%" U
 copy /Y /B "%BRANCH_ROOT_ALL_FILES_LIST_FILE_TMP%" "%BRANCH_ROOT_ALLFILES_NAME%%BRANCH_ROOT_ALLFILES_EXT%" >nul
 del /F /Q /A:-D "%BRANCH_ROOT_ALL_FILES_LIST_FILE_TMP%"
 
-goto :EOF
+exit /b
 
 :CONVERT_ROOT_ALLFILES_FILE_END
 
@@ -712,9 +712,9 @@ if not defined BRANCH_REPO_ROOT (
 ) >&2
 
 rem postprocess externals list
-call :POST_PROCESS_EXTERNALS_FILE || goto :EOF
+call :POST_PROCESS_EXTERNALS_FILE || exit /b
 
-if %BRANCH_AUTO_DETECT% NEQ 0 ( call :PROCESS_ROOT_BRANCH_PATH || goto :EOF )
+if %BRANCH_AUTO_DETECT% NEQ 0 ( call :PROCESS_ROOT_BRANCH_PATH || exit /b )
 
 goto EXTRACT_ROOT_EXTERNALS_IMPL
 
@@ -764,7 +764,7 @@ set "BRANCH_WORKINGSET_CATALOG_DIR_NEXT=%BRANCH_WORKINGSET_CATALOG_PATH%"
 rem echo BRANCH_INFO_FILE=%BRANCH_INFO_FILE%
 
 rem postprocess externals list
-call :POST_PROCESS_EXTERNALS_FILE || goto :EOF
+call :POST_PROCESS_EXTERNALS_FILE || exit /b
 
 :EXTRACT_ROOT_EXTERNALS_IMPL
 for /F "usebackq eol=	 tokens=1,2,3,4,* delims=|" %%i in ("%BRANCH_EXTERNALS_FILE%") do (
@@ -775,7 +775,7 @@ for /F "usebackq eol=	 tokens=1,2,3,4,* delims=|" %%i in ("%BRANCH_EXTERNALS_FIL
   set "BRANCH_EXTERNAL_URI=%%m"
   call :PROCESS_EXTERNAL
 )
-goto :EOF
+exit /b
 
 :PROCESS_EXTERNAL
 if "%BRANCH_EXTERNAL_URI_REV_OPERATIVE%" == "-" set "BRANCH_EXTERNAL_URI_REV_OPERATIVE="
@@ -870,7 +870,7 @@ type "%~dpf1" | "%GNUWIN32_ROOT%/bin/sed.exe" -b -e "s|%SED_SEARCH_STR%|%SED_REP
 copy /Y /B "%BRANCH_EXTERNALS_INFO_FILE_TMP%" "%~dpf1" >nul
 del /F /Q /A:-D "%BRANCH_EXTERNALS_INFO_FILE_TMP%"
 
-goto :EOF
+exit /b
 
 :FILTER_NESTED_INFO_FILE_END
 
@@ -997,7 +997,7 @@ echo.%BRANCH_EXTERNAL_CURRENT_REV%^|%BRANCH_EXTERNAL_LAST_REV%^|%BRANCH_EXTERNAL
 rem get branch info recursively from here
 
 call :EXTRACT_EXTERNALS
-goto :EOF
+exit /b
 
 :POST_PROCESS_EXTERNALS_FILE
 call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat" "%%BRANCH_EXTERNALS_FILE%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" > "%BRANCH_EXTERNALS_LIST_FILE_TMP%"
@@ -1009,7 +1009,7 @@ if %ERRORLEVEL% NEQ 0 (
 copy /Y /B "%BRANCH_EXTERNALS_LIST_FILE_TMP%" "%BRANCH_EXTERNALS_FILE%" >nul
 del /F /Q /A:-D "%BRANCH_EXTERNALS_LIST_FILE_TMP%"
 
-goto :EOF
+exit /b
 
 :RESOLVE_BINARY_DIFFERENCES
 setlocal
@@ -1029,18 +1029,18 @@ call "%%CONTOOLS_ROOT%%/diff/index_patch_file.bat" BRANCH_DIFF_FILE_INDEX "%%BRA
 if %RETURN_VALUE% LSS 1 exit /b 0
 for /L %%i in (1,1,%RETURN_VALUE%) do (
   set BRANCH_DIFF_FILE_INDEX=%%i
-  call :PROCESS_BINARY_DIFF_FILE_INDEX || goto :EOF
+  call :PROCESS_BINARY_DIFF_FILE_INDEX || exit /b
 )
 
 rem resolve add/remove files/directories by adding them to the special lists
 for /F "usebackq eol=	 tokens=* delims=" %%i in (`svn status . --depth infinity --ignore-externals --non-interactive 2^>nul ^| findstr.exe /R /C:"^A "`) do (
   set "BRANCH_FILE_PATH=%%i"
-  call :ADD_SVN_FILE || goto :EOF
+  call :ADD_SVN_FILE || exit /b
 )
 
 for /F "usebackq eol=	 tokens=* delims=" %%i in (`svn status . --depth infinity --ignore-externals --non-interactive 2^>nul ^| findstr.exe /R /C:"^D "`) do (
   set "BRANCH_FILE_PATH=%%i"
-  call :REMOVE_SVN_FILE || goto :EOF
+  call :REMOVE_SVN_FILE || exit /b
 )
 
 exit /b 0
@@ -1087,10 +1087,10 @@ if not exist "%BRANCH_BINARY_DIFF_DIR_PATH%" mkdir "%BRANCH_BINARY_DIFF_DIR_PATH
 if %HAS_TO_RESOLVE_COPY_FIRST_FILE% NEQ 0 (
   set HAS_TO_RESOLVE_COPY_FIRST_FILE=0
   rem always create an empty file
-  type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_copy.lst" || goto :EOF
+  type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_copy.lst" || exit /b
 )
 
-call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_DIFF_DIR_PATH%%" /NJS || goto :EOF
+call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_DIFF_DIR_PATH%%" /NJS || exit /b
 
 rem register binary copy in the list
 (echo.%BRANCH_DIFF_FILE_INDEX_FILE%)>> "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_copy.lst"
@@ -1101,7 +1101,7 @@ exit /b 0
 if %HAS_TO_RESOLVE_ADD_FIRST_FILE% NEQ 0 (
   set HAS_TO_RESOLVE_ADD_FIRST_FILE=0
   rem always create an empty file
-  type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_added.lst" || goto :EOF
+  type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_added.lst" || exit /b
 )
 
 rem register "svn add" in the list
@@ -1113,7 +1113,7 @@ exit /b 0
 if %HAS_TO_RESOLVE_REMOVE_FIRST_FILE% NEQ 0 (
   set HAS_TO_RESOLVE_REMOVE_FIRST_FILE=0
   rem always create an empty file
-  type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_removed.lst" || goto :EOF
+  type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_removed.lst" || exit /b
 )
 
 rem register "svn remove" in the list

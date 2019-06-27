@@ -16,7 +16,7 @@ setlocal
 echo.%~nx0 %*
 echo.
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 
@@ -94,7 +94,7 @@ if not defined SVN_REF_PATH (
 
 popd
 
-goto :EOF
+exit /b
 
 :GET_URL_FILE_NAME
 set "SVN_URL_PATH_PREFIX=%~1"

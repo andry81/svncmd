@@ -22,7 +22,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
@@ -89,7 +89,7 @@ if "%DIR_PATH:~1,1%" == ":" exit /b 0
 rem test whole path on empty directory
 rem set "DIR_PATH=%DIR_PATH:/=\%"
 if exist "%DIR_PATH%\" (
-  call :REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL || goto :EOF
+  call :REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL || exit /b
 )
 exit /b 0
 
@@ -116,7 +116,7 @@ if "%DIR_PATH_PREFIX%" == "." goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
 
 if not exist "%DIR_PATH_PREFIX:/=\%\" exit /b 0
 
-call "%%SVNCMD_TOOLS_ROOT%%/svn_has_changes.bat" -stat-exclude-versioned "%%DIR_PATH_PREFIX%%" "%%DIR_PATH_SUBDIR%%" || goto :EOF
+call "%%SVNCMD_TOOLS_ROOT%%/svn_has_changes.bat" -stat-exclude-versioned "%%DIR_PATH_PREFIX%%" "%%DIR_PATH_SUBDIR%%" || exit /b
 if %RETURN_VALUE% EQU 0 goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_CHECK_DIR_ON_UNVERSIONED_FILES
 goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
 

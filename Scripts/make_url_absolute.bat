@@ -47,7 +47,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 6 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 
@@ -84,7 +84,7 @@ if not defined BASE_URL (
   exit /b 1
 ) >&2
 
-if defined BASE_URL ( call :VALIDATE_BASE_URL || goto :EOF )
+if defined BASE_URL ( call :VALIDATE_BASE_URL || exit /b )
 goto VALIDATE_BASE_URL_END
 
 :VALIDATE_BASE_URL
@@ -98,7 +98,7 @@ exit /b 0
 
 :VALIDATE_BASE_URL_END
 
-call :VALIDATE_TRANSFORM_PATH || goto :EOF
+call :VALIDATE_TRANSFORM_PATH || exit /b
 goto VALIDATE_TRANSFORM_PATH_END
 
 :VALIDATE_TRANSFORM_PATH
@@ -132,7 +132,7 @@ if "%REPO_URL%%TRANSFORM_PATH_TO_REPO_URL_SUFFIX%" == "%TRANSFORM_PATH%" (
 
 :VALIDATE_TRANSFORM_PATH_END
 
-if defined REPO_URL ( call :VALIDATE_REPO_URL || goto :EOF )
+if defined REPO_URL ( call :VALIDATE_REPO_URL || exit /b )
 goto VALIDATE_REPO_URL_END
 
 :VALIDATE_REPO_URL

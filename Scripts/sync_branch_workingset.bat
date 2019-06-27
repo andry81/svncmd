@@ -68,7 +68,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 1 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
@@ -567,7 +567,7 @@ if %FLAG_SVN_AUTO_RELOCATE% NEQ 0 (
   )
 )
 
-call :PREPROCESS_REMOVE_BRANCH_EXTERNALS || goto :EOF
+call :PREPROCESS_REMOVE_BRANCH_EXTERNALS || exit /b
 goto PREPROCESS_REMOVE_BRANCH_EXTERNALS_END
 
 :PREPROCESS_REMOVE_BRANCH_EXTERNALS
@@ -639,7 +639,7 @@ if %BRANCH_DIFF_FILESIZE% NEQ 0 pushd "%SYNC_BRANCH_PATH%" && (
   rem   2. Additionally remove parent directories (in reverse order from child to parent) if they were a part of an external path and there is no
   rem      unversioned files or directories in it.
   rem   3. Stop with an error if being removed external contains changes but the auto revert option is not set.
-  call :PREPROCESS_PATCH_EXTERNAL_REMOVE || ( popd & goto :EOF )
+  call :PREPROCESS_PATCH_EXTERNAL_REMOVE || ( popd & exit /b )
 
   rem CAUTION: Patch svn added files workaround:
   rem   SVN revert can leave files in working copy if they were added before into version control
@@ -647,32 +647,32 @@ if %BRANCH_DIFF_FILESIZE% NEQ 0 pushd "%SYNC_BRANCH_PATH%" && (
   rem   may fail with messages "Skipped missing target: '...'" if such files has already been in the
   rem   working copy being patched.
   rem   To avoid such circumstance we must remove these files before a patch apply or just after revert them.
-  call :RESOLVE_PATCH_AMBIGUITY PREPROCESS_SVN_ADD_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & goto :EOF )
+  call :RESOLVE_PATCH_AMBIGUITY PREPROCESS_SVN_ADD_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & exit /b )
 
   rem CAUTION: Patch binary files workaround:
   rem   Preprocess branch binary differences by creating empty binary files gonna be patched,
   rem   otherwise "svn patch" will fail with: "E720003: Can't open file '...': ...".
   rem   If empty binary file does exist before the "svn patch", then it will just warn: "Skipped missing target: '...'".
-  call :RESOLVE_PATCH_AMBIGUITY PREPROCESS_COPY_BINARY_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & goto :EOF )
+  call :RESOLVE_PATCH_AMBIGUITY PREPROCESS_COPY_BINARY_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & exit /b )
   
   rem CAUTION:
   rem   "svn patch" may fail to add files into directory which is not under version control, because previous
   rem   stage could add unversionned directories for empty files to workaround another problem in "svn patch" (see above).
   rem   So to workaround this problem we must add under version control all newly created directories which files gonna
   rem   be added to the version control through a patch below.
-  call :RESOLVE_PATCH_AMBIGUITY PREPROCESS_COPY_ADD_BINARY_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & goto :EOF)
+  call :RESOLVE_PATCH_AMBIGUITY PREPROCESS_COPY_ADD_BINARY_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & exit /b)
 
   call :CMD svn patch "%%BRANCH_DIFF_FILE%%" . || ( popd & exit /b 72 )
   echo.
 
   rem copy branch binary differences
-  call :RESOLVE_PATCH_AMBIGUITY COPY_BINARY_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & goto :EOF )
+  call :RESOLVE_PATCH_AMBIGUITY COPY_BINARY_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & exit /b )
 
   rem "svn add" branch differences
-  call :RESOLVE_PATCH_AMBIGUITY SVN_ADD_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & goto :EOF )
+  call :RESOLVE_PATCH_AMBIGUITY SVN_ADD_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & exit /b )
 
   rem "svn remove" branch differences
-  call :RESOLVE_PATCH_AMBIGUITY SVN_REMOVE_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & goto :EOF )
+  call :RESOLVE_PATCH_AMBIGUITY SVN_REMOVE_FILE "%%BRANCH_DIFF_FILE%%" || ( popd & exit /b )
 
   popd
 )
@@ -799,7 +799,7 @@ if "%BINARY_FILE_ACTION%" == "SVN_REMOVE_FILE" goto RESOLVE_SVN_REMOVE
 
 for /F "usebackq eol=# tokens=* delims=" %%i in ("%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FROM_FILE_NAME%") do (
   set "BRANCH_FILE_PATH=%%i"
-  call :%%BINARY_FILE_ACTION%% "%%BRANCH_DIFF_FILE_DIR%%%%BRANCH_FILE_PATH%%" "%%BRANCH_FILE_PATH%%" || goto :EOF
+  call :%%BINARY_FILE_ACTION%% "%%BRANCH_DIFF_FILE_DIR%%%%BRANCH_FILE_PATH%%" "%%BRANCH_FILE_PATH%%" || exit /b
 )
 
 echo.
@@ -811,7 +811,7 @@ exit /b 0
 rem add directories from the copy.lst to the version control which files has located in the added.lst (would be added by a patch).
 for /F "usebackq eol=# tokens=* delims=" %%i in (`sort /R "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FROM_FILE_NAME%"`) do (
   set "BRANCH_FILE_PATH=%%i"
-  call :%%BINARY_FILE_ACTION%% "%%BRANCH_DIFF_FILE_DIR%%%%BRANCH_FILE_PATH%%" "%%BRANCH_FILE_PATH%%" || goto :EOF
+  call :%%BINARY_FILE_ACTION%% "%%BRANCH_DIFF_FILE_DIR%%%%BRANCH_FILE_PATH%%" "%%BRANCH_FILE_PATH%%" || exit /b
 )
 
 echo.
@@ -824,7 +824,7 @@ set "BRANCH_TO_ADD_FILE_NAME=%~n2_added.lst"
 rem add directories from the copy.lst to the version control which files has located in the added.lst (would be added by a patch).
 for /F "usebackq eol=# tokens=* delims=" %%i in ("%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FROM_FILE_NAME%") do (
   set "BRANCH_FILE_PATH=%%i"
-  call :%%BINARY_FILE_ACTION%% "%%BRANCH_DIFF_FILE_DIR%%%%BRANCH_FILE_PATH%%" "%%BRANCH_FILE_PATH%%" || goto :EOF
+  call :%%BINARY_FILE_ACTION%% "%%BRANCH_DIFF_FILE_DIR%%%%BRANCH_FILE_PATH%%" "%%BRANCH_FILE_PATH%%" || exit /b
 )
 
 echo.
@@ -860,7 +860,7 @@ exit /b 0
 :PREPROCESS_COPY_ADD_BINARY_FILE_IMPL
 for /F "usebackq eol=# tokens=* delims=" %%i in ("%BRANCH_DIFF_FILE_DIR%%BRANCH_TO_ADD_FILE_NAME%") do (
   set "BRANCH_FILE_PATH_TO_ADD=%%i"
-  call :PREPROCESS_COPY_ADD_BINARY_FILE_LINE || goto :EOF
+  call :PREPROCESS_COPY_ADD_BINARY_FILE_LINE || exit /b
 )
 exit /b 0
 
@@ -887,7 +887,7 @@ set /A BRANCH_BINARY_FILE_MIN_INDEX_SIZE-=1
 set /A BRANCH_BINARY_FILE_MAX_INDEX_SIZE-=1
 for /L %%i in (1,1,%BRANCH_BINARY_FILE_MIN_INDEX_SIZE%) do (
   set DIR_INDEX=%%i
-  call :SVN_COPY_ADD_BINARY_FILE_DIR_IMPL || goto :EOF
+  call :SVN_COPY_ADD_BINARY_FILE_DIR_IMPL || exit /b
 )
 exit /b 0
 
@@ -896,7 +896,7 @@ call set "DIR_PATH=%%BRANCH_BINARY_FILE_SUBDIR_%DIR_INDEX%:/=\%%"
 call set "DIR_TO_ADD_PATH=%%BRANCH_BINARY_FILE_TO_ADD_SUBDIR_%DIR_INDEX%:/=\%%"
 if not "%DIR_PATH%" == "%DIR_TO_ADD_PATH%" exit /b -1
 
-call :SVN_ADD_FILE_DIR || goto :EOF
+call :SVN_ADD_FILE_DIR || exit /b
 
 rem stop search second list because all path is added to the version control
 if %DIR_INDEX% EQU %BRANCH_BINARY_FILE_MAX_INDEX_SIZE% exit /b -2
@@ -904,7 +904,7 @@ if %DIR_INDEX% EQU %BRANCH_BINARY_FILE_MAX_INDEX_SIZE% exit /b -2
 exit /b 0
 
 :PREPROCESS_SVN_ADD_FILE
-if exist "%BRANCH_FILE_PATH%" ( call :REMOVE_UNVERSIONNED || goto :EOF )
+if exist "%BRANCH_FILE_PATH%" ( call :REMOVE_UNVERSIONNED || exit /b )
 exit /b 0
 
 :COPY_BINARY_FILE
@@ -944,7 +944,7 @@ exit /b 0
 rem safe checks
 if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
-if exist "%BRANCH_FILE_PATH%" ( call :REMOVE_VERSIONNED || goto :EOF )
+if exist "%BRANCH_FILE_PATH%" ( call :REMOVE_VERSIONNED || exit /b )
 exit /b 0
 
 :REMOVE_VERSIONNED

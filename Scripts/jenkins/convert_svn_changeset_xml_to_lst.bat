@@ -25,17 +25,17 @@ if not exist "%XML_PATH%" (
 rem Drop last error level
 type nul>nul
 
-call "%%~dp0..\__init__.bat" || goto :EOF
+call "%%~dp0..\__init__.bat" || exit /b
 
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 
 call :XMLSTARLET ^
   sel -T -t -m "%XPATH_ROOT%" ^
-  --var linebreak -n --break -v "concat(translate(module, $linebreak, ''), '|', revision, $linebreak)" "%XML_PATH%" || goto :EOF
+  --var linebreak -n --break -v "concat(translate(module, $linebreak, ''), '|', revision, $linebreak)" "%XML_PATH%" || exit /b
 
 exit /b 0
 
 :XMLSTARLET
 echo.^>^> "%XML_TOOLS_ROOT%/xml.exe" %* ^> "%OUTPUT_DIR%\svn_changeset.lst"
 "%XML_TOOLS_ROOT%/xml.exe" %* > "%OUTPUT_DIR%\svn_changeset.lst"
-goto :EOF
+exit /b

@@ -19,7 +19,7 @@ setlocal
 
 if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || goto :EOF
+call "%%~dp0__init__.bat" || exit /b
 
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
@@ -107,7 +107,7 @@ if not "%~1" == "" set "BRANCH_PATH=%~dpf1"
 if not exist "%BRANCH_PATH%\" (
   echo.%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".
   exit /b 255
-)
+) >&2
 
 set "WCROOT_PATH=%FLAG_TEXT_WCROOT%"
 set "WCROOT_PATH_ABS=%FLAG_TEXT_WCROOT_ABS%"
@@ -125,7 +125,7 @@ if not defined WCROOT_PATH (
 
 rem test SVN WC root path
 if %FLAG_WCROOT% NEQ 0 (
-  call :TEST_WCROOT_PATH || goto :EOF
+  call :TEST_WCROOT_PATH || exit /b
 ) else (
   set "WCROOT_PATH=%BRANCH_PATH%"
   set "BRANCH_REL_SUB_PATH="
@@ -236,7 +236,7 @@ call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".he
 
 for /F "usebackq eol=	 tokens=* delims=" %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
   set "LOCAL_PATH=%%i"
-  call :PROCESS_LOCAL_EXTERNAL_RECORD || goto :EOF
+  call :PROCESS_LOCAL_EXTERNAL_RECORD || exit /b
 )
 
 exit /b 0
@@ -271,7 +271,7 @@ for /F "usebackq eol=	 tokens=1,2,3,4,5,6 delims=|" %%i in (`@call "%%SQLITE_TOO
   set "PEG_REV=%%l"
   set "REPOS_ID=%%m"
   set "REPO_RELPATH=%%n"
-  call :PROCESS_EXTERNAL_RECORD || goto :EOF
+  call :PROCESS_EXTERNAL_RECORD || exit /b
 )
 
 exit /b 0
@@ -364,7 +364,7 @@ for /F "usebackq eol=	 tokens=1,2,3,4,5 delims=|" %%i in ("%EXTERNALS_LIST_FILE_
   set "OPERATIVE_REV=%%k"
   set "PEG_REV=%%l"
   set "REPOPATH=%%m"
-  call :PROCESS_PGET_EXTERNAL_RECORD || goto :EOF
+  call :PROCESS_PGET_EXTERNAL_RECORD || exit /b
 )
 
 exit /b 0
