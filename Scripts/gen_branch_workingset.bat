@@ -258,7 +258,7 @@ rem Is branch URI is a local repo URL?
 set SVN_BRANCH_PATH_IS_LOCAL_REPO_URL=0
 
 rem if not SVN WC path but a local path, then try to request file:/// prefixed path to detect local repo URL presence
-if %SVN_BRANCH_PATH_IS_WC_URL% EQU 0 if %SVN_BRANCH_URI_IS_LOCAL% NEQ 0 ( svn info "file:///%SVN_BRANCH_PATH%" >nul 2>nul && set "SVN_BRANCH_PATH_IS_LOCAL_REPO_URL=1" )
+if %SVN_BRANCH_PATH_IS_WC_URL% EQU 0 if %SVN_BRANCH_URI_IS_LOCAL% NEQ 0 ( svn info "file:///%SVN_BRANCH_PATH%" --non-interactive >nul 2>nul && set "SVN_BRANCH_PATH_IS_LOCAL_REPO_URL=1" )
 
 if %SVN_BRANCH_URI_IS_LOCAL% NEQ 0 (
   if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (

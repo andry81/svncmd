@@ -845,7 +845,7 @@ set "BRANCH_BINARY_FILE_DIR=%~dp2"
 set "BRANCH_BINARY_FILE_DIR=%BRANCH_BINARY_FILE_DIR:~0,-1%"
 
 rem check is directory already added to the version control
-svn info "%BRANCH_BINARY_FILE_DIR%" >nul 2>nul && exit /b 0
+svn info "%BRANCH_BINARY_FILE_DIR%" --non-interactive >nul 2>nul && exit /b 0
 
 rem echo BRANCH_FILE_PATH=%BRANCH_FILE_PATH%
 call "%%CONTOOLS_ROOT%%/index_pathstr.bat" BRANCH_BINARY_FILE_SUBDIR_ /\ "%%BRANCH_FILE_PATH%%"
@@ -926,7 +926,7 @@ rem safe checks
 if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
 rem add only unversionned files
-svn info "%BRANCH_FILE_PATH%" >nul 2>nul && exit /b 0
+svn info "%BRANCH_FILE_PATH%" --non-interactive >nul 2>nul && exit /b 0
 call :CMD svn add "%%BRANCH_FILE_PATH%%" --depth empty --non-interactive || exit /b 111
 exit /b 0
 
@@ -936,7 +936,7 @@ if not defined DIR_PATH exit /b 0
 if "%DIR_PATH%" == "." exit /b 0
 if not exist "%DIR_PATH%\" mkdir "%DIR_PATH%"
 rem add only unversionned directories
-svn info "%DIR_PATH%" >nul 2>nul && exit /b 0
+svn info "%DIR_PATH%" --non-interactive >nul 2>nul && exit /b 0
 call :CMD svn add "%%DIR_PATH%%" --depth empty --non-interactive || exit /b 112
 exit /b 0
 
@@ -952,7 +952,7 @@ rem safe checks
 if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
 rem remove only versionned files
-svn info "%BRANCH_FILE_PATH%" >nul 2>nul || exit /b 0
+svn info "%BRANCH_FILE_PATH%" --non-interactive >nul 2>nul || exit /b 0
 call :CMD svn remove "%%BRANCH_FILE_PATH%%" --force --non-interactive || exit /b 113
 exit /b 0
 
@@ -961,7 +961,7 @@ rem safe checks
 if not defined BRANCH_FILE_PATH exit /b 0
 if "%BRANCH_FILE_PATH%" == "." exit /b 0
 rem remove only unversionned files
-svn info "%BRANCH_FILE_PATH%" >nul 2>nul && exit /b 0
+svn info "%BRANCH_FILE_PATH%" --non-interactive >nul 2>nul && exit /b 0
 if exist "%BRANCH_FILE_PATH%\" (
   call :CMD rmdir /Q "%%BRANCH_FILE_PATH:/=\%%" || exit /b 114
   exit /b 0
