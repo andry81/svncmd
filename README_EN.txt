@@ -1,5 +1,5 @@
 * README_EN.txt
-* 2018.01.20
+* 2019.11.24
 * svncmd
 
 CAUTION:
@@ -40,11 +40,14 @@ https://en.wikipedia.org/wiki/MIT_License)
 3. REPOSITORIES
 -------------------------------------------------------------------------------
 Primary:
-  * https://svn.code.sf.net/p/svncmd/scripts/trunk
+  * https://sf.net/p/svncmd/scripts/HEAD/tree/trunk
+    https://svn.code.sf.net/p/svncmd/scripts/trunk
 First mirror:
-  * https://github.com/andry81/svncmd.git
+  * https://github.com/andry81/svncmd/tree/trunk
+    https://github.com/andry81/svncmd.git
 Second mirror:
-  * https://bitbucket.org/andry81/svncmd.git
+  * https://bitbucket.org/andry81/svncmd/src/trunk
+    https://bitbucket.org/andry81/svncmd.git
 
 -------------------------------------------------------------------------------
 4. INSTALLATION
