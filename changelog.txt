@@ -1,3 +1,6 @@
+2019.12.29:
+* removed: dropped markup readme file as not clearly compatible and not equivalently supported between different hubs
+
 2019.11.24:
 * changed: readme update
 
