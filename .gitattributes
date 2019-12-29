@@ -4,7 +4,6 @@ Config/env/vars_win2k.lst -text
 Config/env/vars_win7.lst -text
 Config/env/vars_win8.lst -text
 Config/env/vars_winxp.lst -text
-/README.md -text
 /README_EN.txt -text
 Scripts/.svnignore -text
 Scripts/KNOWN_ISSUES.txt -text
