@@ -1,5 +1,5 @@
 * README_EN.txt
-* 2019.11.24
+* 2020.02.10
 * svncmd
 
 CAUTION:
@@ -10,7 +10,7 @@ CAUTION:
 2. LICENSE
 3. REPOSITORIES
 4. INSTALLATION
-5. AUTHOR EMAIL
+5. AUTHOR
 
 -------------------------------------------------------------------------------
 1. DESCRIPTION
@@ -55,6 +55,6 @@ Second mirror:
 run configure.bat
 
 -------------------------------------------------------------------------------
-5. AUTHOR EMAIL
+5. AUTHOR
 -------------------------------------------------------------------------------
 Andrey Dibrov (andry at inbox dot ru)
