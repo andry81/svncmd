@@ -5,8 +5,8 @@ Config/env/vars_win7.lst -text
 Config/env/vars_win8.lst -text
 Config/env/vars_winxp.lst -text
 /README_EN.txt -text
-Scripts/.svnignore -text
 Scripts/KNOWN_ISSUES.txt -text
+Scripts/__init__.bat -text
 Scripts/changelog.txt -text
 Scripts/check_svn_up_change.bat -text
 Scripts/extract_info_param.bat -text
@@ -80,6 +80,8 @@ TestsExternal/batscript/pytests/__init__.py -text
 TestsExternal/batscript/pytests/test_svn_changeset.py -text
 TestsExternal/batscript/test_all.bat -text
 TestsExternal/batscript/test_svn_changeset.bat -text
+__init__/__init__.bat -text
+__init__/__init__.sh -text
 /changelog.txt -text
 /configure.bat -text
 /license.txt -text
