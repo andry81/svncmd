@@ -912,7 +912,7 @@ set "BRANCH_BINARY_FILE_DIR=%~dp1"
 set "BRANCH_BINARY_FILE_NAME=%~nx1"
 
 set "BRANCH_BINARY_FILE_DIR_COPY_TO=%~dp2"
-set "BRANCH_FILE_PATH_COPY_TO=%~dpnx2"
+set "BRANCH_FILE_PATH_COPY_TO=%~f2"
 
 rem xcopy will fail now if a directory path has slash character at the end
 set "BRANCH_BINARY_FILE_DIR=%BRANCH_BINARY_FILE_DIR:~0,-1%"
