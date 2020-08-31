@@ -49,7 +49,7 @@ if "%URL:/=%" == "%URL%" (
   exit /b 0
 )
 
-for /F "eol=	 tokens=1,* delims=:" %%i in ("%URL%") do (
+for /F "eol= tokens=1,* delims=:" %%i in ("%URL%") do (
   set "URL_SCHEME=%%i"
   set "URL_PATH=%%j"
 )
@@ -83,7 +83,7 @@ exit /b
 :IMPL
 :MAKE_URL_CANONICAL_LOOP
 set "URL_PATH_SUFFIX="
-for /F "eol=	 tokens=1,* delims=/" %%i in ("%URL_PATH_PREFIX%") do (
+for /F "eol= tokens=1,* delims=/" %%i in ("%URL_PATH_PREFIX%") do (
   set "URL_PATH_PREFIX=%%i"
   set "URL_PATH_SUFFIX=%%j"
 )

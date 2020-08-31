@@ -612,7 +612,7 @@ if exist "%BRANCH_CHANGESET_FILE%" call :UPDATE_BY_CHANGESET
 goto UPDATE_BY_CHANGESET_END
 
 :UPDATE_BY_CHANGESET
-for /F "usebackq eol=	 tokens=1,* delims=|" %%i in ("%BRANCH_CHANGESET_FILE%") do (
+for /F "usebackq eol= tokens=1,* delims=|" %%i in ("%BRANCH_CHANGESET_FILE%") do (
   set CHANGESET_REVISION=%%i
   set "CHANGESET_PATH=%%j"
   pushd "%SYNC_BRANCH_PATH%" && (

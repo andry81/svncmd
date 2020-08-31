@@ -20,7 +20,7 @@ if "%ARG_REVISION_RANGE:~-1%" == "-" (
 
 set "ARG_REVISION_RANGE_FROM="
 set "ARG_REVISION_RANGE_TO="
-for /F "eol=	 tokens=1,* delims=:" %%i in ("%ARG_REVISION_RANGE%") do (
+for /F "eol= tokens=1,* delims=:" %%i in ("%ARG_REVISION_RANGE%") do (
   set "ARG_REVISION_RANGE_FROM=%%i"
   set "ARG_REVISION_RANGE_TO=%%j"
 )

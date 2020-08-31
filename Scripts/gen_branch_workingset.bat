@@ -359,7 +359,7 @@ type nul > "%BRANCH_ROOT_ALLFILES_FILE%"
 type nul > "%BRANCH_ROOT_ALLFILES_HASH_FILE%"
 
 set "SVN_BRANCH_SUB_PATH_LAST="
-for /F "usebackq eol=	 tokens=* delims=" %%i in (`dir /S /B /A:D "*.svn" 2^>nul`) do (
+for /F "usebackq eol= tokens=* delims=" %%i in (`dir /S /B /A:D "*.svn" 2^>nul`) do (
   set "SVN_BRANCH_SUB_PATH=%%i"
   call :BRANCH_SUB_PATH "%%SVN_BRANCH_SUB_PATH%%\.." || exit /b
 )
@@ -449,7 +449,7 @@ if exist "%BRANCH_ROOT_INFO_FILE_DIR%" (
   set "BRANCH_VERID="
   if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
     rem save svnversion output in case commit w/o update been made
-    for /F "usebackq eol=	 tokens=* delims=" %%i in (`svnversion "%SVN_BRANCH_CANONICAL_PATH%"`) do set "BRANCH_VERID=%%i"
+    for /F "usebackq eol= tokens=* delims=" %%i in (`svnversion "%SVN_BRANCH_CANONICAL_PATH%"`) do set "BRANCH_VERID=%%i"
 
     (call echo.VerID: %%BRANCH_VERID%%)>> "%BRANCH_ROOT_INFO_FILE%"
   )
@@ -767,7 +767,7 @@ rem postprocess externals list
 call :POST_PROCESS_EXTERNALS_FILE || exit /b
 
 :EXTRACT_ROOT_EXTERNALS_IMPL
-for /F "usebackq eol=	 tokens=1,2,3,4,* delims=|" %%i in ("%BRANCH_EXTERNALS_FILE%") do (
+for /F "usebackq eol= tokens=1,2,3,4,* delims=|" %%i in ("%BRANCH_EXTERNALS_FILE%") do (
   set "BRANCH_EXTERNAL_DIR_PATH_PREFIX=%%i"
   set "BRANCH_EXTERNAL_DIR_PATH=%%j"
   set "BRANCH_EXTERNAL_URI_REV_OPERATIVE=%%k"
@@ -877,7 +877,7 @@ exit /b
 set "BRANCH_VERID="
 if %SVN_BRANCH_PATH_IS_WC_URL% NEQ 0 (
   rem save svnversion output in case commit w/o update been made
-  for /F "usebackq eol=	 tokens=* delims=" %%i in (`svnversion "%BRANCH_EXTERNAL_WORKING_PATH%"`) do set "BRANCH_VERID=%%i"
+  for /F "usebackq eol= tokens=* delims=" %%i in (`svnversion "%BRANCH_EXTERNAL_WORKING_PATH%"`) do set "BRANCH_VERID=%%i"
 
   (call echo.VerID: %%BRANCH_VERID%%)>> "%BRANCH_WORKINGSET_CATALOG_PATH%/$info.txt"
 )
@@ -1033,12 +1033,12 @@ for /L %%i in (1,1,%RETURN_VALUE%) do (
 )
 
 rem resolve add/remove files/directories by adding them to the special lists
-for /F "usebackq eol=	 tokens=* delims=" %%i in (`svn status . --depth infinity --ignore-externals --non-interactive 2^>nul ^| findstr.exe /R /C:"^A "`) do (
+for /F "usebackq eol= tokens=* delims=" %%i in (`svn status . --depth infinity --ignore-externals --non-interactive 2^>nul ^| findstr.exe /R /C:"^A "`) do (
   set "BRANCH_FILE_PATH=%%i"
   call :ADD_SVN_FILE || exit /b
 )
 
-for /F "usebackq eol=	 tokens=* delims=" %%i in (`svn status . --depth infinity --ignore-externals --non-interactive 2^>nul ^| findstr.exe /R /C:"^D "`) do (
+for /F "usebackq eol= tokens=* delims=" %%i in (`svn status . --depth infinity --ignore-externals --non-interactive 2^>nul ^| findstr.exe /R /C:"^D "`) do (
   set "BRANCH_FILE_PATH=%%i"
   call :REMOVE_SVN_FILE || exit /b
 )
