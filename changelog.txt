@@ -1,3 +1,9 @@
+2020.08.31:
+* changed: minor changes
+
+2020.08.31:
+* changed: `eol=	` replaced by `eol=` in for loops
+
 2020.07.08:
 * changed: __init__.bat: improved an init script search logic to automatically load from the __init__ subdirectory
 * changed: updated to the latest contools
