@@ -17,7 +17,7 @@ rem entire environment into initial state when the Windows just installed.
 rem Read windows version.
 call "%%CONTOOLS_ROOT%%/winver.bat"
 
-for /F "eol=	 tokens=1,2,* delims=|" %%i in ("%WINVER_VALUE%") do (
+for /F "eol= tokens=1,2,* delims=|" %%i in ("%WINVER_VALUE%") do (
   set "OSNAME=%%i"
 )
 

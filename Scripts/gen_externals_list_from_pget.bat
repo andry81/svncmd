@@ -134,7 +134,7 @@ if "%EXTERNAL_DIR_PATH:~0,1%" == "-" (
   if defined EXTERNAL_PATH_EXP set "EXTERNAL_DIR_PATH_PREFIX=%EXTERNAL_PATH_EXP:\=/%"
   set "EXTERNAL_PATH_EXP="
   set "EXTERNAL_DIR_PATH="
-  for /F "eol=	 tokens=2,* delims= " %%i in ("%EXTERNAL_DIR_PATH%") do (
+  for /F "eol= tokens=2,* delims= " %%i in ("%EXTERNAL_DIR_PATH%") do (
     set "EXTERNAL_PATH_EXP=%%i"
     set "EXTERNAL_DIR_PATH=%%j"
   )
@@ -174,7 +174,7 @@ if defined EXTERNAL_DIR_PATH goto PARSE_EXTERNAL_PATH_EXP_OK2
 set "EXTERNAL_URI_PATH="
 set "EXTERNAL_URI_REV_PEG="
 set "EXTERNAL_CURRENT_REV="
-for /F "eol=	 tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
+for /F "eol= tokens=1,2 delims=@" %%i in ("%EXTERNAL_PATH_EXP%") do (
   set "EXTERNAL_URI_PATH=%%i"
   if not "%%j" == "" set "EXTERNAL_URI_REV_PEG=%%j"
 )
@@ -241,13 +241,13 @@ goto PRINT_EXTERNAL_RECORD
 
 :PRINT_EXTERNAL_PATH
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "eol=	 tokens=* delims=" %%i in ("%EXTERNAL_PATH%") do (echo.%%i)
+for /F "eol= tokens=* delims=" %%i in ("%EXTERNAL_PATH%") do (echo.%%i)
 
 exit /b 0
 
 :PRINT_EXTERNAL_RECORD
 rem TODO: EXTERNAL_DIR_PATH_PREFIX can be repo URL path, transformation required in case of compare with another list with local paths in the first parameter 
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "eol=	 tokens=* delims=" %%i in ("%EXTERNAL_DIR_PATH_PREFIX%|%EXTERNAL_DIR_PATH%|%EXTERNAL_URI_REV_OPERATIVE%|%EXTERNAL_URI_REV_PEG%|%EXTERNAL_URI%") do (echo.%%i)
+for /F "eol= tokens=* delims=" %%i in ("%EXTERNAL_DIR_PATH_PREFIX%|%EXTERNAL_DIR_PATH%|%EXTERNAL_URI_REV_OPERATIVE%|%EXTERNAL_URI_REV_PEG%|%EXTERNAL_URI%") do (echo.%%i)
 
 exit /b 0
