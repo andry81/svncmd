@@ -16,8 +16,8 @@ exit /b 0
 set "WINDOWS_UCRT_X86_DEPLOY_DIR_LIST=ToolsExternal/python/python-win32/3.6.1"
 
 rem universal configuration script by tags
-if exist "%CONFIGURE_ROOT%/contools.tag" goto CONFIGURE_CONTOOLS
-if exist "%CONFIGURE_ROOT%/svncmd.tag" goto CONFIGURE_SVNCMD
+if exist "%PROJECT_ROOT%/contools.tag" goto CONFIGURE_CONTOOLS
+if exist "%PROJECT_ROOT%/svncmd.tag" goto CONFIGURE_SVNCMD
 
 (
   echo.%~nx0: error: unknown configuration environment.
@@ -31,16 +31,16 @@ goto CONFIGURE_SVNCMD_END
 :CONFIGURE_SVNCMD
 :CONFIGURE_SVNCMD_END
 
-if exist "%CONFIGURE_ROOT%/svncmd.tag" call :DEPLOY_TOOLS_EXTERNAL
+if exist "%PROJECT_ROOT%/svncmd.tag" call :DEPLOY_TOOLS_EXTERNAL
 exit /b
 
 :DEPLOY_TOOLS_EXTERNAL
 rem initialize Tools "module"
-call :CMD "%%CONFIGURE_ROOT%%/Tools/__init__.bat" || exit /b
+call :CMD "%%PROJECT_ROOT%%/Tools/__init__.bat" || exit /b
 
 rem deploy Windows UCRT dependencies
 for %%i in (%WINDOWS_UCRT_X86_DEPLOY_DIR_LIST%) do (
-  call :XCOPY_DIR "%%CONFIGURE_ROOT%%/ToolsExternal/deps/Windows Kits/10/Redist/ucrt/DLLs/x86" "%%CONFIGURE_ROOT%%/%%i" || exit /b
+  call :XCOPY_DIR "%%PROJECT_ROOT%%/ToolsExternal/deps/Windows Kits/10/Redist/ucrt/DLLs/x86" "%%PROJECT_ROOT%%/%%i" || exit /b
 )
 
 exit /b 0
