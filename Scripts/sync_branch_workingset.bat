@@ -626,8 +626,8 @@ exit /b 0
 :UPDATE_BY_CHANGESET_END
 
 rem get branch difference file size after update
-call "%%CONTOOLS_ROOT%%/get_filesize.bat" "%%BRANCH_DIFF_FILE%%"
-set BRANCH_DIFF_FILESIZE=%ERRORLEVEL%
+set "BRANCH_DIFF_FILESIZE=0"
+for /F "eol= tokens=* delims=" %%i in ("%BRANCH_DIFF_FILE%") do set "BRANCH_DIFF_FILESIZE=%%~zi"
 
 if %BRANCH_DIFF_FILESIZE% NEQ 0 pushd "%SYNC_BRANCH_PATH%" && (
   rem PREPROCESS_PATCH_EXTERNAL_REMOVE step, because:
