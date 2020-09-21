@@ -4,7 +4,7 @@ setlocal
 
 rem check on supported wc.db user version
 set "WC_DB_USER_VERSION="
-for /F "usebackq eol= tokens=1,* delims=:" %%i in (`@call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch ".svn/wc.db" ".headers off" ".mode list" ".separator |" ".dbinfo"`) do (
+for /F "usebackq eol= tokens=1,* delims=:" %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch ".svn/wc.db" ".headers off" ".mode list" ".separator |" ".dbinfo"`) do (
   if "%%i" == "user version" set "WC_DB_USER_VERSION=%%j"  
 )
 

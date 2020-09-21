@@ -227,12 +227,12 @@ if defined BRANCH_REL_SUB_PATH (
 set "SQLINE_EXP_EXTERNALS_LIST=select%SQLITE_EXP_SELECT_FIRST_FILTER% from externals where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER%"
 
 if %FLAG_RECURSIVE% EQU 0 (
-  call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%"
+  call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%"
   exit /b
 )
 
 rem make recursion
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%" > "%EXTERNALS_LIST_FILE_TMP%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%" > "%EXTERNALS_LIST_FILE_TMP%"
 
 for /F "usebackq eol= tokens=* delims=" %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
   set "LOCAL_PATH=%%i"
@@ -264,7 +264,7 @@ if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 set "SQLINE_EXP_EXTERNALS_LIST=select case when def_local_relpath != '' then def_local_relpath else '.' end as local_prefix, case when def_local_relpath != '' then substr(case when kind != 'dir' then local_relpath else local_relpath || '/' end, length(def_local_relpath)+2) else case when kind != 'dir' then local_relpath else local_relpath || '/' end end as external_path, case when def_revision != '' then def_revision else '-' end as operative_rev, case when def_operational_revision != '' then def_operational_revision else '-' end as peg_rev, repos_id, def_repos_relpath from externals where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER%"
 
-for /F "usebackq eol= tokens=1,2,3,4,5,6 delims=|" %%i in (`@call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "%%SQLINE_EXP_EXTERNALS_LIST%%"`) do (
+for /F "usebackq eol= tokens=1,2,3,4,5,6 delims=|" %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "%%SQLINE_EXP_EXTERNALS_LIST%%"`) do (
   set "LOCAL_PREFIX=%%i"
   set "EXTERNAL_PATH=%%j"
   set "OPERATIVE_REV=%%k"
@@ -278,7 +278,7 @@ exit /b 0
 
 :PROCESS_EXTERNAL_RECORD
 set "REPOROOT="
-for /F "usebackq eol= tokens=* delims=" %%i in (`@call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "select root from repository where id='%%REPOS_ID%%'"`) do set "REPOROOT=%%i"
+for /F "usebackq eol= tokens=* delims=" %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "select root from repository where id='%%REPOS_ID%%'"`) do set "REPOROOT=%%i"
 if not defined REPOROOT (
   echo.%?~nx0%: error: SVN database `REPOSITORY root` request has failed: "%WCROOT_PATH:\=/%/.svn/wc.db".
   exit /b 240
@@ -314,7 +314,7 @@ exit /b
 
 set "SQLINE_EXP_EXTERNALS_LIST=select case when def_local_relpath != '' then def_local_relpath else '.' end as local_prefix, case when def_local_relpath != '' then substr(case when kind != 'dir' then local_relpath else local_relpath || '/' end, length(def_local_relpath)+2) else case when kind != 'dir' then local_relpath else local_relpath || '/' end end as external_path, case when def_revision != '' then def_revision else '-' end as operative_rev, case when def_operational_revision != '' then def_operational_revision else '-' end as peg_rev, '-' from externals where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER%"
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "%%SQLINE_EXP_EXTERNALS_LIST%%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "%%SQLINE_EXP_EXTERNALS_LIST%%"
 
 exit /b
 

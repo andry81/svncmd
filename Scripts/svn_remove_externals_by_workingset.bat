@@ -156,7 +156,7 @@ if %ERRORLEVEL% GTR 0 (
 
 if %ERRORLEVEL% NEQ 0 exit /b 0
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" "select id from 'WCROOT' where local_abspath is null or local_abspath = ''" > "%SQLITE_OUT_FILE_TMP%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" "select id from 'WCROOT' where local_abspath is null or local_abspath = ''" > "%SQLITE_OUT_FILE_TMP%"
 set /P WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 if not defined WC_ID (
   echo.%?~nx0%: error: SVN database `WCROOT id` request has failed: "%WCROOT_PATH%/.svn/wc.db" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
@@ -214,7 +214,7 @@ if not defined EXTERNAL_BRANCH_REPOSITORY_UUID (
   exit /b 51
 ) >&2
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" "select id from 'REPOSITORY' where uuid='%%EXTERNAL_BRANCH_REPOSITORY_UUID%%'" > "%SQLITE_OUT_FILE_TMP%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" "select id from 'REPOSITORY' where uuid='%%EXTERNAL_BRANCH_REPOSITORY_UUID%%'" > "%SQLITE_OUT_FILE_TMP%"
 set /P REPOS_ID=< "%SQLITE_OUT_FILE_TMP%"
 if not defined REPOS_ID (
   echo.%?~nx0%: error: SVN database `REPOSITORY id` request has failed: "%WCROOT_PATH_ABS%/.svn/wc.db".

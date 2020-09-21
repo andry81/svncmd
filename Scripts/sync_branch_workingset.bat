@@ -330,8 +330,8 @@ echo.Synchronizing branch: "%SYNC_BRANCH_REDUCED_PATH%"...
 set "SYNC_BRANCH_PATH=%SYNC_BRANCH_UNREDUCED_PATH%"
 
 rem Extract an external local_relpath, parent_relpath and def_local_relpath fields.
-call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%SYNC_BRANCH_DECORATED_PATH%%" : SYNC_BRANCH_EXT_PATH SYNC_BRANCH_PARENT_PATH
-call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%SYNC_BRANCH_PARENT_PATH%%" : SYNC_BRANCH_PARENT_PATH
+call "%%CONTOOLS_ROOT%%/filesys/split_pathstr.bat" "%%SYNC_BRANCH_DECORATED_PATH%%" : SYNC_BRANCH_EXT_PATH SYNC_BRANCH_PARENT_PATH
+call "%%CONTOOLS_ROOT%%/filesys/split_pathstr.bat" "%%SYNC_BRANCH_PARENT_PATH%%" : SYNC_BRANCH_PARENT_PATH
 
 if "%SYNC_BRANCH_EXT_PATH:~0,1%" == "#" set "SYNC_BRANCH_EXT_PATH=%SYNC_BRANCH_EXT_PATH:~1%"
 
@@ -355,7 +355,7 @@ if defined SYNC_BRANCH_LOCAL_REL_PATH (
 )
 
 rem extract branch parent relative path
-call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%SYNC_BRANCH_LOCAL_REL_PATH%%" / "" SYNC_BRANCH_PARENT_REL_PATH
+call "%%CONTOOLS_ROOT%%/filesys/split_pathstr.bat" "%%SYNC_BRANCH_LOCAL_REL_PATH%%" / "" SYNC_BRANCH_PARENT_REL_PATH
 
 call :SYNC_BRANCH
 exit /b
@@ -723,14 +723,14 @@ if not defined BRANCH_REPOSITORY_UUID (
   exit /b 82
 ) >&2
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'REPOSITORY' where uuid='%%BRANCH_REPOSITORY_UUID%%'" > "%SQLITE_OUT_FILE_TMP%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'REPOSITORY' where uuid='%%BRANCH_REPOSITORY_UUID%%'" > "%SQLITE_OUT_FILE_TMP%"
 set /P REPOS_ID=< "%SQLITE_OUT_FILE_TMP%"
 if not defined REPOS_ID (
   echo.%?~nx0%: error: SVN database `REPOSITORY id` request has failed: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
   exit /b 90
 ) >&2
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'WCROOT' where local_abspath is null or local_abspath = ''" > "%SQLITE_OUT_FILE_TMP%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select id from 'WCROOT' where local_abspath is null or local_abspath = ''" > "%SQLITE_OUT_FILE_TMP%"
 set /P WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 if not defined WC_ID (
   echo.%?~nx0%: error: SVN database `WCROOT id` request has failed: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
@@ -742,7 +742,7 @@ if "%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%" == "0" set "SYNC_BRANCH_EXTERNAL_U
 
 set "SQLITE_EXP_WHERE=where wc_id = '%WC_ID%' and local_relpath = '%SYNC_BRANCH_LOCAL_REL_PATH%' and repos_id = '%REPOS_ID%' and presence = 'normal' and kind = 'dir' and def_local_relpath = '%SYNC_BRANCH_DEF_LOCAL_REL_PATH%' and def_repos_relpath = '%SYNC_BRANCH_BASE_REV_REPO_REL_PATH%'"
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from 'EXTERNALS' %%SQLITE_EXP_WHERE%%" > "%SQLITE_OUT_FILE_TMP%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from 'EXTERNALS' %%SQLITE_EXP_WHERE%%" > "%SQLITE_OUT_FILE_TMP%"
 set /P PREV_WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 
 if defined PREV_WC_ID goto UPDATE_EXTERNALS_RECORD
@@ -750,7 +750,7 @@ goto TRY_INSERT_EXTERNALS_RECORD
 
 :UPDATE_EXTERNALS_RECORD
 rem Update record into the WC EXTERNALS table to update the link of the external directory to the WC root.
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
   "update EXTERNALS set parent_relpath = '%%SYNC_BRANCH_PARENT_REL_PATH%%',def_repos_relpath = '%BRANCH_WORKINGSET_REPO_REL_PATH%',def_operational_revision = '%%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%%',def_revision = '%%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%%' %%SQLITE_EXP_WHERE%%" || (
   echo.%?~nx0%: error: failed to update a record in the EXTERNALS table in the WC root: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
   exit /b 92
@@ -761,7 +761,7 @@ goto TRY_INSERT_EXTERNALS_RECORD_END
 :TRY_INSERT_EXTERNALS_RECORD
 set "SQLITE_EXP_WHERE=where wc_id = '%WC_ID%' and local_relpath = '%SYNC_BRANCH_LOCAL_REL_PATH%' and repos_id = '%REPOS_ID%' and presence = 'normal' and kind = 'dir' and def_local_relpath = '%SYNC_BRANCH_DEF_LOCAL_REL_PATH%' and def_repos_relpath = '%BRANCH_WORKINGSET_REPO_REL_PATH%'"
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from 'EXTERNALS' %%SQLITE_EXP_WHERE%%" > "%SQLITE_OUT_FILE_TMP%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" "select wc_id from 'EXTERNALS' %%SQLITE_EXP_WHERE%%" > "%SQLITE_OUT_FILE_TMP%"
 set /P PREV_WC_ID=< "%SQLITE_OUT_FILE_TMP%"
 
 rem check if insert already done
@@ -769,7 +769,7 @@ if defined PREV_WC_ID goto TRY_INSERT_EXTERNALS_RECORD_END
 
 :INSERT_EXTERNALS_RECORD
 rem Insert record into the WC EXTERNALS table to link the external directory to the WC root.
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%SYNC_BRANCH_PARENT_PATH%%/.svn/wc.db" ".headers off" ^
   "insert into EXTERNALS (wc_id,local_relpath,parent_relpath,repos_id,presence,kind,def_local_relpath,def_repos_relpath,def_operational_revision,def_revision) values (%%WC_ID%%,'%%SYNC_BRANCH_LOCAL_REL_PATH%%','%%SYNC_BRANCH_PARENT_REL_PATH%%','%%REPOS_ID%%','normal','dir','%%SYNC_BRANCH_DEF_LOCAL_REL_PATH%%','%%BRANCH_WORKINGSET_REPO_REL_PATH%%','%%SYNC_BRANCH_EXTERNAL_URI_REV_PEG%%','%%SYNC_BRANCH_EXTERNAL_URI_REV_OPERATIVE%%')" || (
   echo.%?~nx0%: error: failed to insert a record to the EXTERNALS table in the WC root: "%SYNC_BRANCH_PARENT_PATH%/.svn/wc.db".
   exit /b 93
@@ -848,7 +848,7 @@ rem check is directory already added to the version control
 svn info "%BRANCH_BINARY_FILE_DIR%" --non-interactive >nul 2>nul && exit /b 0
 
 rem echo BRANCH_FILE_PATH=%BRANCH_FILE_PATH%
-call "%%CONTOOLS_ROOT%%/index_pathstr.bat" BRANCH_BINARY_FILE_SUBDIR_ /\ "%%BRANCH_FILE_PATH%%"
+call "%%CONTOOLS_ROOT%%/filesys/index_pathstr.bat" BRANCH_BINARY_FILE_SUBDIR_ /\ "%%BRANCH_FILE_PATH%%"
 set BRANCH_BINARY_FILE_INDEX_SIZE=%RETURN_VALUE%
 if %BRANCH_BINARY_FILE_INDEX_SIZE% LSS 2 exit /b 0
 
@@ -866,7 +866,7 @@ exit /b 0
 
 :PREPROCESS_COPY_ADD_BINARY_FILE_LINE
 rem echo BRANCH_FILE_PATH_TO_ADD=%BRANCH_FILE_PATH_TO_ADD%
-call "%%CONTOOLS_ROOT%%/index_pathstr.bat" BRANCH_BINARY_FILE_TO_ADD_SUBDIR_ /\ "%%BRANCH_FILE_PATH_TO_ADD%%"
+call "%%CONTOOLS_ROOT%%/filesys/index_pathstr.bat" BRANCH_BINARY_FILE_TO_ADD_SUBDIR_ /\ "%%BRANCH_FILE_PATH_TO_ADD%%"
 set BRANCH_BINARY_FILE_TO_ADD_INDEX_SIZE=%RETURN_VALUE%
 if %BRANCH_BINARY_FILE_TO_ADD_INDEX_SIZE% LSS 2 exit /b 0
 
