@@ -1,3 +1,7 @@
+2020.09.21:
+* fixed: missed change
+* changed: project environment variables refactor
+
 2020.09.20:
 * fixed: invalid value of the `SVNCMD_TOOLS_ROOT` variable
 * changed: `__init__.*` scripts is copied from the contools project

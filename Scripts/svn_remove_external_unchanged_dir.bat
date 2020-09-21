@@ -96,7 +96,7 @@ exit /b 0
 :REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL
 rem We must requested statuses for all subdirectories in the DIR_PATH before we begin to remove,
 rem otherwise the SVN status will change after a very first remove!
-call "%%CONTOOLS_ROOT%%/index_pathstr.bat" DIR_PATH_ARR_ /\ "%%DIR_PATH%%"
+call "%%CONTOOLS_ROOT%%/filesys/index_pathstr.bat" DIR_PATH_ARR_ /\ "%%DIR_PATH%%"
 set DIR_PATH_SIZE=%RETURN_VALUE%
 set DIR_PATH_OFFSET=%DIR_PATH_SIZE%
 set "DIR_PATH_DIR="
@@ -108,7 +108,7 @@ call set "DIR_PATH_PREFIX=%%DIR_PATH_ARR_%DIR_PATH_OFFSET%%%"
 
 set "DIR_PATH_ARR_TO_REMOVE_%DIR_PATH_OFFSET%="
 
-call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%DIR_PATH_PREFIX%%" /\ DIR_PATH_SUBDIR
+call "%%CONTOOLS_ROOT%%/filesys/split_pathstr.bat" "%%DIR_PATH_PREFIX%%" /\ DIR_PATH_SUBDIR
 
 rem test path component on empty directory
 if not defined DIR_PATH_PREFIX goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE
@@ -126,7 +126,7 @@ call :HAS_DIR_PATH_UNVERSIONED_FILES && goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL
 set "DIR_PATH_ARR_TO_REMOVE_%DIR_PATH_OFFSET%=%DIR_PATH_PREFIX%"
 
 :REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_UPDATE_STATUS_LOOP_REPEAT
-call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%DIR_PATH_PREFIX%%" /\ DIR_PATH_DIR
+call "%%CONTOOLS_ROOT%%/filesys/split_pathstr.bat" "%%DIR_PATH_PREFIX%%" /\ DIR_PATH_DIR
 
 set /A DIR_PATH_OFFSET-=1
 

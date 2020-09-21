@@ -198,7 +198,7 @@ if defined BRANCH_REL_SUB_PATH (
   set "SQLINE_EXP_NODES_LIST=select case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from nodes_base where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER% order by local_relpath asc"
 )
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%WCROOT_PATH%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_NODES_LIST%%"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%WCROOT_PATH%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_NODES_LIST%%"
 
 exit /b
 

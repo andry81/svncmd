@@ -204,4 +204,4 @@ if defined BRANCH_REL_SUB_PATH (
   set "SQLITE_EXP_WHERE_FIRST_FILTER= and substr(local_relpath || '/', 1, length('%BRANCH_REL_SUB_PATH%/')) == '%BRANCH_REL_SUB_PATH%/' collate nocase"
 )
 
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%WCROOT_PATH%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "select revision, case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from %%SQLITE_EXP_NODES_TABLE%% where local_relpath != ''%%SQLITE_EXP_REVISION_RANGE_SUFFIX%%%%SQLITE_EXP_WHERE_FIRST_FILTER%% order by local_relpath asc"
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%WCROOT_PATH%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "select revision, case when kind != 'dir' then local_relpath else local_relpath || '/' end as local_relpath_new from %%SQLITE_EXP_NODES_TABLE%% where local_relpath != ''%%SQLITE_EXP_REVISION_RANGE_SUFFIX%%%%SQLITE_EXP_WHERE_FIRST_FILTER%% order by local_relpath asc"

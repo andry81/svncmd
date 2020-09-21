@@ -136,13 +136,13 @@ if "%STATUS%" == "+" set /A NUM_ADDED+=1
 if "%STATUS%" == "-" set /A NUM_REMOVED+=1
 if "%STATUS%" == " " set /A NUM_UNCHANGED+=1
 
-call "%%CONTOOLS_ROOT%%/strlen.bat" "" "%%REPO%%"
+call "%%CONTOOLS_ROOT%%/std/strlen.bat" "" "%%REPO%%"
 set REPO_LEN=%ERRORLEVEL%
 
-call "%%CONTOOLS_ROOT%%/strlen.bat" "" "%%REV%%"
+call "%%CONTOOLS_ROOT%%/std/strlen.bat" "" "%%REV%%"
 set REV_LEN=%ERRORLEVEL%
 
-call "%%CONTOOLS_ROOT%%/strlen.bat" "" "%%PREV%%"
+call "%%CONTOOLS_ROOT%%/std/strlen.bat" "" "%%PREV%%"
 set PREV_LEN=%ERRORLEVEL%
 
 call set "REPO_SPACES=%%REPO_MAXSPACES:~%REPO_LEN%%%"
@@ -169,7 +169,7 @@ set "REPO=%~2"
 set "REV=%~3"
 set "PREV=%~4"
 
-call "%%CONTOOLS_ROOT%%/strlen.bat" "" "%%REPO%%"
+call "%%CONTOOLS_ROOT%%/std/strlen.bat" "" "%%REPO%%"
 set REPO_LEN=%ERRORLEVEL%
 if %REPO_LEN% GTR %REPO_MAXLEN% set REPO_MAXLEN=%REPO_LEN%
 

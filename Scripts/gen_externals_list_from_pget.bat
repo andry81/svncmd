@@ -216,9 +216,9 @@ if not defined EXTERNAL_URI_REV_PEG set EXTERNAL_URI_REV_PEG=-
 if %FLAG_PREFIX_PATH% EQU 0 goto IGNORE_PREFIX_PATH
 
 if not "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
-  call "%%CONTOOLS_ROOT%%/subtract_relative_path.bat" "%%FLAG_TEXT_PREFIX_PATH%%" "%%EXTERNAL_DIR_PATH_PREFIX%%/%%EXTERNAL_DIR_PATH%%"
+  call "%%CONTOOLS_ROOT%%/filesys/subtract_relative_path.bat" "%%FLAG_TEXT_PREFIX_PATH%%" "%%EXTERNAL_DIR_PATH_PREFIX%%/%%EXTERNAL_DIR_PATH%%"
 ) else (
-  call "%%CONTOOLS_ROOT%%/subtract_relative_path.bat" "%%FLAG_TEXT_PREFIX_PATH%%" "%%EXTERNAL_DIR_PATH%%"
+  call "%%CONTOOLS_ROOT%%/filesys/subtract_relative_path.bat" "%%FLAG_TEXT_PREFIX_PATH%%" "%%EXTERNAL_DIR_PATH%%"
 )
 if %ERRORLEVEL% NEQ 0 exit /b 0
 

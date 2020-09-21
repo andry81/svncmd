@@ -168,7 +168,7 @@ if "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
   set "BRANCH_DEF_LOCAL_REL_PATH=%EXTERNAL_DIR_PATH_PREFIX%"
 )
 
-call "%%CONTOOLS_ROOT%%/split_pathstr.bat" "%%BRANCH_LOCAL_REL_PATH%%" / "" BRANCH_PARENT_REL_PATH
+call "%%CONTOOLS_ROOT%%/filesys/split_pathstr.bat" "%%BRANCH_LOCAL_REL_PATH%%" / "" BRANCH_PARENT_REL_PATH
 
 pushd "%WCROOT_PATH_ABS%" && (
   rem remove nested externals recursively
@@ -332,7 +332,7 @@ set "BRANCH_DEF_LOCAL_REL_PATH=%EXTERNAL_DIR_PATH_PREFIX:\=/%"
 if "%BRANCH_DEF_LOCAL_REL_PATH%" == "." set "BRANCH_DEF_LOCAL_REL_PATH="
 
 rem delete record from the WC EXTERNALS table to unlink the external directory from the WC root.
-call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" ^
+call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" ^
   "delete from EXTERNALS where wc_id = '%%WC_ID%%' and local_relpath = '%%BRANCH_LOCAL_REL_PATH%%' and repos_id = '%%REPOS_ID%%' and presence = 'normal' and kind = 'dir' and def_local_relpath = '%%BRANCH_DEF_LOCAL_REL_PATH%%'"
 if %ERRORLEVEL% NEQ 0 (
   echo.%?~nx0%: error: failed to delete a record from the EXTERNALS table in the WC root: ERROR="%ERRORLEVEL%" EXTERNAL_BRANCH_PATH="%EXTERNAL_BRANCH_PATH_PREFIX%" WCROOT_PATH="%WCROOT_PATH%" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".

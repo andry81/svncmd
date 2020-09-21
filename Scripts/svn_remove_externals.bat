@@ -156,7 +156,7 @@ if %ERRORLEVEL% GTR 0 (
 if %ERRORLEVEL% NEQ 0 exit /b 0
 
 set "WC_ID="
-for /F "usebackq eol= tokens=* delims=" %%i in (`call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" "select id from "WCROOT" where local_abspath is null or local_abspath = ''"`) do set "WC_ID=%%i"
+for /F "usebackq eol= tokens=* delims=" %%i in (`call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH_ABS%%/.svn/wc.db" ".headers off" "select id from "WCROOT" where local_abspath is null or local_abspath = ''"`) do set "WC_ID=%%i"
 if not defined WC_ID (
   echo.%?~nx0%: error: SVN database `WCROOT id` request has failed: "%WCROOT_PATH%/.svn/wc.db" SYNC_BRANCH_PATH="%SYNC_BRANCH_PATH_ABS%".
   exit /b 21
@@ -209,7 +209,7 @@ if not defined EXTERNAL_BRANCH_REPOSITORY_UUID (
 ) >&2
 
 set "REPOS_ID="
-for /F "usebackq eol= tokens=* delims=" %%i in (`call "%%SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%EXTERNAL_BRANCH_PATH_TO_REMOVE%%/.svn/wc.db" ".headers off" "select id from "REPOSITORY" where uuid='%%EXTERNAL_BRANCH_REPOSITORY_UUID%%'"`) do set "REPOS_ID=%%i"
+for /F "usebackq eol= tokens=* delims=" %%i in (`call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%EXTERNAL_BRANCH_PATH_TO_REMOVE%%/.svn/wc.db" ".headers off" "select id from "REPOSITORY" where uuid='%%EXTERNAL_BRANCH_REPOSITORY_UUID%%'"`) do set "REPOS_ID=%%i"
 if not defined REPOS_ID (
   echo.%?~nx0%: error: SVN database `REPOSITORY id` request has failed: "%EXTERNAL_BRANCH_PATH_TO_REMOVE%/.svn/wc.db".
   exit /b 52
