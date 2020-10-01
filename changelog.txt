@@ -1,3 +1,6 @@
+2020.10.01:
+* refactor: moved all executables into Utilities directory
+
 2020.09.21:
 * fixed: missed change
 * changed: project environment variables refactor
