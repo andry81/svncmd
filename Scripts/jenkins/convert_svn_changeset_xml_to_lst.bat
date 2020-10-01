@@ -36,6 +36,6 @@ call :XMLSTARLET ^
 exit /b 0
 
 :XMLSTARLET
-echo.^>^> "%CONTOOLS_XML_TOOLS_ROOT%/xml.exe" %* ^> "%OUTPUT_DIR%\svn_changeset.lst"
-"%CONTOOLS_XML_TOOLS_ROOT%/xml.exe" %* > "%OUTPUT_DIR%\svn_changeset.lst"
+echo.^>^> "%CONTOOLS_UTILITIES_BIN_ROOT%/xmlstarlet/xml.exe" %* ^> "%OUTPUT_DIR%\svn_changeset.lst"
+"%CONTOOLS_UTILITIES_BIN_ROOT%/xmlstarlet/xml.exe" %* > "%OUTPUT_DIR%\svn_changeset.lst"
 exit /b
