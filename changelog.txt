@@ -1,5 +1,5 @@
 2020.12.12:
-* new: license file
+* new: markdown readme with links
 
 2020.10.01:
 * refactor: moved all executables into Utilities directory
