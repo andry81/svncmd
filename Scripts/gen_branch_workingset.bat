@@ -1090,7 +1090,10 @@ if %HAS_TO_RESOLVE_COPY_FIRST_FILE% NEQ 0 (
   type nul > "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_copy.lst" || exit /b
 )
 
-call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_DIFF_DIR_PATH%%" /NJS || exit /b
+(
+  if defined OEMCP ( call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" -chcp "%%OEMCP%%" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_DIFF_DIR_PATH%%" /NJS
+  ) else call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_DIFF_DIR_PATH%%" /NJS
+) || exit /b
 
 rem register binary copy in the list
 (echo.%BRANCH_DIFF_FILE_INDEX_FILE%)>> "%BRANCH_DIFF_FILE_DIR%%BRANCH_DIFF_FILE_NAME%_copy.lst"

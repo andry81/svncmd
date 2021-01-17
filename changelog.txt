@@ -1,3 +1,6 @@
+2021.01.17:
+* changed: Scripts: switch scripts to use `OEMCP` variable (has meaning under Windows XP)
+
 2020.12.12:
 * new: markdown readme with links
 

@@ -918,7 +918,10 @@ rem xcopy will fail now if a directory path has slash character at the end
 set "BRANCH_BINARY_FILE_DIR=%BRANCH_BINARY_FILE_DIR:~0,-1%"
 set "BRANCH_BINARY_FILE_DIR_COPY_TO=%BRANCH_BINARY_FILE_DIR_COPY_TO:~0,-1%"
 
-call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_FILE_DIR_COPY_TO%%" /NJS || exit /b 110
+(
+  if defined OEMCP ( call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" -chcp "%%OEMCP%%" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_FILE_DIR_COPY_TO%%" /NJS
+  ) else call "%%CONTOOLS_ROOT%%/std/xcopy_file.bat" "%%BRANCH_BINARY_FILE_DIR%%" "%%BRANCH_BINARY_FILE_NAME%%" "%%BRANCH_BINARY_FILE_DIR_COPY_TO%%" /NJS
+) || exit /b 110
 exit /b 0
 
 :SVN_ADD_FILE
