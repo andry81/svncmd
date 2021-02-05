@@ -1,3 +1,6 @@
+2021.02.05:
+* changed: Scripts: all scripts moved to use `wmi` directory to access wmi instead of `std`
+
 2021.01.17:
 * changed: Scripts: switch scripts to use `OEMCP` variable (has meaning under Windows XP)
 

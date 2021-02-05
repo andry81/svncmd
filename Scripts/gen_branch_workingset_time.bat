@@ -27,7 +27,7 @@ if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 1 (echo.^>^>%0 %*) >&3
 
 call "%%~dp0__init__.bat" || exit /b
 
-call "%%CONTOOLS_ROOT%%/std/get_wmic_local_datetime.bat"
+call "%%CONTOOLS_ROOT%%\wmi\get_wmic_local_datetime.bat"
 set "BEGIN_DATE=%RETURN_VALUE:~0,4%-%RETURN_VALUE:~4,2%-%RETURN_VALUE:~6,2%"
 set "BEGIN_TIME=%RETURN_VALUE:~8,2%-%RETURN_VALUE:~10,2%-%RETURN_VALUE:~12,2%,%RETURN_VALUE:~15,3%"
 call "%%CONTOOLS_ROOT%%/timestamp.bat" "%%RETURN_VALUE%%"
@@ -38,7 +38,7 @@ echo.%~nx0: start time: %BEGIN_DATE% %BEGIN_TIME% ^(%BEGIN_TIMESTAMP%^)
 call "%%SVNCMD_TOOLS_ROOT%%/gen_branch_workingset.bat" %*
 set LASTERROR=%ERRORLEVEL%
 
-call "%%CONTOOLS_ROOT%%/std/get_wmic_local_datetime.bat"
+call "%%CONTOOLS_ROOT%%\wmi\get_wmic_local_datetime.bat"
 set "END_DATE=%RETURN_VALUE:~0,4%-%RETURN_VALUE:~4,2%-%RETURN_VALUE:~6,2%"
 set "END_TIME=%RETURN_VALUE:~8,2%-%RETURN_VALUE:~10,2%-%RETURN_VALUE:~12,2%,%RETURN_VALUE:~15,3%"
 call "%%CONTOOLS_ROOT%%/timestamp.bat" "%%RETURN_VALUE%%"
