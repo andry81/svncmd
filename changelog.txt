@@ -1,4 +1,7 @@
 2021.03.02:
+* changed: old directories cleanup
+
+2021.03.02:
 * changed: Tools, ToolsExternal, Utilities: moved into `_externals` directory
 * refactor: nested externals cleanup
 
