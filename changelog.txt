@@ -1,3 +1,6 @@
+2021.03.02:
+* fixed: __init__: init fixup
+
 2021.02.05:
 * changed: Scripts: all scripts moved to use `wmi` directory to access wmi instead of `std`
 

@@ -1,8 +1,8 @@
 @echo off
 
-if /i "%SVNCMD_ROOT_INIT0_DIR%" == "%~dp0" exit /b 0
+if /i "%SVNCMD_PROJECT_ROOT_INIT0_DIR%" == "%~dp0" exit /b 0
 
-set "SVNCMD_ROOT_INIT0_DIR=%~dp0"
+set "SVNCMD_PROJECT_ROOT_INIT0_DIR=%~dp0"
 
 if not defined NEST_LVL set NEST_LVL=0
 
