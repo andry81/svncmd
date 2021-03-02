@@ -1,4 +1,8 @@
 2021.03.02:
+* changed: Tools, ToolsExternal, Utilities: moved into `_externals` directory
+* refactor: nested externals cleanup
+
+2021.03.02:
 * fixed: __init__: init fixup
 
 2021.02.05:
