@@ -1,7 +1,7 @@
 [submodule "_externals/contools/Scripts/Tools"]
 	path = _externals/contools/Scripts/Tools
 	owner = _externals
-	url = https://svn.code.sf.net/p/contools/contools/trunk/Scripts/Tools
+	url = svn://svn.code.sf.net/p/contools/contools/trunk/Scripts/Tools
 	branch = /
 	fetch = :refs/remotes/git-svn
 	remote = svn
@@ -9,7 +9,7 @@
 [submodule "_externals/contools/Utilities/bin"]
 	path = _externals/contools/Utilities/bin
 	owner = _externals
-	url = https://svn.code.sf.net/p/contools/contools/trunk/Utilities/bin
+	url = svn://svn.code.sf.net/p/contools/contools/trunk/Utilities/bin
 	branch = /
 	fetch = :refs/remotes/git-svn
 	remote = svn
@@ -17,7 +17,7 @@
 [submodule "_externals/external_tools/deps"]
 	path = _externals/external_tools/deps
 	owner = _externals
-	url = https://svn.code.sf.net/p/contools/external_tools/trunk/deps
+	url = svn://svn.code.sf.net/p/contools/external_tools/trunk/deps
 	branch = /
 	fetch = :refs/remotes/git-svn
 	remote = svn
@@ -25,7 +25,7 @@
 [submodule "_externals/external_tools/python"]
 	path = _externals/external_tools/python
 	owner = _externals
-	url = https://svn.code.sf.net/p/contools/external_tools/trunk/python
+	url = svn://svn.code.sf.net/p/contools/external_tools/trunk/python
 	branch = /
 	fetch = :refs/remotes/git-svn
 	remote = svn
@@ -33,7 +33,7 @@
 [submodule "_externals/external_tools/scm/svn"]
 	path = _externals/external_tools/scm/svn
 	owner = _externals
-	url = https://svn.code.sf.net/p/contools/external_tools/trunk/scm/svn
+	url = svn://svn.code.sf.net/p/contools/external_tools/trunk/scm/svn
 	branch = /
 	fetch = :refs/remotes/git-svn
 	remote = svn
