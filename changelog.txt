@@ -1,4 +1,7 @@
 2021.08.25:
+* new: __init__: contools-svncmd cross initialization
+
+2021.08.25:
 * changed: __init__: bash scripts speedup optimization
 
 2021.08.14:
