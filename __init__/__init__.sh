@@ -9,7 +9,7 @@ SVNCMD_PROJECT_ROOT_INIT0_DIR="$BASH_SOURCE_DIR" # including guard
 
 [[ -z "$NEST_LVL" ]] && NEST_LVL=0
 
-tkl_normalize_path "$BASH_SOURCE_DIR/.." -a && \
+tkl_normalize_path "$BASH_SOURCE_DIR/.." -a || tkl_abort 10
 SVNCMD_PROJECT_ROOT="$RETURN_VALUE"
 
 [[ -z "$SVNCMD_PROJECT_EXTERNALS_ROOT" ]] &&      tkl_export SVNCMD_PROJECT_EXTERNALS_ROOT      "$SVNCMD_PROJECT_ROOT/_externals"
