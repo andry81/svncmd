@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Script can be ONLY included by "source" command.
-if [[ -n "$BASH" && (-z "$BASH_LINENO" || BASH_LINENO[0] -gt 0) && "$SVNCMD_PROJECT_ROOT_INIT0_DIR" != "$BASH_SOURCE_DIR" ]]; then
+[[ -z "$BASH" || (-n "$BASH_LINENO" && BASH_LINENO[0] -le 0) || "$SVNCMD_PROJECT_ROOT_INIT0_DIR" == "$BASH_SOURCE_DIR" ]] && return 0
+
+source '/bin/bash_tacklelib' || exit $?
 
 SVNCMD_PROJECT_ROOT_INIT0_DIR="$BASH_SOURCE_DIR" # including guard
-
-source "/bin/bash_entry" || exit $?
 
 [[ -z "$NEST_LVL" ]] && NEST_LVL=0
 
@@ -30,5 +30,3 @@ SVNCMD_PROJECT_ROOT="$RETURN_VALUE"
 [[ -z "$CONTOOLS_UTILITIES_SQLITE_ROOT" ]] &&     tkl_export CONTOOLS_UTILITIES_SQLITE_ROOT     "$CONTOOLS_UTILITIES_BIN_ROOT/sqlite"
 
 return 0
-
-fi
