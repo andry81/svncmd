@@ -1,3 +1,6 @@
+2021.09.01:
+* refactor: minor refactor
+
 2021.08.25:
 * new: __init__: contools-svncmd cross initialization
 

@@ -2,8 +2,6 @@
 
 if /i "%SVNCMD_PROJECT_ROOT_INIT0_DIR%" == "%~dp0" exit /b 0
 
-set "SVNCMD_PROJECT_ROOT_INIT0_DIR=%~dp0"
-
 if not defined NEST_LVL set NEST_LVL=0
 
 if not defined SVNCMD_PROJECT_ROOT                call :CANONICAL_PATH SVNCMD_PROJECT_ROOT                "%%~dp0.."
@@ -15,6 +13,8 @@ rem init contools project
 if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/contools/__init__/__init__.bat" (
   call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/contools/__init__/__init__.bat" || exit /b
 )
+
+set "SVNCMD_PROJECT_ROOT_INIT0_DIR=%~dp0"
 
 exit /b 0
 
