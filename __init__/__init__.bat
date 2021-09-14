@@ -2,19 +2,38 @@
 
 if /i "%SVNCMD_PROJECT_ROOT_INIT0_DIR%" == "%~dp0" exit /b 0
 
+set "SVNCMD_PROJECT_ROOT_INIT0_DIR=%~dp0"
+
 if not defined NEST_LVL set NEST_LVL=0
 
 if not defined SVNCMD_PROJECT_ROOT                call :CANONICAL_PATH SVNCMD_PROJECT_ROOT                "%%~dp0.."
 if not defined SVNCMD_PROJECT_EXTERNALS_ROOT      call :CANONICAL_PATH SVNCMD_PROJECT_EXTERNALS_ROOT      "%%SVNCMD_PROJECT_ROOT%%/_externals"
 
+if not defined PROJECT_OUTPUT_ROOT                call :CANONICAL_PATH PROJECT_OUTPUT_ROOT                "%%SVNCMD_PROJECT_ROOT%%/_out"
+if not defined PROJECT_LOG_ROOT                   call :CANONICAL_PATH PROJECT_LOG_ROOT                   "%%SVNCMD_PROJECT_ROOT%%/.log"
+
+if not defined SVNCMD_PROJECT_INPUT_CONFIG_ROOT   call :CANONICAL_PATH SVNCMD_PROJECT_INPUT_CONFIG_ROOT   "%%SVNCMD_PROJECT_ROOT%%/_config"
+if not defined SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT  call :CANONICAL_PATH SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT  "%%PROJECT_OUTPUT_ROOT%%/config/svncmd"
+
 if not defined SVNCMD_TOOLS_ROOT                  call :CANONICAL_PATH SVNCMD_TOOLS_ROOT                  "%%SVNCMD_PROJECT_ROOT%%/Scripts"
 
-rem init contools project
+rem init external projects
+
+if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/tacklelib/__init__/__init__.bat" (
+  call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/tacklelib/__init__/__init__.bat" || exit /b
+)
+
 if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/contools/__init__/__init__.bat" (
   call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/contools/__init__/__init__.bat" || exit /b
 )
 
-set "SVNCMD_PROJECT_ROOT_INIT0_DIR=%~dp0"
+if not exist "%PROJECT_OUTPUT_ROOT%\" ( mkdir "%PROJECT_OUTPUT_ROOT%" || exit /b 10 )
+if not exist "%PROJECT_LOG_ROOT%\" ( mkdir "%PROJECT_LOG_ROOT%" || exit /b 11 )
+if not exist "%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%\" ( mkdir "%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%" || exit /b 12 )
+
+call "%%CONTOOLS_ROOT%%/std/load_config_dir.bat" -gen_config "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
+
+if defined CHCP chcp %CHCP%
 
 exit /b 0
 

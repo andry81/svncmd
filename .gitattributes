@@ -85,6 +85,8 @@ TestsExternal/batscript/test_all.bat -text
 TestsExternal/batscript/test_svn_changeset.bat -text
 __init__/__init__.bat -text
 __init__/__init__.sh -text
+_config/config.0.vars.in -text
+_config/config.system.vars.in -text
 /changelog.txt -text
 /configure.bat -text
 /license.txt -text
