@@ -13,7 +13,7 @@ if 0%__CTRL_SETLOCAL% EQU 1 (
 set __CTRL_SETLOCAL=1
 
 call "%%~dp0__init__.bat" || goto :EOF
-call "%%CONTOOLS_TESTLIB_ROOT%%/init.bat" "%%~dpf0" || goto :EOF
+call "%%CONTOOLS_TESTLIB_ROOT%%/init.bat" "%%~f0" || goto :EOF
 
 set ?0=^^
 

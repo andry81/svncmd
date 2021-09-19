@@ -24,7 +24,7 @@ call "%%~dp0__init__.bat" || exit /b
 set "?~n0=%~n0"
 set "?~nx0=%~nx0"
 set "?~dp0=%~dp0"
-set "?~dpf0=%~dpf0"
+set "?~f0=%~f0"
 
 call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 
@@ -76,7 +76,7 @@ if defined FLAG (
   ) else if "%FLAG%" == "-wcroot" (
     set FLAG_WCROOT=1
     set "FLAG_TEXT_WCROOT=%~2"
-    set "FLAG_TEXT_WCROOT_ABS=%~dpf2"
+    set "FLAG_TEXT_WCROOT_ABS=%~f2"
     shift
   ) else if "%FLAG%" == "-no_uri_transform" (
     set FLAG_NO_URI_TRANSFORM=1
@@ -102,7 +102,7 @@ if defined FLAG (
 )
 
 set "BRANCH_PATH=%CD%"
-if not "%~1" == "" set "BRANCH_PATH=%~dpf1"
+if not "%~1" == "" set "BRANCH_PATH=%~f1"
 
 if not exist "%BRANCH_PATH%\" (
   echo.%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".
@@ -248,7 +248,7 @@ if "/" == "%LOCAL_PREFIX_PATH:~-1%" set "LOCAL_PREFIX_PATH=%LOCAL_PREFIX_PATH:~0
 rem special form of the echo command to ignore special characters in the echo value.
 for /F "eol= tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PATH%") do (echo.%%i)
 
-call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%% -l -prefix_path "%%LOCAL_PREFIX_PATH%%" "%%LOCAL_PATH%%"
+call "%%?~f0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%% -l -prefix_path "%%LOCAL_PREFIX_PATH%%" "%%LOCAL_PATH%%"
 
 exit /b
 
@@ -303,9 +303,9 @@ if %FLAG_RECURSIVE% EQU 0 exit /b
 
 rem make recursion
 if not "%LOCAL_PREFIX%" == "." (
-  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%LOCAL_PREFIX%%/%%EXTERNAL_PATH%%" "%%LOCAL_PREFIX%%/%%EXTERNAL_PATH%%"
+  call "%%?~f0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%LOCAL_PREFIX%%/%%EXTERNAL_PATH%%" "%%LOCAL_PREFIX%%/%%EXTERNAL_PATH%%"
 ) else (
-  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%EXTERNAL_PATH%%" "%%EXTERNAL_PATH%%"
+  call "%%?~f0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%EXTERNAL_PATH%%" "%%EXTERNAL_PATH%%"
 )
 
 exit /b
@@ -392,7 +392,7 @@ set "EXTERNAL_PATH_SUFFIX=%EXTERNAL_PATH%"
 rem make recursion
 if not "%LOCAL_PREFIX%" == "." (
   if defined EXTERNAL_PATH_SUFFIX set "EXTERNAL_PATH_SUFFIX=/%EXTERNAL_PATH_SUFFIX%"
-  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%LOCAL_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%" "%%LOCAL_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%"
+  call "%%?~f0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%LOCAL_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%" "%%LOCAL_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%"
 ) else (
-  call "%%?~dpf0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%" "%%EXTERNAL_PATH%%"
+  call "%%?~f0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%% -prefix_path "%%PREFIX_PATH_PREFIX%%%%EXTERNAL_PATH_SUFFIX%%" "%%EXTERNAL_PATH%%"
 )
