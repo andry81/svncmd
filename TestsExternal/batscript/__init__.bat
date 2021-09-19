@@ -101,6 +101,6 @@ exit /b 0
 
 :ABSPATH
 if "%~3" == "" (
-  set "%~1=%~dpf2"
-) else set %~1="%~dpf2" %3 %4 %5 %6 %7 %8 %9
+  set "%~1=%~f2"
+) else set %~1="%~f2" %3 %4 %5 %6 %7 %8 %9
 exit /b 0

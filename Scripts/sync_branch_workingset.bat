@@ -146,19 +146,19 @@ if not exist "%BRANCH_PATH%" (
 ) >&2
 
 rem use canonical file form
-set "BRANCH_PATH=%~dpf1"
+set "BRANCH_PATH=%~f1"
 
 rem convert all back slashes to slashes
 set "BRANCH_PATH=%BRANCH_PATH:\=/%"
 if "%BRANCH_PATH:~-1%" == "/" set "BRANCH_PATH=%BRANCH_PATH:~0,-1%"
 
-set "BRANCH_ROOT_INFO_FILE=%~dpf2"
-set "BRANCH_ROOT_CHANGESET_FILE=%~dpf3"
-set "BRANCH_ROOT_DIFF_FILE=%~dpf4"
-set "BRANCH_ROOT_EXTERNALS_FILE=%~dpf5"
+set "BRANCH_ROOT_INFO_FILE=%~f2"
+set "BRANCH_ROOT_CHANGESET_FILE=%~f3"
+set "BRANCH_ROOT_DIFF_FILE=%~f4"
+set "BRANCH_ROOT_EXTERNALS_FILE=%~f5"
 
-set "BRANCH_WORKINGSET_FILE=%~dpf6"
-set "BRANCH_WORKINGSET_CATALOG_DIR=%~dpf7"
+set "BRANCH_WORKINGSET_FILE=%~f6"
+set "BRANCH_WORKINGSET_CATALOG_DIR=%~f7"
 
 call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 

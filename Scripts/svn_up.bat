@@ -45,7 +45,7 @@ if defined FLAG (
   goto FLAGS_LOOP
 )
 
-set "SVN_BASE_PATH=%~dpf1"
+set "SVN_BASE_PATH=%~f1"
 set "SVN_URL_PATH=%~2"
 set "SVN_REF_PATH=%~3"
 

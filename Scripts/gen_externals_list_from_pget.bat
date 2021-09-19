@@ -62,7 +62,7 @@ if not defined FLAG_TEXT_PREFIX_PATH (
   exit /b 1
 ) >&2
 
-set "EXTERNALS_FILE=%~dpf1"
+set "EXTERNALS_FILE=%~f1"
 set "REPO_ROOT=%~2"
 set "DIR_URL=%~3"
 

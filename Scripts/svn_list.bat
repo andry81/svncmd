@@ -56,7 +56,7 @@ if defined FLAG (
   ) else if "%FLAG%" == "-wcroot" (
     set FLAG_WCROOT=1
     set "FLAG_TEXT_WCROOT=%~2"
-    set "FLAG_TEXT_WCROOT_ABS=%~dpf2"
+    set "FLAG_TEXT_WCROOT_ABS=%~f2"
     shift
   ) else (
     set SVN_CMD_FLAG_ARGS=%SVN_CMD_FLAG_ARGS%%1 
@@ -69,7 +69,7 @@ if defined FLAG (
 )
 
 set "BRANCH_PATH=%CD%"
-if not "%~1" == "" set "BRANCH_PATH=%~dpf1"
+if not "%~1" == "" set "BRANCH_PATH=%~f1"
 
 if not exist "%BRANCH_PATH%\" (
   echo.%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".

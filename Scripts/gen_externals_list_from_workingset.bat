@@ -42,8 +42,8 @@ if defined FLAG (
   goto FLAGS_LOOP
 )
 
-set "BRANCH_WORKINGSET_FILE=%~dpf1"
-set "BRANCH_WORKINGSET_CATALOG_DIR=%~dpf2"
+set "BRANCH_WORKINGSET_FILE=%~f1"
+set "BRANCH_WORKINGSET_CATALOG_DIR=%~f2"
 
 if not defined BRANCH_WORKINGSET_FILE (
   echo.%?~nx0%: error: branch workingset file is not set.

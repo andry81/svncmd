@@ -173,7 +173,7 @@ rem
 rem exit /b %LASTERROR%
 rem 
 rem :GET_ABSOLUTE_PATH
-rem set "RETURN_VALUE=%~dpf1"
+rem set "RETURN_VALUE=%~f1"
 rem exit /b 0
 rem 
 rem :TEST_TEARDOWN
