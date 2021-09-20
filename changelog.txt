@@ -1,3 +1,7 @@
+2021.09.20:
+* fixed: __init__: cross initialization fixup
+* changed: _config: moved not immediate variables from the root `__init__.*` into `config.systen.vars.in`
+
 2021.09.19:
 * changed: minor changes
 

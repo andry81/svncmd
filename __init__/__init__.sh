@@ -18,16 +18,14 @@ tkl_export_path SVNCMD_PROJECT_ROOT_INIT0_DIR "$BASH_SOURCE_DIR" # including gua
 [[ -z "$SVNCMD_PROJECT_INPUT_CONFIG_ROOT" ]] &&     tkl_export_path -a -s SVNCMD_PROJECT_INPUT_CONFIG_ROOT      "$SVNCMD_PROJECT_ROOT/_config"
 [[ -z "$SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT" ]] &&    tkl_export_path -a -s SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT     "$PROJECT_OUTPUT_ROOT/config/svncmd"
 
-[[ -z "$SVNCMD_TOOLS_ROOT" ]] &&                    tkl_export_path -a -s SVNCMD_TOOLS_ROOT                     "$SVNCMD_PROJECT_ROOT/Scripts"
-
-# init external projects
-
-if [[ -f "$SVNCMD_PROJECT_EXTERNALS_ROOT/tacklelib/__init__/__init__.sh" ]]; then
-  tkl_include "$SVNCMD_PROJECT_EXTERNALS_ROOT/tacklelib/__init__/__init__.sh" || tkl_abort_include
-fi
+# init external projects, common dependencies must be always initialized at first
 
 if [[ -f "$SVNCMD_PROJECT_EXTERNALS_ROOT/contools/__init__/__init__.sh" ]]; then
   tkl_include "$SVNCMD_PROJECT_EXTERNALS_ROOT/contools/__init__/__init__.sh" || tkl_abort_include
+fi
+
+if [[ -f "$SVNCMD_PROJECT_EXTERNALS_ROOT/tacklelib/__init__/__init__.sh" ]]; then
+  tkl_include "$SVNCMD_PROJECT_EXTERNALS_ROOT/tacklelib/__init__/__init__.sh" || tkl_abort_include
 fi
 
 tkl_include "$TACKLELIB_BASH_ROOT/tacklelib/buildlib.sh" || tkl_abort_include

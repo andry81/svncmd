@@ -15,16 +15,14 @@ if not defined PROJECT_LOG_ROOT                   call :CANONICAL_PATH PROJECT_L
 if not defined SVNCMD_PROJECT_INPUT_CONFIG_ROOT   call :CANONICAL_PATH SVNCMD_PROJECT_INPUT_CONFIG_ROOT   "%%SVNCMD_PROJECT_ROOT%%/_config"
 if not defined SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT  call :CANONICAL_PATH SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT  "%%PROJECT_OUTPUT_ROOT%%/config/svncmd"
 
-if not defined SVNCMD_TOOLS_ROOT                  call :CANONICAL_PATH SVNCMD_TOOLS_ROOT                  "%%SVNCMD_PROJECT_ROOT%%/Scripts"
-
-rem init external projects
-
-if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/tacklelib/__init__/__init__.bat" (
-  call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/tacklelib/__init__/__init__.bat" || exit /b
-)
+rem init external projects, common dependencies must be always initialized at first
 
 if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/contools/__init__/__init__.bat" (
   call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/contools/__init__/__init__.bat" || exit /b
+)
+
+if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/tacklelib/__init__/__init__.bat" (
+  call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/tacklelib/__init__/__init__.bat" || exit /b
 )
 
 if not exist "%PROJECT_OUTPUT_ROOT%\" ( mkdir "%PROJECT_OUTPUT_ROOT%" || exit /b 10 )
