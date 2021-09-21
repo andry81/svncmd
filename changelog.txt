@@ -1,3 +1,6 @@
+2021.09.21:
+* changed: __init__: load root directory variables before all externals
+
 2021.09.20:
 * fixed: __init__: cross initialization fixup
 * changed: _config: moved not immediate variables from the root `__init__.*` into `config.systen.vars.in`
