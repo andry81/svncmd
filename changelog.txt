@@ -1,3 +1,7 @@
+2021.10.06:
+* new: __init__: `declare_builtins.bat` to declare builtin variables
+* changed: Scripts: `declare_builtins.bat` scripts usage
+
 2021.09.21:
 * changed: _config: minor cleanup
 

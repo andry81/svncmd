@@ -18,8 +18,7 @@ if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 2 (echo.^>^>%0 %*) >&3
 
 call "%%~dp0__init__.bat" || exit /b
 
-set "?~n0=%~n0"
-set "?~nx0=%~nx0"
+call "%%SVNCMD_PROJECT_ROOT%%/__init__/declare_builtins.bat" %%0 %%*
 
 rem script flags
 set FLAG_SVN_IGNORE_NESTED_EXTERNALS_LOCAL_CHANGES=0
