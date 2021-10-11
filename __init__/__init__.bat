@@ -17,6 +17,8 @@ if not defined SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT  call :CANONICAL_PATH SVNCMD_PR
 
 if not exist "%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%\" ( mkdir "%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%" || exit /b 10 )
 
+if not defined LOAD_CONFIG_VERBOSE if %INIT_VERBOSE%0 NEQ 0 set LOAD_CONFIG_VERBOSE=1
+
 call "%%CONTOOLS_ROOT%%/build/load_config_dir.bat" -gen_user_config "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
 
 rem init external projects, common dependencies must be always initialized at first

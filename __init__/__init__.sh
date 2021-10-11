@@ -20,6 +20,8 @@ tkl_export_path SVNCMD_PROJECT_ROOT_INIT0_DIR "$BASH_SOURCE_DIR" # including gua
 
 [[ ! -e "$SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT" ]] && { mkdir -p "$SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT" || tkl_abort 10; }
 
+[[ -z "$LOAD_CONFIG_VERBOSE" ]] && (( INIT_VERBOSE )) && tkl_export_path LOAD_CONFIG_VERBOSE 1
+
 tkl_load_config_dir "$SVNCMD_PROJECT_INPUT_CONFIG_ROOT" "$SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT"
 
 # init external projects, common dependencies must be always initialized at first
