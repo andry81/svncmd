@@ -17,12 +17,13 @@ the svn command line tools (Win32) as is from:</h4>
 
 <p align="center">
   <a href="https://www.codefactor.io/repository/github/andry81/svncmd"><img src="https://www.codefactor.io/repository/github/andry81/svncmd/badge" valign="middle" alt="codefactor.io" /></a>
+• <a href="https://www.codacy.com/gh/andry81/svncmd/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=andry81/svncmd&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/fbda77985c50456aab14d52d41570889" valign="middle" alt="codacy.com" /></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/andry81/svncmd/blob/trunk/changelog.txt">Changelog</a> •
-  <a href="https://github.com/andry81/svncmd/blob/trunk/README_EN.txt">Readme</a> •
-  <a href="#copyright-and-license"><img src="https://github.com/andry81/andry81/raw/main/badges/mit-license.svg" valign="middle" alt="copyright and license" />&nbsp;Copyright and License</a>
+  <a href="https://github.com/andry81/svncmd/blob/trunk/changelog.txt">Changelog</a>
+• <a href="https://github.com/andry81/svncmd/blob/trunk/README_EN.txt">Readme</a>
+• <a href="#copyright-and-license"><img src="https://github.com/andry81/andry81/raw/main/badges/mit-license.svg" valign="middle" alt="copyright and license" />&nbsp;Copyright and License</a>
 </p>
 
 <p align="center">
@@ -30,9 +31,11 @@ the svn command line tools (Win32) as is from:</h4>
   <a href="https://www.paypal.com/cgi-bin/webscr?item_name=Donation+to+svncmd&cmd=_donations&business=andry%40inbox.ru"><img src="https://github.com/andry81/andry81/raw/main/badges/paypal-donate.svg" valign="middle" alt="paypal donate" /></a>
 </p>
 
+<!-- -->
 <p align="center">
-  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fandry81%2Fsvncmd&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" valign="middle" alt="hits" />
+  <a href="#"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fandry81%2Fsvncmd&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" valign="middle" alt="hits" /></a>
 </p>
+<!-- -->
 
 ---
 
