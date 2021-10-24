@@ -16,6 +16,10 @@ the svn command line tools (Win32) as is from:</h4>
 ##
 
 <p align="center">
+  <a href="https://www.codefactor.io/repository/github/andry81/svncmd"><img src="https://www.codefactor.io/repository/github/andry81/svncmd/badge" valign="middle" alt="codefactor.io" /></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/andry81/svncmd/blob/trunk/changelog.txt">Changelog</a> •
   <a href="https://github.com/andry81/svncmd/blob/trunk/README_EN.txt">Readme</a> •
   <a href="#copyright-and-license"><img src="https://github.com/andry81/andry81/raw/main/badges/mit-license.svg" valign="middle" alt="copyright and license" />&nbsp;Copyright and License</a>
