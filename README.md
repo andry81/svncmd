@@ -21,6 +21,21 @@ the svn command line tools (Win32) as is from:</h4>
 </p>
 
 <p align="center">
+  <a href="#"><img src="https://img.shields.io/github/repo-size/andry81/svncmd" valign="middle" alt="GitHub repo size in bytes" /></a>
+• <a href="#"><img src="https://img.shields.io/github/languages/code-size/andry81/svncmd" valign="middle" alt="code size in bytes" /></a>
+• <a href="https://github.com/XAMPPRocky/tokei"><img src="https://tokei.rs/b1/github/andry81/svncmd?category=code" valign="middle" alt="lines of code by tokei.rs" /></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/andry81/svncmd--gh-stats/commits/master/traffic/clones">
+    <img src="https://img.shields.io/badge/dynamic/json?color=success&label=Github%20clones|all&query=count&url=https://github.com/andry81/svncmd--gh-stats/raw/master/traffic/clones/latest-accum.json?raw=True&logo=github" valign="middle" alt="GitHub clones|any|total" />
+    <img src="https://img.shields.io/badge/dynamic/json?color=success&label=14d&query=count&url=https://github.com/andry81/svncmd--gh-stats/raw/master/traffic/clones/latest.json?raw=True" valign="middle" alt="GitHub clones|any|14d" /></a>
+• <a href="https://github.com/andry81/svncmd--gh-stats/commits/master/traffic/clones">
+    <img src="https://img.shields.io/badge/dynamic/json?color=success&label=Github%20clones|unq&query=uniques&url=https://github.com/andry81/svncmd--gh-stats/raw/master/traffic/clones/latest-accum.json?raw=True&logo=github" valign="middle" alt="GitHub clones|unique per day|total" />
+    <img src="https://img.shields.io/badge/dynamic/json?color=success&label=14d&query=uniques&url=https://github.com/andry81/svncmd--gh-stats/raw/master/traffic/clones/latest.json?raw=True" valign="middle" alt="GitHub clones|unique per day|14d" /></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/andry81/svncmd/blob/trunk/changelog.txt">Changelog</a>
 • <a href="https://github.com/andry81/svncmd/blob/trunk/README_EN.txt">Readme</a>
 • <a href="#copyright-and-license"><img src="https://github.com/andry81/andry81/raw/main/badges/mit-license.svg" valign="middle" alt="copyright and license" />&nbsp;Copyright and License</a>
