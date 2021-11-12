@@ -16,15 +16,23 @@ the svn command line tools (Win32) as is from:</h4>
 ##
 
 <p align="center">
-  <a href="https://www.codefactor.io/repository/github/andry81/svncmd"><img src="https://img.shields.io/codefactor/grade/github/andry81/svncmd?logo=codefactor" valign="middle" alt="codefactor.io|quality" /></a>
+  <a href="https://www.codefactor.io/repository/github/andry81/svncmd"><img src="https://img.shields.io/codefactor/grade/github/andry81/svncmd?label=quality&logo=codefactor" valign="middle" alt="codefactor.io|quality" /></a>
   <!-- <a href="https://www.codefactor.io/repository/github/andry81/svncmd"><img src="https://www.codefactor.io/repository/github/andry81/svncmd/badge" valign="middle" alt="codefactor.io|quality" /></a> -->
-• <a href="https://www.codacy.com/gh/andry81/svncmd/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=andry81/svncmd&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/fbda77985c50456aab14d52d41570889" valign="middle" alt="codacy.com|quality" /></a>
-• <a href="https://codeclimate.com/github/andry81/svncmd/maintainability"><img src="https://api.codeclimate.com/v1/badges/3ba9415721d7f3bfafec/maintainability?logo=codeclimate" valign="middle" alt="codeclimate.com|maintainability"></a>
-<!-- -- >
-  <a href="https://codeclimate.com/github/andry81/svncmd/issues"><img src="https://img.shields.io/codeclimate/issues/andry81/svncmd?logo=codeclimate" valign="middle" alt="codeclimate.com|issues"></a>
-  <a href="https://codeclimate.com/github/andry81/svncmd/trends/technical_debt"><img src="https://img.shields.io/codeclimate/tech-debt/andry81/svncmd?logo=codeclimate" valign="middle" alt="codeclimate.com|debt"></a>
+• <a href="https://www.codacy.com/gh/andry81/svncmd/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=andry81/svncmd&amp;utm_campaign=Badge_Grade"><img src="https://img.shields.io/codacy/grade/fbda77985c50456aab14d52d41570889?label=quality&logo=codacy" valign="middle" alt="codacy.com|quality" /></a>
+<!-- • <a href="https://www.codacy.com/gh/andry81/svncmd/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=andry81/svncmd&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/fbda77985c50456aab14d52d41570889" valign="middle" alt="codacy.com|quality" /></a> -->
+<!-- -->
+• <a href="https://lgtm.com/projects/g/andry81/svncmd/context:python"><img src="https://img.shields.io/lgtm/grade/python/g/andry81/svncmd.svg?label=quality: python&logo=lgtm" valign="middle" alt="lgtm.com|quality|python" /></a>
+  <a href="https://lgtm.com/projects/g/andry81/svncmd/alerts"><img src="https://img.shields.io/lgtm/alerts/github/andry81/svncmd?label=alerts&logo=lgtm" valign="middle" alt="lgtm.com|alerts" /></a>
 <!-- -->
 </p>
+
+<!-- -->
+<p align="center">
+  <a href="https://codeclimate.com/github/andry81/svncmd/maintainability"><img src="https://api.codeclimate.com/v1/badges/3ba9415721d7f3bfafec/maintainability?logo=codeclimate" valign="middle" alt="codeclimate.com|maintainability" /></a>
+  <a href="https://codeclimate.com/github/andry81/svncmd/issues"><img src="https://img.shields.io/codeclimate/issues/andry81/svncmd?logo=codeclimate" valign="middle" alt="codeclimate.com|issues" /></a>
+  <a href="https://codeclimate.com/github/andry81/svncmd/trends/technical_debt"><img src="https://img.shields.io/codeclimate/tech-debt/andry81/svncmd?logo=codeclimate" valign="middle" alt="codeclimate.com|debt" /></a>
+</p>
+<!-- -->
 
 <p align="center">
   <a href="#"><img src="https://img.shields.io/github/repo-size/andry81/svncmd?logo=github" valign="middle" alt="GitHub repo size in bytes" /></a>
