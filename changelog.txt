@@ -1,5 +1,8 @@
+2021.11.13:
+* changed: README_EN.txt: repository links minor update
+
 2021.11.12:
-* new: README.md: `lgtm.com` link badges (disabled)
+* new: README.md: `lgtm.com` link badges
 * changed: README.md: links update, realign
 
 2021.11.11:
