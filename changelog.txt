@@ -1,3 +1,6 @@
+2021.11.18:
+* fixed: *.bat: explicitly sort by name in `dir` command if the sort option is not defined to avoid sort by date as by default
+
 2021.11.13:
 * changed: README_EN.txt: repository links minor update
 
