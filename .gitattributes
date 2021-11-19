@@ -1,6 +1,7 @@
 * text=auto !eol
 .github/FUNDING.yml -text
 .github/workflows/svncmd-gh-clone-stats.yml -text
+.github/workflows/svncmd-gh-view-stats.yml -text
 Config/env/vars_vista.lst -text
 Config/env/vars_win2k.lst -text
 Config/env/vars_win7.lst -text
