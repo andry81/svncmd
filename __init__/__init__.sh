@@ -22,9 +22,9 @@ tkl_export_path SVNCMD_PROJECT_ROOT_INIT0_DIR "$BASH_SOURCE_DIR" # including gua
 
 [[ -z "$LOAD_CONFIG_VERBOSE" ]] && (( INIT_VERBOSE )) && tkl_export_path LOAD_CONFIG_VERBOSE 1
 
-tkl_load_config_dir "$SVNCMD_PROJECT_INPUT_CONFIG_ROOT" "$SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT"
+tkl_load_config_dir "$SVNCMD_PROJECT_INPUT_CONFIG_ROOT" "$SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT" || tkl_abort_include
 
-# init external projects, common dependencies must be always initialized at first
+# init external projects
 
 if [[ -f "$SVNCMD_PROJECT_EXTERNALS_ROOT/contools/__init__/__init__.sh" ]]; then
   tkl_include "$SVNCMD_PROJECT_EXTERNALS_ROOT/contools/__init__/__init__.sh" || tkl_abort_include
