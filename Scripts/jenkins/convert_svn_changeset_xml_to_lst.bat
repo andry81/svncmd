@@ -23,7 +23,7 @@ if not exist "%XML_PATH%" (
 ) >&2
 
 rem Drop last error level
-type nul>nul
+call;
 
 call "%%~dp0..\__init__.bat" || exit /b
 

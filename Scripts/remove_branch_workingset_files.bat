@@ -10,7 +10,7 @@ rem Examples:
 rem 1. call remove_branch_workingset_files.bat <PathToRootFilesDirectory> <PrefixNameToRootFiles> <PathToWorkingsetCatalogDirectory>
 
 rem Drop last error level
-type nul>nul
+call;
 
 setlocal
 

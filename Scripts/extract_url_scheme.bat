@@ -14,7 +14,7 @@ rem    echo "RETURN_VALUE=%RETURN_VALUE%"
 set "RETURN_VALUE="
 
 rem Drop last error level
-type nul>nul
+call;
 
 setlocal
 

@@ -9,7 +9,7 @@ rem Examples:
 rem 1. call svn_up.bat branch/current https://blabla/repo/branch/current my_branch
 
 rem Drop last error level
-type nul>nul
+call;
 
 setlocal
 

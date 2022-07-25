@@ -1,3 +1,6 @@
+2022.07.25:
+* changed: scripts execution optimization
+
 2021.02.05:
 * changed: all scripts moved to use `wmi` directory to access wmi instead of `std`
 

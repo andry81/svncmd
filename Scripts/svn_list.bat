@@ -14,7 +14,7 @@ rem TODO:
 rem 1. offline mode w/ or w/o -R (recursion)
 
 rem Drop last error level
-type nul>nul
+call;
 
 setlocal
 

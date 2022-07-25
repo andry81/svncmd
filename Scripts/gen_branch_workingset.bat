@@ -72,7 +72,7 @@ rem 5. All collisions must be resolved before the script execution, otherwise
 rem    the result will be undefined.
 
 rem Drop last error level
-type nul>nul
+call;
 
 setlocal
 

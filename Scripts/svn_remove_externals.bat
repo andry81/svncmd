@@ -11,7 +11,7 @@ rem Examples:
 rem 1. call svn_remove_externals.bat branch/current branch_workingset.lst ./proj1/proj1_subdir/ext_path to_externals.lst from_externals.lst
 
 rem Drop last error level
-type nul>nul
+call;
 
 setlocal
 
