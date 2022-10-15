@@ -1,3 +1,6 @@
+2022.10.15:
+* new: __init__: added `NO_GEN` and `NO_LOG` environment variables to disable files and directories generation and logging
+
 2022.07.25:
 * changed: Scripts: scripts execution optimization
 
