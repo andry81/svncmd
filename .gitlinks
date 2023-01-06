@@ -1,0 +1,3 @@
+contools        _externals/contools       https://github.com/andry81/contools                           master
+external_tools  _externals/external_tools https://github.com/andry81-3dparty/contools--external_tools   master
+tacklelib       _externals/tacklelib      https://github.com/andry81/tacklelib                          master
