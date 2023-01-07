@@ -21,15 +21,17 @@ if %NO_GEN%0 EQU 0 (
 
 if not defined LOAD_CONFIG_VERBOSE if %INIT_VERBOSE%0 NEQ 0 set LOAD_CONFIG_VERBOSE=1
 
+rem init contools first
+
+if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/contools/__init__/__init__.bat" (
+  call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/contools/__init__/__init__.bat" %%* || exit /b
+)
+
 if %NO_GEN%0 EQU 0 (
   call "%%CONTOOLS_ROOT%%/build/load_config_dir.bat" %%* -lite_parse -gen_user_config "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
 ) else call "%%CONTOOLS_ROOT%%/build/load_config_dir.bat" %%* -lite_parse "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
 
 rem init external projects
-
-if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/contools/__init__/__init__.bat" (
-  call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/contools/__init__/__init__.bat" %%* || exit /b
-)
 
 if exist "%SVNCMD_PROJECT_EXTERNALS_ROOT%/tacklelib/__init__/__init__.bat" (
   call "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%/tacklelib/__init__/__init__.bat" %%* || exit /b
