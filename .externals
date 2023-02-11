@@ -1,0 +1,31 @@
+repositories:
+
+  _externals/tacklelib:
+    type:         git
+    url:          https://github.com/andry81/tacklelib
+    version:      master
+    subpaths:
+      - __init__
+      - _config
+      - bash/__init__
+      - bash/tacklelib
+
+  _externals/contools:
+    type:         git
+    url:          https://github.com/andry81/contools
+    version:      master
+    subpaths:
+      - __init__
+      - _config
+      - Scripts/__init__
+      - Scripts/Tools
+      - Utilities/bin
+
+  _externals/external_tools:
+    type:         git
+    url:          https://github.com/andry81-3dparty/contools--external_tools
+    version:      master
+    subpaths:
+      - scm/svn
+      - python
+      - deps
