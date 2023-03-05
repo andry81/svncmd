@@ -1,3 +1,5 @@
+> **Warning** DEVELOPMENT OF THIS PROJECT IS ABANDONED.
+
 > **Warning** FOR GIT USERS: To clone including all dependecies you must use [fork](https://github.com/plusone-robotics/vcstool) (has the sparse checkout feature) of the [vcstool](https://github.com/dirk-thomas/vcstool) python module (currently the sparse checkout feature is not merged).
 
 <h4 align="center">Set of batch scripts (experimental) for the svn command line tools including
@@ -10,8 +12,6 @@ the svn command line tools (Win32) as is from:</h4>
 <li>VisualSVN</li>
 <li>win32svn</li>
 </ul>
-
-<h4 align="center">The latest version is here: https://sf.net/p/svncmd</h4>
 
 ##
 
@@ -65,8 +65,8 @@ the svn command line tools (Win32) as is from:</h4>
 </p>
 
 <p align="center">
-  <a href="https://github.com/andry81/svncmd/blob/trunk/changelog.txt">Changelog</a>
-• <a href="https://github.com/andry81/svncmd/blob/trunk/README_EN.txt">Readme</a>
+  <a href="https://github.com/andry81/svncmd/blob/master/changelog.txt">Changelog</a>
+• <a href="https://github.com/andry81/svncmd/blob/master/README_EN.txt">Readme</a>
 • <a href="#copyright-and-license"><img src="https://github.com/andry81-cache/andry81--gh-content-cache/raw/master/common/badges/license/mit-license.svg" valign="middle" alt="copyright and license" />&nbsp;Copyright and License</a>
 </p>
 
@@ -78,4 +78,4 @@ the svn command line tools (Win32) as is from:</h4>
 
 ## <a name="copyright-and-license">Copyright and License</a>
 
-Code and documentation copyright 2021 Andrey Dibrov. Code released under [MIT License](https://github.com/andry81/svncmd/blob/trunk/license.txt)
+Code and documentation copyright 2021 Andrey Dibrov. Code released under [MIT License](https://github.com/andry81/svncmd/blob/master/license.txt)

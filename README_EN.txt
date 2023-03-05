@@ -1,10 +1,9 @@
 * README_EN.txt
-* 2021.11.13
+* 2023.03.05
 * svncmd
 
 CAUTION:
-  DEVELOPMENT OF THIS PROJECT IS INCOMPLETE AND IS STALLED FOR UNDEFINED AMOUNT
-  OF TIME.
+  DEVELOPMENT OF THIS PROJECT IS ABANDONED.
 
 1. DESCRIPTION
 2. LICENSE
@@ -24,12 +23,6 @@ the svn command line tools (Win32) as is from:
 * VisualSVN
 * win32svn
 
-The latest version is here: https://sf.net/p/svncmd
-
-WARNING:
-  Use the SVN access to find out new functionality and bug fixes.
-  See the REPOSITORIES section.
-
 -------------------------------------------------------------------------------
 2. LICENSE
 -------------------------------------------------------------------------------
@@ -40,11 +33,11 @@ https://en.wikipedia.org/wiki/MIT_License)
 3. REPOSITORIES
 -------------------------------------------------------------------------------
 Primary:
-  * https://sf.net/p/svncmd/scripts/HEAD/tree
-    https://svn.code.sf.net/p/svncmd/scripts
-First mirror:
   * https://github.com/andry81/svncmd/branches
     https://github.com/andry81/svncmd.git
+First mirror:
+  * https://sf.net/p/svncmd/svncmd/ci/master/tree
+    https://git.code.sf.net/p/svncmd/svncmd
 Second mirror:
   * https://bitbucket.org/andry81/svncmd/branches
     https://bitbucket.org/andry81/svncmd.git
