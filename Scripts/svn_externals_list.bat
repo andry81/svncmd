@@ -21,7 +21,7 @@ if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
 
 call "%%~dp0__init__.bat" || exit /b
 
-call "%%SVNCMD_PROJECT_ROOT%%/__init__/declare_builtins.bat" %%0 %%*
+call "%%CONTOOLS_ROOT%%/std/declare_builtins.bat" %%0 %%*
 
 call "%%CONTOOLS_ROOT%%/std/allocate_temp_dir.bat" . "%%?~n0%%"
 

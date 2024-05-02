@@ -35,22 +35,23 @@ if not defined SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT  call "%%~dp0canonical_path.bat
 rem retarget externals of an external project
 
 if not defined CONTOOLS_PROJECT_EXTERNALS_ROOT    call "%%~dp0canonical_path.bat" CONTOOLS_PROJECT_EXTERNALS_ROOT    "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%"
+if not defined TACKLELIB_PROJECT_EXTERNALS_ROOT   call "%%~dp0canonical_path.bat" TACKLELIB_PROJECT_EXTERNALS_ROOT    "%%SVNCMD_PROJECT_EXTERNALS_ROOT%%"
 
-rem init immediate external projects
+rem init external projects
 
 if exist "%TACKLEBAR_PROJECT_EXTERNALS_ROOT%/contools/__init__/__init__.bat" (
-  call "%%TACKLEBAR_PROJECT_EXTERNALS_ROOT%%/contools/__init__/__init__.bat" -no_load_user_config || exit /b
+  call "%%TACKLEBAR_PROJECT_EXTERNALS_ROOT%%/contools/__init__/__init__.bat" %%* || exit /b
 )
 
 if %NO_GEN%0 EQU 0 (
-  call "%%CONTOOLS_ROOT%%/std/mkdir_if_notexist.bat" "%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%" || exit /b 10
+  call "%%CONTOOLS_ROOT%%/std/mkdir_if_notexist.bat" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b 10
 )
 
 if not defined LOAD_CONFIG_VERBOSE if %INIT_VERBOSE%0 NEQ 0 set LOAD_CONFIG_VERBOSE=1
 
 if %NO_GEN%0 EQU 0 (
-  call "%%CONTOOLS_ROOT%%/build/load_config_dir.bat" %%* -lite_parse -gen_user_config "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
-) else call "%%CONTOOLS_ROOT%%/build/load_config_dir.bat" %%* -lite_parse "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
+  call "%%CONTOOLS_ROOT%%/build/load_config_dir.bat" %%* -gen_user_config -- "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
+) else call "%%CONTOOLS_ROOT%%/build/load_config_dir.bat" %%* -- "%%SVNCMD_PROJECT_INPUT_CONFIG_ROOT%%" "%%SVNCMD_PROJECT_OUTPUT_CONFIG_ROOT%%" || exit /b
 
 rem init external projects
 

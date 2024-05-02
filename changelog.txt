@@ -1,3 +1,6 @@
+2024.05.02:
+* changed: __init__, Scripts: sync with `contools` project
+
 2023.12.09:
 * fixed: __init__/__init__.bat: execution fixup
 
