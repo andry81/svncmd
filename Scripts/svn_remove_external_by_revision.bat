@@ -251,7 +251,7 @@ pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
   call "%%SVNCMD_TOOLS_ROOT%%/svn_list.bat" -offline . --depth infinity --non-interactive > "%BRANCH_FILES_FILE_TMP%" 2>nul || ( popd & exit /b )
 
   echo.Removing external directory content: "%EXTERNAL_BRANCH_PATH%"...
-  for /F "usebackq eol= tokens=* delims=" %%i in (`sort /R "%BRANCH_FILES_FILE_TMP%"`) do (
+  for /F "usebackq tokens=* delims="eol^= %%i in (`sort /R "%BRANCH_FILES_FILE_TMP%"`) do (
     set "SVN_FILE_PATH=%%i"
     call :REMOVE_SVN_FILE_PATH || ( popd & exit /b )
   )

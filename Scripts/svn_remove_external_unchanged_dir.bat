@@ -151,7 +151,7 @@ goto REMOVE_EXTERNAL_EMPTY_DIR_PATH_IMPL_REMOVE_LOOP
 rem directories with the .svn subdirectory has being request through the svn commands
 if exist "%DIR_PATH_PREFIX%/.svn\" exit /b 1
 
-for /F "usebackq eol= tokens=* delims=" %%i in (`dir /A /B /O:N "%DIR_PATH_PREFIX%"`) do (
+for /F "usebackq tokens=* delims="eol^= %%i in (`dir /A /B /O:N "%DIR_PATH_PREFIX%"`) do (
   if /i not "%%i" == ".svn" if /i not "%DIR_PATH_DIR%" == "%%i" exit /b 0
 )
 

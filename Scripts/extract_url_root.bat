@@ -24,7 +24,7 @@ set "URL=%~1"
 
 set "URL_SCHEME="
 set "URL_PATH="
-for /F "eol= tokens=1,* delims=:" %%i in ("%URL%") do (
+for /F "tokens=1,* delims=:"eol^= %%i in ("%URL%") do (
   set "URL_SCHEME=%%i"
   set "URL_PATH=%%j"
 )
@@ -35,7 +35,7 @@ if "%URL_SCHEME%" == "file" (
   set "URL_PATH=%URL_PATH:~2%"
 )
 
-for /F "eol= tokens=1,* delims=/" %%i in ("%URL_PATH%") do (
+for /F "tokens=1,* delims=/"eol^= %%i in ("%URL_PATH%") do (
   set "URL_DOMAIN=%%i"
 )
 

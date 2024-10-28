@@ -611,7 +611,7 @@ if exist "%BRANCH_CHANGESET_FILE%" call :UPDATE_BY_CHANGESET
 goto UPDATE_BY_CHANGESET_END
 
 :UPDATE_BY_CHANGESET
-for /F "usebackq eol= tokens=1,* delims=|" %%i in ("%BRANCH_CHANGESET_FILE%") do (
+for /F "usebackq tokens=1,* delims=|"eol^= %%i in ("%BRANCH_CHANGESET_FILE%") do (
   set CHANGESET_REVISION=%%i
   set "CHANGESET_PATH=%%j"
   pushd "%SYNC_BRANCH_PATH%" && (
@@ -626,7 +626,7 @@ exit /b 0
 
 rem get branch difference file size after update
 set "BRANCH_DIFF_FILESIZE=0"
-for /F "eol= tokens=* delims=" %%i in ("%BRANCH_DIFF_FILE%") do set "BRANCH_DIFF_FILESIZE=%%~zi"
+for /F "tokens=* delims="eol^= %%i in ("%BRANCH_DIFF_FILE%") do set "BRANCH_DIFF_FILESIZE=%%~zi"
 
 if %BRANCH_DIFF_FILESIZE% NEQ 0 pushd "%SYNC_BRANCH_PATH%" && (
   rem PREPROCESS_PATCH_EXTERNAL_REMOVE step, because:

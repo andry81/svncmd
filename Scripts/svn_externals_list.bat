@@ -231,7 +231,7 @@ if %FLAG_RECURSIVE% EQU 0 (
 rem make recursion
 call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "%%SQLINE_EXP_EXTERNALS_LIST%%" > "%EXTERNALS_LIST_FILE_TMP%"
 
-for /F "usebackq eol= tokens=* delims=" %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
+for /F "usebackq tokens=* delims="eol^= %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
   set "LOCAL_PATH=%%i"
   call :PROCESS_LOCAL_EXTERNAL_RECORD || exit /b
 )
@@ -243,7 +243,7 @@ set "LOCAL_PREFIX_PATH=%PREFIX_PATH_PREFIX%%LOCAL_PATH%"
 if "/" == "%LOCAL_PREFIX_PATH:~-1%" set "LOCAL_PREFIX_PATH=%LOCAL_PREFIX_PATH:~0,-1%"
 
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "eol= tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PATH%") do (echo.%%i)
+for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PATH%") do (echo.%%i)
 
 call "%%?~f0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%% -l -prefix_path "%%LOCAL_PREFIX_PATH%%" "%%LOCAL_PATH%%"
 
@@ -261,7 +261,7 @@ if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 set "SQLINE_EXP_EXTERNALS_LIST=select case when def_local_relpath != '' then def_local_relpath else '.' end as local_prefix, case when def_local_relpath != '' then substr(case when kind != 'dir' then local_relpath else local_relpath || '/' end, length(def_local_relpath)+2) else case when kind != 'dir' then local_relpath else local_relpath || '/' end end as external_path, case when def_revision != '' then def_revision else '-' end as operative_rev, case when def_operational_revision != '' then def_operational_revision else '-' end as peg_rev, repos_id, def_repos_relpath from externals where local_relpath != '' and presence != 'not-present'%SQLITE_EXP_WHERE_FIRST_FILTER%"
 
-for /F "usebackq eol= tokens=1,2,3,4,5,6 delims=|" %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "%%SQLINE_EXP_EXTERNALS_LIST%%"`) do (
+for /F "usebackq tokens=1,2,3,4,5,6 delims=|"eol^= %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" ".mode list" ".separator |" ".nullvalue ." "%%SQLINE_EXP_EXTERNALS_LIST%%"`) do (
   set "LOCAL_PREFIX=%%i"
   set "EXTERNAL_PATH=%%j"
   set "OPERATIVE_REV=%%k"
@@ -275,7 +275,7 @@ exit /b 0
 
 :PROCESS_EXTERNAL_RECORD
 set "REPOROOT="
-for /F "usebackq eol= tokens=* delims=" %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "select root from repository where id='%%REPOS_ID%%'"`) do set "REPOROOT=%%i"
+for /F "usebackq tokens=* delims="eol^= %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "select root from repository where id='%%REPOS_ID%%'"`) do set "REPOROOT=%%i"
 if not defined REPOROOT (
   echo.%?~nx0%: error: SVN database `REPOSITORY root` request has failed: "%WCROOT_PATH:\=/%/.svn/wc.db".
   exit /b 240
@@ -294,7 +294,7 @@ if defined PREFIX_PATH_PREFIX (
 )
 
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "eol= tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
+for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
 
 if %FLAG_RECURSIVE% EQU 0 exit /b
 
@@ -355,7 +355,7 @@ if %FLAG_RECURSIVE% EQU 0 (
 rem make recursion
 call "%%SVNCMD_TOOLS_ROOT%%/gen_externals_list_from_pget.bat"%%FLAG_TEXT_NO_URI_TRANSFORM%%%%FLAG_TEXT_LOCAL_PATHS_ONLY%%%%CMD_LINE_PREFIX_PATH%% "%%EXTERNALS_FILE_TMP%%" "%%BRANCH_REPO_ROOT%%" "%%BRANCH_DIR_URL%%" > "%EXTERNALS_LIST_FILE_TMP%" || exit /b 245
 
-for /F "usebackq eol= tokens=1,2,3,4,5 delims=|" %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
+for /F "usebackq tokens=1,2,3,4,5 delims=|"eol^= %%i in ("%EXTERNALS_LIST_FILE_TMP%") do (
   set "LOCAL_PREFIX=%%i"
   set "EXTERNAL_PATH=%%j"
   set "OPERATIVE_REV=%%k"
@@ -378,10 +378,10 @@ if defined PREFIX_PATH_PREFIX (
 
 if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 (
   rem special form of the echo command to ignore special characters in the echo value.
-  for /F "eol= tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%") do (echo.%%i)
+  for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%") do (echo.%%i)
 ) else (
   rem special form of the echo command to ignore special characters in the echo value.
-  for /F "eol= tokens=* delims=" %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
+  for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
 )
 
 set "EXTERNAL_PATH_SUFFIX=%EXTERNAL_PATH%"

@@ -33,7 +33,7 @@ if not defined INFO_PARAM_NAME (
   exit /b 2
 ) >&2
 
-for /F "usebackq eol= tokens=* delims=" %%i in ("%INFO_PARAM_FILE%") do (
+for /F "usebackq tokens=* delims="eol^= %%i in ("%INFO_PARAM_FILE%") do (
   set "BRANCH_INFO_LINE=%%i"
   call :EXTRACT_INFO_PARAM_LINE && goto EXIT_ON_SUCCESS
 )
@@ -49,7 +49,7 @@ exit /b 254
 exit /b 0
 
 :EXTRACT_INFO_PARAM_LINE
-for /F "eol= tokens=1,* delims=:" %%i in ("%BRANCH_INFO_LINE%") do (
+for /F "tokens=1,* delims=:"eol^= %%i in ("%BRANCH_INFO_LINE%") do (
   set "INFO_PARAM_LINE_NAME=%%i"
   set "INFO_PARAM_LINE_VALUE=%%j"
   call :PROCESS_INFO_PARAM_LINE && exit /b 0
@@ -64,5 +64,5 @@ exit /b 0
 :TRIM_BEGINNING_SPACES
 rem drop return value
 set "RETURN_VALUE="
-for /F "eol= tokens=* delims=	 " %%i in ("%~1") do set "RETURN_VALUE=%%i"
+for /F "tokens=* delims=	 "eol^= %%i in ("%~1") do set "RETURN_VALUE=%%i"
 exit /b 0
