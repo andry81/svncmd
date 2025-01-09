@@ -15,18 +15,14 @@ the svn command line tools (Win32) as is from:</h4>
 
 ##
 
+<!-- -- >
 <p align="center">
   <a href="https://www.codefactor.io/repository/github/andry81/svncmd">
     <img src="https://github.com/andry81-cache/andry81--gh-content-cache/raw/master/repo/andry81/svncmd/badges/metrics/codefactor-grade.svg" valign="middle" alt="codefactor.io|quality" /></a>
-• <a href="https://www.codacy.com/gh/andry81/svncmd/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=andry81/svncmd&amp;utm_campaign=Badge_Grade">
+• <a href="https://app.codacy.com/gh/andry81/svncmd/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=andry81/svncmd&amp;utm_campaign=Badge_Grade">
     <img src="https://github.com/andry81-cache/andry81--gh-content-cache/raw/master/repo/andry81/svncmd/badges/metrics/codacy-grade.svg" valign="middle" alt="codacy.com|quality" /></a>
-• <a href="https://lgtm.com/projects/g/andry81/svncmd/context:python">
-    <img src="https://github.com/andry81-cache/andry81--gh-content-cache/raw/master/repo/andry81/svncmd/badges/metrics/lgtm-grade-python.svg" valign="middle" alt="lgtm.com|quality|python" /></a>
-  <a href="https://lgtm.com/projects/g/andry81/svncmd/alerts">
-    <img src="https://github.com/andry81-cache/andry81--gh-content-cache/raw/master/repo/andry81/svncmd/badges/metrics/lgtm-alerts.svg" valign="middle" alt="lgtm.com|alerts" /></a>
 </p>
 
-<!-- -->
 <p align="center">
   <a href="https://codeclimate.com/github/andry81/svncmd/maintainability">
     <img src="https://github.com/andry81-cache/andry81--gh-content-cache/raw/master/repo/andry81/svncmd/badges/metrics/codeclimate-maintainability.svg" valign="middle" alt="codeclimate.com|maintainability" /></a>
