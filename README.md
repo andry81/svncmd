@@ -1,17 +1,18 @@
-> **Warning** DEVELOPMENT OF THIS PROJECT IS ABANDONED.
+> [!WARNING]
+> DEVELOPMENT OF THIS PROJECT IS ABANDONED.
 
-> **Warning** FOR GIT USERS: To clone including all dependecies you must use [fork](https://github.com/plusone-robotics/vcstool) (has the sparse checkout feature) of the [vcstool](https://github.com/dirk-thomas/vcstool) python module (currently the sparse checkout feature is not merged).
+> [!NOTE]
+> To checkout externals read the details here: https://github.com/andry81/externals
 
-<h4 align="center">Set of batch scripts (experimental) for the svn command line tools including
-the svn command line tools (Win32) as is from:</h4>
-<ul>
-<li>TortoiseSVN</li>
-<li>CollabNet</li>
-<li>SlikSVN</li>
-<li>Cygwin</li>
-<li>VisualSVN</li>
-<li>win32svn</li>
-</ul>
+<p align="center">Set of batch scripts (experimental) for the svn command line tools including
+the svn command line tools (Win32) as is from:</p>
+
+* TortoiseSVN
+* CollabNet
+* SlikSVN
+* Cygwin
+* VisualSVN
+* win32svn
 
 ##
 
@@ -61,8 +62,8 @@ the svn command line tools (Win32) as is from:</h4>
 </p>
 
 <p align="center">
-  <a href="https://github.com/andry81/svncmd/blob/master/changelog.txt">Changelog</a>
-• <a href="https://github.com/andry81/svncmd/blob/master/README_EN.txt">Readme</a>
+  <a href="https://github.com/andry81/svncmd/tree/HEAD/changelog.txt">Changelog</a>
+• <a href="https://github.com/andry81/svncmd/tree/HEAD/README_EN.txt">Readme</a>
 • <a href="#copyright-and-license"><img src="https://github.com/andry81-cache/gh-content-static-cache/raw/master/common/badges/license/mit-license.svg" valign="middle" alt="copyright and license" />&nbsp;Copyright and License</a>
 </p>
 
@@ -74,4 +75,4 @@ the svn command line tools (Win32) as is from:</h4>
 
 ## <a name="copyright-and-license">Copyright and License</a>
 
-Code and documentation copyright 2021 Andrey Dibrov. Code released under [MIT License](https://github.com/andry81/svncmd/blob/master/license.txt)
+Code and documentation copyright 2021 Andrey Dibrov. Code released under [MIT License](https://github.com/andry81/svncmd/tree/HEAD/license.txt)

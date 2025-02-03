@@ -1,3 +1,8 @@
+2025.02.03:
+* changed: README.md: github markdown blockquotes update
+* changed: README.md: repo links update
+* refactor: README.md: minor refactor
+
 2025.01.09:
 * changed: README.md: removed `lgtm` badges as not existed anymore and disabled the rest code quality badges
 
