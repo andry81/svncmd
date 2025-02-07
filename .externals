@@ -1,5 +1,24 @@
 repositories:
 
+  _externals/contools:
+    type:         git
+    url:          https://github.com/andry81/contools
+    version:      master
+    subpaths:
+      - __init__
+      - _config
+      - Scripts/__init__
+      - Scripts/Tools
+
+  _externals/contools--utils:
+    type:         git
+    url:          https://github.com/andry81/contools--utils
+    version:      master
+    subpaths:
+      - __init__
+      - _config
+      - bin
+
   _externals/tacklelib:
     type:         git
     url:          https://github.com/andry81/tacklelib
@@ -10,22 +29,28 @@ repositories:
       - bash/__init__
       - bash/tacklelib
 
-  _externals/contools:
+  _externals/gnuwin32:
     type:         git
-    url:          https://github.com/andry81/contools
-    version:      master
-    subpaths:
-      - __init__
-      - _config
-      - Scripts/__init__
-      - Scripts/Tools
-      - Utilities/bin
+    url:          https://github.com/andry81-3dparty/external-tools--gnuwin32
+    version:      20101227
 
-  _externals/external_tools:
+  _externals/xmlstarlet:
     type:         git
-    url:          https://github.com/andry81-3dparty/contools--external_tools
-    version:      master
-    subpaths:
-      - scm/svn
-      - python
-      - deps
+    url:          https://github.com/andry81-3dparty/external-tools--xmlstarlet
+    version:      1_6_1_release
+
+
+  _externals/external-tools/svn:
+    type:         git
+    url:          https://github.com/andry81-3dparty/external-tools--svn
+    version:      1_x
+
+  _externals/external-tools/winsdk:
+    type:         git
+    url:          https://github.com/andry81-3dparty/external-tools--winsdk
+    version:      10_0_x
+
+  _externals/external-tools/python:
+    type:         git
+    url:          https://github.com/andry81-3dparty/external-tools--python
+    version:      3_x
