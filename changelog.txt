@@ -1,3 +1,6 @@
+2025.09.11:
+* changed: README.md: global remove of code metric references from all project pages
+
 2025.02.07:
 * changed: *.bat: `CONTOOLS_UTILITIES_BIN_ROOT` variable renamed into `CONTOOLS_UTILS_BIN_ROOT`
 * changed: .externals: switch to `contools--utils` project
