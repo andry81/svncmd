@@ -1,3 +1,6 @@
+2026.03.10:
+* changed: _config: `INIT_VERBOSE`, `CONTOOLS_VERBOSE`, `PRINT_VARS_SET`, `CHCP` global environment variables initialization is moved into `contools` project
+
 2025.09.11:
 * changed: README.md: global remove of code metric references from all project pages
 
