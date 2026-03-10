@@ -26,4 +26,4 @@
 #                         Can start by the `"` quote character, but two quotes does remove only when exist on both ends of a value.
 #
 
-once SVNCMD_TOOLS_ROOT                  ="%SVNCMD_PROJECT_ROOT%/Scripts"
+once SVNCMD_TOOLS_ROOT                  ="%SVNCMD_PROJECT_ROOT%/scripts"

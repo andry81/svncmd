@@ -1,4 +1,9 @@
 2026.03.10:
+* new: .externals: `testlib` dependency from `contools` project
+* changed: .externals: removed unused dependencies
+* refactor: global directories rename to lower case name
+
+2026.03.10:
 * changed: extracted not used and abandoned files into `svncmd.old` project
 
 2026.03.10:

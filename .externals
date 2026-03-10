@@ -9,11 +9,11 @@ repositories:
       - _config
       - scripts/__init__
       - scripts/tools/__init__
-      - scripts/tools/build
-      - scripts/tools/encoding
       - scripts/tools/filesys
-      - scripts/tools/std
       - scripts/tools/sqlite
+      - scripts/tools/std
+      - scripts/tools/testlib
+      - scripts/tools/time
       - scripts/tools/wmi
       - scripts/tools/xcopy
 
