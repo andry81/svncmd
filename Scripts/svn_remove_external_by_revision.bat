@@ -172,7 +172,8 @@ exit /b %LASTERROR%
 
 :MAIN
 
-echo BRANCH_LOCAL_REL_PATH=%BRANCH_LOCAL_REL_PATH%
+if 0 "code is incomplete and abandoned"
+rem echo BRANCH_LOCAL_REL_PATH=%BRANCH_LOCAL_REL_PATH%
 if "%EXTERNAL_DIR_PATH_PREFIX%" == "." (
   set "BRANCH_LOCAL_REL_PATH=%EXTERNAL_DIR_PATH%"
   set "BRANCH_DEF_LOCAL_REL_PATH="
@@ -200,7 +201,8 @@ pushd "%WCROOT_PATH_ABS%" && (
 exit /b 0
 
 :SVN_REMOVE_EXTERNALS
-echo 1 EXTERNAL_BRANCH_PATH_ABS=%EXTERNAL_BRANCH_PATH_ABS%
+if 0 "code is incomplete and abandoned"
+rem echo 1 EXTERNAL_BRANCH_PATH_ABS=%EXTERNAL_BRANCH_PATH_ABS%
 pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
   rem from externals
   svn pget svn:externals . -R --non-interactive > "%BRANCH_FROM_EXTERNALS_FILE_TMP%" || ( popd & exit /b 30 )
@@ -213,7 +215,6 @@ pushd "%EXTERNAL_BRANCH_PATH_ABS%" && (
   popd
 )
 
-echo 1
 rem read temporary info file
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%BRANCH_TO_EXTERNALS_INFO_FILE_TMP%%" "URL"
 set "BRANCH_CURRENT_REV_DIR_URL=%RETURN_VALUE%"

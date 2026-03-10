@@ -186,8 +186,8 @@ set "EXTERNAL_BRANCH_PATH_TO_REMOVE=%WCROOT_PATH_ABS:\=/%/%EXTERNAL_BRANCH_PATH_
 
 if not exist "%EXTERNAL_BRANCH_PATH_TO_REMOVE%" exit /b 0
 
-echo EXTERNAL_BRANCH_PATH_TO_REMOVE=%EXTERNAL_BRANCH_PATH_TO_REMOVE%
-pause
+if 0 "code is incomplete and abandoned"
+rem echo EXTERNAL_BRANCH_PATH_TO_REMOVE=%EXTERNAL_BRANCH_PATH_TO_REMOVE%
 
 rem check branch changes status
 call "%%SVNCMD_TOOLS_ROOT%%/svn_has_changes.bat" -stat-exclude-? "%%EXTERNAL_BRANCH_PATH_TO_REMOVE%%" || ( popd & exit /b 41 )
