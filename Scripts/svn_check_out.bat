@@ -11,10 +11,10 @@ call;
 
 setlocal
 
-echo.%~nx0 %*
-echo.
+echo;%~nx0 %*
+echo;
 
-call "%%~dp0__init__.bat" || exit /b
+call "%%~dp0__init__\__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 
@@ -69,17 +69,17 @@ if defined SVN_URL_PATH call :GET_URL_FILE_NAME "%%SVN_URL_PATH%%"
 if defined SVN_URL_PATH set "SVN_UP_DIR=%SVN_UP_DIR%/%URL_FILE_NAME%"
 
 :SVN_REF_PATH_END
-echo."%SVN_UP_DIR%" ^<- "%SVN_URL_PATH%" ^("%SVN_REF_PATH%"^)
+echo;"%SVN_UP_DIR%" ^<- "%SVN_URL_PATH%" ^("%SVN_REF_PATH%"^)
 
 if not exist "%SVN_BASE_PATH%\" mkdir "%SVN_BASE_PATH%"
 
 if not exist "%SVN_BASE_PATH%\" (
-  echo.%~nx0: error: could not SVN check out, because base directory does not exist: "%SVN_BASE_PATH%"
+  echo;%~nx0: error: could not SVN check out, because base directory does not exist: "%SVN_BASE_PATH%"
   exit /b 254
 ) >&2
 
 pushd "%SVN_BASE_PATH%" || (
-  echo.%~nx0: error: could not SVN check out, because could not make directory current: "%SVN_BASE_PATH%"
+  echo;%~nx0: error: could not SVN check out, because could not make directory current: "%SVN_BASE_PATH%"
   exit /b 253
 ) >&2
 

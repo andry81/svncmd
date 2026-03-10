@@ -26,7 +26,7 @@ call;
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 6 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 6 (echo;^>^>%0 %*) >&3
 
 set "?~nx0=%~nx0"
 
@@ -67,7 +67,7 @@ if defined FLAG (
   ) else if "%FLAG%" == "-stat-exclude-versioned" (
     set FLAG_SVN_STATUS_EXCLUDE_VERSIONED=1
   ) else (
-    echo.%?~nx0%: error: invalid flag: %FLAG%
+    echo;%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
   ) >&2
 
@@ -92,7 +92,7 @@ goto DIR_PATH_PREFIX_END
 
 :DIR_PATH_PREFIX_ERROR
 (
-  echo.%?~nx0%: error: directory does not exist: "%DIR_PATH_PREFIX%".
+  echo;%?~nx0%: error: directory does not exist: "%DIR_PATH_PREFIX%".
   exit /b -255
 ) >&2
 
@@ -111,7 +111,7 @@ goto DIR_PATH_SUBDIR_END
 
 :DIR_PATH_SUBDIR_ERROR
 (
-  echo.%?~nx0%: error: directory does not exist or not relative: "%DIR_PATH_PREFIX%\%DIR_PATH_SUBDIR%\".
+  echo;%?~nx0%: error: directory does not exist or not relative: "%DIR_PATH_PREFIX%\%DIR_PATH_SUBDIR%\".
   exit /b -254
 ) >&2
 

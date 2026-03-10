@@ -41,26 +41,26 @@ call;
 rem enable delayed expansion to speed overall code iterations
 setlocal ENABLEDELAYEDEXPANSION
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo;^>^>%0 %*) >&3
 
 set "SVN_WORKINGSET_NEXT=%~1"
 set "SVN_WORKINGSET_PREV=%~2"
 set "SVN_WORKINGSET_DIFF=%~3"
 
 if not exist "!SVN_WORKINGSET_NEXT!" (
-  echo.%~nx0: error: svn next externals list file does not exist: "!SVN_WORKINGSET_NEXT!"
+  echo;%~nx0: error: svn next externals list file does not exist: "!SVN_WORKINGSET_NEXT!"
   exit /b 1
 ) >&2
 
 if not exist "!SVN_WORKINGSET_PREV!" (
-  echo.%~nx0: error: svn prev externals list file does not exist: "!SVN_WORKINGSET_PREV!"
+  echo;%~nx0: error: svn prev externals list file does not exist: "!SVN_WORKINGSET_PREV!"
   exit /b 2
 ) >&2
 
 rem drop output difference file
 del /F /Q /A:-D "!SVN_WORKINGSET_DIFF!" 2>nul
 if exist "!SVN_WORKINGSET_DIFF!" (
-  echo.%~nx0: error: svn externals differences file could not be recreated: "!SVN_WORKINGSET_DIFF!"
+  echo;%~nx0: error: svn externals differences file could not be recreated: "!SVN_WORKINGSET_DIFF!"
   exit /b 3
 ) >&2
 
@@ -75,7 +75,7 @@ set LASTERROR=0
 call :LOAD_SVN_WORKINGSET
 
 if !LASTERROR! NEQ 0 (
-  echo.%~nx0: error: svn next externals file is broken: "!SVN_WORKINGSET_NEXT!"
+  echo;%~nx0: error: svn next externals file is broken: "!SVN_WORKINGSET_NEXT!"
   exit /b !LASTERROR!
 ) >&2
 
@@ -86,7 +86,7 @@ set LASTERROR=0
 call :LOAD_SVN_WORKINGSET
 
 if !LASTERROR! NEQ 0 (
-  echo.%~nx0: error: svn previous externals file is broken: "!SVN_WORKINGSET_PREV!"
+  echo;%~nx0: error: svn previous externals file is broken: "!SVN_WORKINGSET_PREV!"
   exit /b !LASTERROR!
 ) >&2
 
@@ -148,7 +148,7 @@ set WORKINGSET_EXT_PATH_FOUND=0
 set WORKINGSET_REPO_FOUND=0
 set WORKINGSET_REV_CHANGED=0
 
-rem echo.!L_REPO!^|!L_OP_REV!^|!L_PEG_REV!
+rem echo;!L_REPO!^|!L_OP_REV!^|!L_PEG_REV!
 
 call :PROCESS_WORKINGSET_R
 
@@ -157,30 +157,30 @@ if !SVN_WORKINGSET_SEARCH_T! EQU 0 (
     if !WORKINGSET_EXT_PATH_FOUND! NEQ 0 (
       if !WORKINGSET_REPO_FOUND! NEQ 0 (
         if !WORKINGSET_REV_CHANGED! EQU 0 (
-          (echo. ^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
+          (echo; ^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
         ) else (
           set WORKINGSETS_HAS_CHANGES=1
-          (echo.^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|!R_REPO_FOUND!^|-^|!R_PEG_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
+          (echo;^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|!R_REPO_FOUND!^|-^|!R_PEG_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
         )
       ) else (
         set WORKINGSETS_HAS_CHANGES=1
-        (echo.^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|!R_REPO_FOUND!^|!R_PEG_REV_FOUND!^|!R_OP_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
+        (echo;^*^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!^|!R_REPO_FOUND!^|!R_PEG_REV_FOUND!^|!R_OP_REV_FOUND!)>>"!SVN_WORKINGSET_DIFF!"
       )
     ) else (
       set WORKINGSETS_HAS_CHANGES=1
-      (echo.+^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
+      (echo;+^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
     )
   ) else if defined L_LOCAL_PATH (
     set WORKINGSETS_HAS_CHANGES=1
-    (echo.+^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
+    (echo;+^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
   )
 ) else if defined L_LOCAL_PATH (
   if !WORKINGSET_LOCAL_PATH_FOUND! EQU 0 (
     set WORKINGSETS_HAS_CHANGES=1
-    (echo.-^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
+    (echo;-^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
   ) else if !WORKINGSET_EXT_PATH_FOUND! EQU 0 (
     set WORKINGSETS_HAS_CHANGES=1
-    (echo.-^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
+    (echo;-^|!L_LOCAL_PATH!^|!L_EXT_PATH!^|!L_OP_REV!^|!L_PEG_REV!^|!L_REPO!)>>"!SVN_WORKINGSET_DIFF!"
   )
 )
 

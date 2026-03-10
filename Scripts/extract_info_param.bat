@@ -16,18 +16,18 @@ call;
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 5 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 5 (echo;^>^>%0 %*) >&3
 
 set "INFO_PARAM_FILE=%~1"
 set "INFO_PARAM_NAME=%~2"
 
 if not exist "%INFO_PARAM_FILE%" (
-  echo.%~nx0: error: info file does not exist: "%INFO_PARAM_FILE%"
+  echo;%~nx0: error: info file does not exist: "%INFO_PARAM_FILE%"
   exit /b 1
 ) >&2
 
 if not defined INFO_PARAM_NAME (
-  echo.%~nx0: error: info param name is not set.
+  echo;%~nx0: error: info param name is not set.
   exit /b 2
 ) >&2
 

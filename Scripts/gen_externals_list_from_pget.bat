@@ -9,9 +9,9 @@ call;
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 4 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 4 (echo;^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || exit /b
+call "%%~dp0__init__\__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 
@@ -46,7 +46,7 @@ if defined FLAG (
     set FLAG_LOCAL_PATHS_ONLY=1
     shift
   ) else (
-    echo.%?~nx0%: error: invalid flag: %FLAG%
+    echo;%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
   ) >&2
 
@@ -56,7 +56,7 @@ if defined FLAG (
 
 if %FLAG_PREFIX_PATH% NEQ 0 ^
 if not defined FLAG_TEXT_PREFIX_PATH (
-  echo.%?~nx0%: error: prefix path is empty.
+  echo;%?~nx0%: error: prefix path is empty.
   exit /b 1
 ) >&2
 
@@ -65,12 +65,12 @@ set "REPO_ROOT=%~2"
 set "DIR_URL=%~3"
 
 if not defined EXTERNALS_FILE (
-  echo.%?~nx0%: error: externals file is not set.
+  echo;%?~nx0%: error: externals file is not set.
   exit /b 2
 ) >&2
 
 if not exist "%EXTERNALS_FILE%" (
-  echo.%?~nx0%: error: externals file does not exist: "%EXTERNALS_FILE%".
+  echo;%?~nx0%: error: externals file does not exist: "%EXTERNALS_FILE%".
   exit /b 3
 ) >&2
 
@@ -79,13 +79,13 @@ if %FLAG_NO_URI_TRANSFORM% NEQ 0 goto IGNORE_URI_ARGS_CHECK
 if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto IGNORE_URI_ARGS_CHECK
 
 if not defined REPO_ROOT (
-  echo.%?~nx0%: error: `Repository Root` argument is not set.
+  echo;%?~nx0%: error: `Repository Root` argument is not set.
   exit /b 4
 ) >&2
 
 :CHECK_DIR_URL
 if not defined DIR_URL (
-  echo.%?~nx0%: error: `URL` argument is not set.
+  echo;%?~nx0%: error: `URL` argument is not set.
   exit /b 5
 ) >&2
 
@@ -109,7 +109,7 @@ if defined EXTERNAL_PATH_EXP ^
 if defined EXTERNAL_DIR_PATH goto PARSE_EXTERNAL_PATH_EXP_OK
 
 (
-  echo.%?~nx0%: error: svn:externals property line is not recognized in file: "%EXTERNALS_FILE%": "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%".
+  echo;%?~nx0%: error: svn:externals property line is not recognized in file: "%EXTERNALS_FILE%": "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%".
   exit /b 10
 ) >&2
 
@@ -163,7 +163,7 @@ if defined EXTERNAL_PATH_EXP ^
 if defined EXTERNAL_DIR_PATH goto PARSE_EXTERNAL_PATH_EXP_OK2
 
 (
-  echo.%?~nx0%: error: svn:externals `URL` or `Path` value is not recognized in file: "%EXTERNALS_FILE%": "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%".
+  echo;%?~nx0%: error: svn:externals `URL` or `Path` value is not recognized in file: "%EXTERNALS_FILE%": "%EXTERNAL_PATH_EXP%%EXTERNAL_DIR_PATH%".
   exit /b 28
 ) >&2
 
@@ -185,7 +185,7 @@ if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 goto IGNORE_URI_TRANSFORM
 
 call "%%SVNCMD_TOOLS_ROOT%%/make_url_absolute.bat" "%%DIR_URL%%" "%%EXTERNAL_URI_PATH%%" "%%REPO_ROOT%%"
 if %ERRORLEVEL% NEQ 0 (
-  echo.%?~nx0%: error: invalid svn:externals path transformation: BASE_URL="%DIR_URL%" ^
+  echo;%?~nx0%: error: invalid svn:externals path transformation: BASE_URL="%DIR_URL%" ^
 EXTERNAL_PATH="%EXTERNAL_URI_PATH%" REPOSITORY_ROOT="%REPO_ROOT%" RESULT="%RETURN_VALUE%".
   exit /b 20
 ) >&2
@@ -239,13 +239,13 @@ goto PRINT_EXTERNAL_RECORD
 
 :PRINT_EXTERNAL_PATH
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "tokens=* delims="eol^= %%i in ("%EXTERNAL_PATH%") do (echo.%%i)
+for /F "tokens=* delims="eol^= %%i in ("%EXTERNAL_PATH%") do (echo;%%i)
 
 exit /b 0
 
 :PRINT_EXTERNAL_RECORD
 rem TODO: EXTERNAL_DIR_PATH_PREFIX can be repo URL path, transformation required in case of compare with another list with local paths in the first parameter 
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "tokens=* delims="eol^= %%i in ("%EXTERNAL_DIR_PATH_PREFIX%|%EXTERNAL_DIR_PATH%|%EXTERNAL_URI_REV_OPERATIVE%|%EXTERNAL_URI_REV_PEG%|%EXTERNAL_URI%") do (echo.%%i)
+for /F "tokens=* delims="eol^= %%i in ("%EXTERNAL_DIR_PATH_PREFIX%|%EXTERNAL_DIR_PATH%|%EXTERNAL_URI_REV_OPERATIVE%|%EXTERNAL_URI_REV_PEG%|%EXTERNAL_URI%") do (echo;%%i)
 
 exit /b 0

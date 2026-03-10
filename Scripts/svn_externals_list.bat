@@ -15,9 +15,9 @@ call;
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo;^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || exit /b
+call "%%~dp0__init__\__init__.bat" || exit /b
 
 call "%%CONTOOLS_ROOT%%/std/declare_builtins.bat" %%0 %%*
 
@@ -86,7 +86,7 @@ if defined FLAG (
     set "FLAG_TEXT_PREFIX_PATH=%~2"
     shift
   ) else (
-    echo.%?~nx0%: error: invalid flag: %FLAG%
+    echo;%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
   ) >&2
 
@@ -100,7 +100,7 @@ set "BRANCH_PATH=%CD%"
 if not "%~1" == "" set "BRANCH_PATH=%~f1"
 
 if not exist "%BRANCH_PATH%\" (
-  echo.%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".
+  echo;%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".
   exit /b 255
 ) >&2
 
@@ -109,7 +109,7 @@ set "WCROOT_PATH_ABS=%FLAG_TEXT_WCROOT_ABS%"
 
 if %FLAG_WCROOT% NEQ 0 ^
 if not defined WCROOT_PATH (
-  echo.%?~nx0%: error: SVN WC root path should not be empty.
+  echo;%?~nx0%: error: SVN WC root path should not be empty.
   exit /b 254
 ) >&2
 
@@ -140,7 +140,7 @@ if defined BRANCH_REL_SUB_PATH (
 
 if defined BRANCH_REL_SUB_PATH ^
 if /i not "%WCROOT_PATH%\%BRANCH_REL_SUB_PATH%" == "%BRANCH_PATH%" (
-  echo.%?~nx0%: error: SVN WC root path must be absolute and BRANCH_PATH must be descendant to the SVN WC root path: WCROOT_PATH="%WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
+  echo;%?~nx0%: error: SVN WC root path must be absolute and BRANCH_PATH must be descendant to the SVN WC root path: WCROOT_PATH="%WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
   exit /b 253
 ) >&2
 
@@ -151,7 +151,7 @@ exit /b 0
 :TEST_WCROOT_PATH_END
 
 if not exist "%WCROOT_PATH%\.svn\wc.db" (
-  echo.%?~nx0%: error: SVN WC database file is not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
+  echo;%?~nx0%: error: SVN WC database file is not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 252
 ) >&2
 
@@ -201,12 +201,12 @@ rem check on supported wc.db user version
 call "%%?~dp0%%impl/svn_get_wc_db_user_ver.bat"
 
 if not defined WC_DB_USER_VERSION (
-  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
+  echo;%?~nx0%: error: SVN WC database user version is not set or not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 249
 ) >&2
 
 if %WC_DB_USER_VERSION% LSS 31 (
-  echo.%?~nx0%: warning: SVN WC database user version is not supported: %WC_DB_USER_VERSION%; supported greater or equal to: 31
+  echo;%?~nx0%: warning: SVN WC database user version is not supported: %WC_DB_USER_VERSION%; supported greater or equal to: 31
 ) >&2
 
 if %FLAG_LOCAL_PATHS_ONLY% EQU 0 goto IGNORE_LOCAL_PATH_ONLY
@@ -241,7 +241,7 @@ set "LOCAL_PREFIX_PATH=%PREFIX_PATH_PREFIX%%LOCAL_PATH%"
 if "/" == "%LOCAL_PREFIX_PATH:~-1%" set "LOCAL_PREFIX_PATH=%LOCAL_PREFIX_PATH:~0,-1%"
 
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PATH%") do (echo.%%i)
+for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PATH%") do (echo;%%i)
 
 call "%%?~f0%%" -R%%FLAG_TEXT_OFFLINE%%%%FLAG_TEXT_NO_URI_TRANSFORM%% -l -prefix_path "%%LOCAL_PREFIX_PATH%%" "%%LOCAL_PATH%%"
 
@@ -275,7 +275,7 @@ exit /b 0
 set "REPOROOT="
 for /F "usebackq tokens=* delims="eol^= %%i in (`@call "%%CONTOOLS_SQLITE_TOOLS_ROOT%%/sqlite.bat" -batch "%%WCROOT_PATH%%\.svn\wc.db" ".headers off" "select root from repository where id='%%REPOS_ID%%'"`) do set "REPOROOT=%%i"
 if not defined REPOROOT (
-  echo.%?~nx0%: error: SVN database `REPOSITORY root` request has failed: "%WCROOT_PATH:\=/%/.svn/wc.db".
+  echo;%?~nx0%: error: SVN database `REPOSITORY root` request has failed: "%WCROOT_PATH:\=/%/.svn/wc.db".
   exit /b 240
 ) >&2
 
@@ -292,7 +292,7 @@ if defined PREFIX_PATH_PREFIX (
 )
 
 rem special form of the echo command to ignore special characters in the echo value.
-for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
+for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo;%%i)
 
 if %FLAG_RECURSIVE% EQU 0 exit /b
 
@@ -323,14 +323,14 @@ svn info . --non-interactive > "%INFO_FILE_TMP%" || exit /b 248
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%INFO_FILE_TMP%%" "URL"
 set "BRANCH_DIR_URL=%RETURN_VALUE%"
 if not defined BRANCH_DIR_URL (
-  echo.%?~nx0%: error: `URL` property is not found in SVN info file: "%INFO_FILE_TMP%".
+  echo;%?~nx0%: error: `URL` property is not found in SVN info file: "%INFO_FILE_TMP%".
   exit /b 230
 ) >&2
 
 call "%%SVNCMD_TOOLS_ROOT%%/extract_info_param.bat" "%%INFO_FILE_TMP%%" "Repository Root"
 set "BRANCH_REPO_ROOT=%RETURN_VALUE%"
 if not defined BRANCH_REPO_ROOT (
-  echo.%?~nx0%: error: `Repository Root` property is not found in SVN info file: "%BRANCH_INFO_FILE%".
+  echo;%?~nx0%: error: `Repository Root` property is not found in SVN info file: "%BRANCH_INFO_FILE%".
   exit /b 229
 ) >&2
 
@@ -376,10 +376,10 @@ if defined PREFIX_PATH_PREFIX (
 
 if %FLAG_LOCAL_PATHS_ONLY% NEQ 0 (
   rem special form of the echo command to ignore special characters in the echo value.
-  for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%") do (echo.%%i)
+  for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%") do (echo;%%i)
 ) else (
   rem special form of the echo command to ignore special characters in the echo value.
-  for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo.%%i)
+  for /F "tokens=* delims="eol^= %%i in ("%PREFIX_PATH_PREFIX%%LOCAL_PREFIX_SUFFIX%|%EXTERNAL_PATH%|%OPERATIVE_REV%|%PEG_REV%|%REPOPATH%") do (echo;%%i)
 )
 
 set "EXTERNAL_PATH_SUFFIX=%EXTERNAL_PATH%"

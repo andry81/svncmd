@@ -20,7 +20,7 @@ call;
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 5 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 5 (echo;^>^>%0 %*) >&3
 
 set "?~nx0=%~nx0"
 
@@ -40,7 +40,7 @@ if defined FLAG (
     set FLAG_SVN_USE_CURRENT_REV=1
     shift
   ) else (
-    echo.%?~nx0%: error: invalid flag: %FLAG%
+    echo;%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
   ) >&2
 

@@ -1,4 +1,7 @@
 2026.03.10:
+* changed: extracted not used and abandoned files into `svncmd.old` project
+
+2026.03.10:
 * new: .externals*: `msys2` external dependencies for Windows 7+
 * changed: __init__, .externals: sync with `contools` project
 * changed: __init__: code cleanup

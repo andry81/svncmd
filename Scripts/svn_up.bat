@@ -11,10 +11,10 @@ call;
 
 setlocal
 
-echo.%~nx0 %*
-echo.
+echo;%~nx0 %*
+echo;
 
-call "%%~dp0__init__.bat" || exit /b
+call "%%~dp0__init__\__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 
@@ -69,15 +69,15 @@ if defined SVN_URL_PATH call :GET_URL_FILE_NAME "%%SVN_URL_PATH%%"
 if defined SVN_URL_PATH set "SVN_UP_DIR=%SVN_UP_DIR%/%URL_FILE_NAME%"
 
 :SVN_REF_PATH_END
-echo."%SVN_UP_DIR%" ^<- "%SVN_URL_PATH%" ^("%SVN_REF_PATH%"^)
+echo;"%SVN_UP_DIR%" ^<- "%SVN_URL_PATH%" ^("%SVN_REF_PATH%"^)
 
 if not exist "%SVN_UP_DIR%\" (
-  echo.%~nx0: error: could not SVN update, because directory does not exist: "%SVN_UP_DIR%"
+  echo;%~nx0: error: could not SVN update, because directory does not exist: "%SVN_UP_DIR%"
   exit /b 254
 ) >&2
 
 pushd "%SVN_UP_DIR%" || (
-  echo.%~nx0: error: could not SVN update, because could not make directory current: "%SVN_UP_DIR%"
+  echo;%~nx0: error: could not SVN update, because could not make directory current: "%SVN_UP_DIR%"
   exit /b 253
 ) >&2
 

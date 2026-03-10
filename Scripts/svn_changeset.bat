@@ -31,9 +31,9 @@ call;
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 3 (echo;^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || exit /b
+call "%%~dp0__init__\__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 set "?~dp0=%~dp0"
@@ -75,7 +75,7 @@ if defined FLAG (
     shift
     shift
   ) else (
-    echo.%?~nx0%: error: invalid flag: %FLAG%
+    echo;%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
   ) >&2
 
@@ -87,7 +87,7 @@ set "BRANCH_PATH=%CD%"
 if not "%~1" == "" set "BRANCH_PATH=%~f1"
 
 if not exist "%BRANCH_PATH%\" (
-  echo.%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".
+  echo;%?~nx0%: error: BRANCH_PATH does not exist: "%BRANCH_PATH%".
   exit /b 255
 )
 
@@ -96,19 +96,19 @@ set "WCROOT_PATH_ABS=%FLAG_TEXT_WCROOT_ABS%"
 
 if %FLAG_REVISION_RANGE% NEQ 0 ^
 if not defined FLAG_TEXT_REVISION_RANGE (
-  echo.%?~nx0%: error: revision range is not set.
+  echo;%?~nx0%: error: revision range is not set.
   exit /b 254
 ) >&2
 
 if %FLAG_NODES_TABLE% NEQ 0 ^
 if not defined FLAG_TEXT_NODES_TABLE (
-  echo.%?~nx0%: error: SVN WC database node table name suffix is not set.
+  echo;%?~nx0%: error: SVN WC database node table name suffix is not set.
   exit /b 253
 ) >&2
 
 if %FLAG_WCROOT% NEQ 0 ^
 if not defined WCROOT_PATH (
-  echo.%?~nx0%: error: SVN WC root path should not be empty.
+  echo;%?~nx0%: error: SVN WC root path should not be empty.
   exit /b 252
 ) >&2
 
@@ -139,7 +139,7 @@ if defined BRANCH_REL_SUB_PATH (
 
 if defined BRANCH_REL_SUB_PATH ^
 if /i not "%WCROOT_PATH%\%BRANCH_REL_SUB_PATH%" == "%BRANCH_PATH%" (
-  echo.%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: WCROOT_PATH="%WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
+  echo;%?~nx0%: error: SVN WC root path must be absolute and current directory path must be descendant to the SVN WC root path: WCROOT_PATH="%WCROOT_PATH:\=/%" BRANCH_PATH="%BRANCH_PATH:\=/%".
   exit /b 251
 ) >&2
 
@@ -150,7 +150,7 @@ exit /b 0
 :TEST_WCROOT_PATH_END
 
 if not exist "%WCROOT_PATH%\.svn\wc.db" (
-  echo.%?~nx0%: error: SVN WC database file is not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
+  echo;%?~nx0%: error: SVN WC database file is not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 250
 ) >&2
 
@@ -174,12 +174,12 @@ rem check on supported wc.db user version
 call "%%?~dp0%%impl/svn_get_wc_db_user_ver.bat"
 
 if not defined WC_DB_USER_VERSION (
-  echo.%?~nx0%: error: SVN WC database user version is not set or not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
+  echo;%?~nx0%: error: SVN WC database user version is not set or not found: "%WCROOT_PATH:\=/%/.svn/wc.db"
   exit /b 249
 ) >&2
 
 if %WC_DB_USER_VERSION% LSS 31 (
-  echo.%?~nx0%: warning: SVN WC database user version is not supported: %WC_DB_USER_VERSION%; supported greater or equal to: 31
+  echo;%?~nx0%: warning: SVN WC database user version is not supported: %WC_DB_USER_VERSION%; supported greater or equal to: 31
 ) >&2
 
 rem parse -r argument value

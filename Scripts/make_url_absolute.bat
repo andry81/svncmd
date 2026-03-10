@@ -43,9 +43,9 @@ call;
 
 setlocal
 
-if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 6 (echo.^>^>%0 %*) >&3
+if 0%SVNCMD_TOOLS_DEBUG_VERBOSITY_LVL% GEQ 6 (echo;^>^>%0 %*) >&3
 
-call "%%~dp0__init__.bat" || exit /b
+call "%%~dp0__init__\__init__.bat" || exit /b
 
 set "?~nx0=%~nx0"
 
@@ -65,7 +65,7 @@ if defined FLAG (
     set FLAG_TEST_ABSOLUTE_TRANSFORM_PATH=1
     shift
   ) else (
-    echo.%?~nx0%: error: invalid flag: %FLAG%
+    echo;%?~nx0%: error: invalid flag: %FLAG%
     exit /b -255
   ) >&2
 
@@ -78,7 +78,7 @@ set "TRANSFORM_PATH=%~2"
 set "REPO_URL=%~3"
 
 if not defined BASE_URL (
-  echo.%?~nx0%: error: BASE_URL should be defined.
+  echo;%?~nx0%: error: BASE_URL should be defined.
   exit /b 1
 ) >&2
 
@@ -88,7 +88,7 @@ goto VALIDATE_BASE_URL_END
 :VALIDATE_BASE_URL
 rem BASE_URL should be absolute
 if "%BASE_URL:://=%" == "%BASE_URL%" (
-  echo.%?~nx0%: error: BASE_URL should be absolute: BASE_URL="%BASE_URL%".
+  echo;%?~nx0%: error: BASE_URL should be absolute: BASE_URL="%BASE_URL%".
   exit /b 2
 )
 
@@ -101,7 +101,7 @@ goto VALIDATE_TRANSFORM_PATH_END
 
 :VALIDATE_TRANSFORM_PATH
 if not defined TRANSFORM_PATH (
-  echo.%?~nx0%: error: TRANSFORM_PATH should not be empty.
+  echo;%?~nx0%: error: TRANSFORM_PATH should not be empty.
   exit /b 3
 ) >&2
 
@@ -124,7 +124,7 @@ if "%REPO_URL%%TRANSFORM_PATH_TO_REPO_URL_SUFFIX%" == "%TRANSFORM_PATH%" (
 )
 
 (
-  echo.%?~nx0%: error: REPO_URL is not a prefix to the TRANSFORM_PATH: REPO_URL="%REPO_URL%" TRANSFORM_PATH="%TRANSFORM_PATH%".
+  echo;%?~nx0%: error: REPO_URL is not a prefix to the TRANSFORM_PATH: REPO_URL="%REPO_URL%" TRANSFORM_PATH="%TRANSFORM_PATH%".
   exit /b 4
 ) >&2
 
@@ -136,7 +136,7 @@ goto VALIDATE_REPO_URL_END
 :VALIDATE_REPO_URL
 rem REPO_URL should be absolute
 if "%REPO_URL:://=%" == "%REPO_URL%" (
-  echo.%?~nx0%: error: REPO_URL should be absolute: REPO_URL="%REPO_URL%".
+  echo;%?~nx0%: error: REPO_URL should be absolute: REPO_URL="%REPO_URL%".
   exit /b 5
 ) >&2
 
@@ -150,7 +150,7 @@ if "%REPO_URL%%BASE_URL_TO_REPO_URL_SUFFIX%" == "%BASE_URL%" (
 )
 
 (
-  echo.%?~nx0%: error: REPO_URL is not a prefix to the BASE_URL: REPO_URL="%REPO_URL%" BASE_URL="%BASE_URL%"
+  echo;%?~nx0%: error: REPO_URL is not a prefix to the BASE_URL: REPO_URL="%REPO_URL%" BASE_URL="%BASE_URL%"
   exit /b 6
 ) >&2
 
@@ -159,21 +159,21 @@ if "%REPO_URL%%BASE_URL_TO_REPO_URL_SUFFIX%" == "%BASE_URL%" (
 if "%TRANSFORM_PATH:~0,1%" == "." (
   rem relative to base url
   if not defined BASE_URL (
-    echo.%?~nx0%: error: BASE_URL should not be empty.
+    echo;%?~nx0%: error: BASE_URL should not be empty.
     exit /b 7
   ) >&2
   set "RETURN_VALUE=%BASE_URL%/%TRANSFORM_PATH%"
 ) else if "%TRANSFORM_PATH:~0,2%" == "^/" (
   rem relative to repo url
   if not defined REPO_URL (
-    echo.%?~nx0%: error: REPO_URL should not be empty.
+    echo;%?~nx0%: error: REPO_URL should not be empty.
     exit /b 8
   ) >&2
   set "RETURN_VALUE=%REPO_URL%/%TRANSFORM_PATH:~2%"
 ) else if "%TRANSFORM_PATH:~0,2%" == "//" (
   rem relative to repo url scheme
   if not defined REPO_URL (
-    echo.%?~nx0%: error: REPO_URL should not be empty.
+    echo;%?~nx0%: error: REPO_URL should not be empty.
     exit /b 8
   ) >&2
   call "%%SVNCMD_TOOLS_ROOT%%/extract_url_scheme.bat" "%%REPO_URL%%"
@@ -181,7 +181,7 @@ if "%TRANSFORM_PATH:~0,1%" == "." (
 ) else if "%TRANSFORM_PATH:~0,1%" == "/" (
   rem relative to repo url root
   if not defined REPO_URL (
-    echo.%?~nx0%: error: REPO_URL should not be empty.
+    echo;%?~nx0%: error: REPO_URL should not be empty.
     exit /b 8
   ) >&2
   call "%%SVNCMD_TOOLS_ROOT%%/extract_url_root.bat" "%%REPO_URL%%"
@@ -189,7 +189,7 @@ if "%TRANSFORM_PATH:~0,1%" == "." (
 ) else (
   rem relative or prefix to base url
   if not defined BASE_URL (
-    echo.%?~nx0%: error: BASE_URL should not be empty.
+    echo;%?~nx0%: error: BASE_URL should not be empty.
     exit /b 7
   ) >&2
   

@@ -12,40 +12,12 @@ repositories:
       - scripts/tools/build
       - scripts/tools/encoding
       - scripts/tools/filesys
-      - scripts/tools/hash
       - scripts/tools/std
       - scripts/tools/sqlite
-      - scripts/tools/vars
       - scripts/tools/wmi
       - scripts/tools/xcopy
-
-  _externals/hashdeep:
-    type:         git
-    url:          https://github.com/andry81-3dparty/external-tools--hashdeep
-    version:      4_4_release
 
   _externals/sqlite:
     type:         git
     url:          https://github.com/andry81-3dparty/external-tools--sqlite3
     version:      3_15_0_release
-
-  _externals/xmlstarlet:
-    type:         git
-    url:          https://github.com/andry81-3dparty/external-tools--xmlstarlet
-    version:      1_6_1_release
-
-
-  _externals/external-tools/svn:
-    type:         git
-    url:          https://github.com/andry81-3dparty/external-tools--svn
-    version:      1_x
-
-  _externals/external-tools/winsdk:
-    type:         git
-    url:          https://github.com/andry81-3dparty/external-tools--winsdk
-    version:      10_0_x
-
-  _externals/external-tools/python:
-    type:         git
-    url:          https://github.com/andry81-3dparty/external-tools--python
-    version:      3_x
