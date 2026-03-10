@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script recursively reads branch information like SVN info/diff/externals/files
 rem   and saves it into the workingset file creating catalog directory with
@@ -580,7 +578,7 @@ if %FLAG_SVN_LIST_FILES% NEQ 0 (
   )
 
   if defined BRANCH_EXTERNAL_BASE_PATH (
-    type "%BRANCH_ROOT_FILES_FILE%" | "%CONTOOLS_GNUWIN32_ROOT%/bin/sed.exe" -e "s|^|%BRANCH_EXTERNAL_BASE_PATH%/|" >> "%BRANCH_ROOT_ALLFILES_FILE%"
+    type "%BRANCH_ROOT_FILES_FILE%" | "%CONTOOLS_MSYS2_USR_ROOT%/bin/sed.exe" -b -e "s|^|%BRANCH_EXTERNAL_BASE_PATH%/|" >> "%BRANCH_ROOT_ALLFILES_FILE%"
   ) else (
     type "%BRANCH_ROOT_FILES_FILE%" >> "%BRANCH_ROOT_ALLFILES_FILE%"
   )
@@ -864,7 +862,7 @@ set "SED_BRANCH_ROOT_PATH=%SED_BRANCH_ROOT_PATH:\=\\%"
 set "SED_SEARCH_STR=^Working Copy Root Path: %SED_BRANCH_ROOT_PATH%"
 set "SED_REPLACE_STR=Working Copy Root Path: ."
 
-type "%~f1" | "%CONTOOLS_GNUWIN32_ROOT%/bin/sed.exe" -b -e "s|%SED_SEARCH_STR%|%SED_REPLACE_STR%|img" > "%BRANCH_EXTERNALS_INFO_FILE_TMP%"
+type "%~f1" | "%CONTOOLS_MSYS2_USR_ROOT%/bin/sed.exe" -b -e "s|%SED_SEARCH_STR%|%SED_REPLACE_STR%|img" > "%BRANCH_EXTERNALS_INFO_FILE_TMP%"
 
 copy /Y /B "%BRANCH_EXTERNALS_INFO_FILE_TMP%" "%~f1" >nul
 del /F /Q /A:-D "%BRANCH_EXTERNALS_INFO_FILE_TMP%"
@@ -961,7 +959,7 @@ if %FLAG_SVN_LIST_FILES% NEQ 0 (
 )
 
 if %FLAG_SVN_LIST_FILES% NEQ 0 (
-  type "%BRANCH_WORKINGSET_CATALOG_PATH:/=\%\$files.lst" | "%CONTOOLS_GNUWIN32_ROOT%/bin/sed.exe" -e "s|^|%BRANCH_EXTERNAL_DIR_PATH_PREFIX2%%BRANCH_EXTERNAL_DIR_PATH%/|" >> "%BRANCH_ROOT_ALLFILES_FILE%"
+  type "%BRANCH_WORKINGSET_CATALOG_PATH:/=\%\$files.lst" | "%CONTOOLS_MSYS2_USR_ROOT%/bin/sed.exe" -b -e "s|^|%BRANCH_EXTERNAL_DIR_PATH_PREFIX2%%BRANCH_EXTERNAL_DIR_PATH%/|" >> "%BRANCH_ROOT_ALLFILES_FILE%"
 )
 
 if %FLAG_SVN_STATUS_FILES% NEQ 0 ^

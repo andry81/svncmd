@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script for remove SVN externals from the WC root by difference of 2
 rem   externals list representing the state for the base revision and the state

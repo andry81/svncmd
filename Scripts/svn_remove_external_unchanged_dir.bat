@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script for remove a single SVN external directory from the WC root if it
 rem   does not have unversioned items.

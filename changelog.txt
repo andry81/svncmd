@@ -1,4 +1,12 @@
 2026.03.10:
+* new: .externals*: `msys2` external dependencies for Windows 7+
+* changed: __init__, .externals: sync with `contools` project
+* changed: __init__: code cleanup
+* changed: Scripts/gen_branch_workingset.bat: switched from `gnuwin32` to `msys2`
+* changed: README.md: copyright year as project born year
+* refactor: *.bat: minor cleanup
+
+2026.03.10:
 * changed: _config: `INIT_VERBOSE`, `CONTOOLS_VERBOSE`, `PRINT_VARS_SET`, `CHCP` global environment variables initialization is moved into `contools` project
 
 2025.09.11:

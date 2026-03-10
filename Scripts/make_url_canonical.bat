@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script makes SVN URL canonical, removing all . and .. component
 rem   occurrences.

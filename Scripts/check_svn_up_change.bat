@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script generates changesets difference file, prints it and returns
 rem   code representing changesets difference state.

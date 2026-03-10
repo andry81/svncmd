@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script recursively synchronizes branch information like SVN diff/externals
 rem   and restores branch into state which has been when workingset has

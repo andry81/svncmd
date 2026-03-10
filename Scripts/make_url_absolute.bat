@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script makes SVN URL absolute applying to a base/repo url the SVN
 rem   transform path ("./", "../", "^/", "//", "/").

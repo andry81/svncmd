@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script requests piece of wc.db (EXTERNALS table) paths,
 rem   builds externals CSV list and filters out them by target path.

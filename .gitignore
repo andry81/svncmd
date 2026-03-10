@@ -1,9 +1,9 @@
-/.log
-/_externals
+/**/.log
+/**/.cache
+/**/.temp
+/**/_out
+/**/_output
+/**/_externals
 /Temp
-Tests/batscripts/_output
-TestsExternal/batscript/.cache
-TestsExternal/batscript/_output
 TestsExternal/batscript/_testdata_dynamic
 TestsExternal/batscript/_testdata_static
-/_out

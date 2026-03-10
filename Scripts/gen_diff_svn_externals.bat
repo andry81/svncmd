@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Svn changeset generation script from 2 externals (externals CSV list).
 rem   Generate CSV file with not sorted differences between 2 SVN externals

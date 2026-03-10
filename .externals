@@ -7,32 +7,27 @@ repositories:
     subpaths:
       - __init__
       - _config
-      - Scripts/__init__
-      - Scripts/Tools
+      - scripts/__init__
+      - scripts/tools/__init__
+      - scripts/tools/build
+      - scripts/tools/encoding
+      - scripts/tools/filesys
+      - scripts/tools/hash
+      - scripts/tools/std
+      - scripts/tools/sqlite
+      - scripts/tools/vars
+      - scripts/tools/wmi
+      - scripts/tools/xcopy
 
-  _externals/contools--utils:
+  _externals/hashdeep:
     type:         git
-    url:          https://github.com/andry81/contools--utils
-    version:      master
-    subpaths:
-      - __init__
-      - _config
-      - bin
+    url:          https://github.com/andry81-3dparty/external-tools--hashdeep
+    version:      4_4_release
 
-  _externals/tacklelib:
+  _externals/sqlite:
     type:         git
-    url:          https://github.com/andry81/tacklelib
-    version:      master
-    subpaths:
-      - __init__
-      - _config
-      - bash/__init__
-      - bash/tacklelib
-
-  _externals/gnuwin32:
-    type:         git
-    url:          https://github.com/andry81-3dparty/external-tools--gnuwin32
-    version:      20101227
+    url:          https://github.com/andry81-3dparty/external-tools--sqlite3
+    version:      3_15_0_release
 
   _externals/xmlstarlet:
     type:         git

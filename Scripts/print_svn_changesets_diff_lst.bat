@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Svn changesets differences file print script.
 rem   Print generated differences CSV file between 2 SVN changesets in sorted

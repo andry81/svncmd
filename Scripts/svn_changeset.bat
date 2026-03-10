@@ -1,7 +1,5 @@
 @echo off
 
-rem Author:   Andrey Dibrov (andry at inbox dot ru)
-
 rem Description:
 rem   Script requests piece of wc.db (NODES_BASE/NODES_CURRENT tables) paths
 rem   with revisions range in format:

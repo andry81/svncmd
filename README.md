@@ -77,4 +77,4 @@ the svn command line tools (Win32) as is from:</p>
 
 ## <a name="copyright-and-license">Copyright and License</a>
 
-Code and documentation copyright 2021 Andrey Dibrov. Code released under [MIT License](https://github.com/andry81/svncmd/tree/HEAD/license.txt)
+Code and documentation copyright 2017 Andrey Dibrov. Code released under [MIT License](https://github.com/andry81/svncmd/tree/HEAD/license.txt)
