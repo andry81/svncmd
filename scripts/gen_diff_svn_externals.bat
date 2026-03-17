@@ -57,8 +57,8 @@ if not exist "!SVN_WORKINGSET_PREV!" (
   exit /b 2
 ) >&2
 
-rem drop output difference file
-del /F /Q /A:-D "!SVN_WORKINGSET_DIFF!" 2>nul
+rem drop output difference file, check on empty variable to avoid accidental `del /Q ""` case
+if defined SVN_WORKINGSET_DIFF del /F /Q /A:-D "!SVN_WORKINGSET_DIFF!" 2>nul
 if exist "!SVN_WORKINGSET_DIFF!" (
   echo;%~nx0: error: svn externals differences file could not be recreated: "!SVN_WORKINGSET_DIFF!"
   exit /b 3
